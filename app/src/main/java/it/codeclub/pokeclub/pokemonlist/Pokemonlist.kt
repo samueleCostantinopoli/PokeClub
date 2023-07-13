@@ -531,6 +531,7 @@ fun PokedexScreen(
                 .background(Color.Transparent)
         ) {
             Image(
+
                 painter = painterResource(id = R.drawable.menupokeball), // Replace with your image resource
                 contentDescription = "FabButton",
                 modifier = Modifier.fillMaxSize(), // Modificatore per riempire l'intera area del pulsante
