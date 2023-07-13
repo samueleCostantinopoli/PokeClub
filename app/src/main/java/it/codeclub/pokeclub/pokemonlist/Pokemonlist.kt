@@ -521,6 +521,7 @@ fun PokedexScreen(
                     isRotated = !isRotated
                 }
             },
+
             contentColor = contentColorFor(backgroundColor = Color.Transparent),
             modifier = Modifier
                 .padding(16.dp)
