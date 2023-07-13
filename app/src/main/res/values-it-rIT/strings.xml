@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PokeClub</string>
+    <string name="bug">Insetto</string>
+    <string name="dark">Buio</string>
+    <string name="dragon">Drago</string>
+    <string name="electric">Elettro</string>
+    <string name="fairy">Folletto</string>
+    <string name="fighting">Lotta</string>
+    <string name="fire">Fuoco</string>
+    <string name="flying">Volante</string>
+    <string name="ghost">Spettro</string>
+    <string name="grass">Erba</string>
+    <string name="ground">Terra</string>
+    <string name="ice">Ghiaccio</string>
+    <string name="normal">Normale</string>
+    <string name="poison">Veleno</string>
+    <string name="psychic">Psico</string>
+    <string name="rock">Roccia</string>
+    <string name="steel">Acciaio</string>
+    <string name="water">Acqua</string>
+    <string name="favourites_filter">Filtro preferiti</string>
+    <string name="captured_filter">Filtro catturati</string>
+    <string name="settings">Impostazioni</string>
+    <string name="version">Versione</string>
+    <string name="type">Tipo</string>
+    <string name="ability">Abilità</string>
+    <string name="select_version">Seleziona una versione</string>
+    <string name="favourite">Preferito</string>
+    <string name="not_favourite">Non preferito</string>
+    <string name="captured">Catturato</string>
+    <string name="not_captured">Non catturato</string>
+    <string name="height">Altezza</string>
+    <string name="weight">Peso</string>
+    <string name="lp">PS</string>
+    <string name="attack">Attacco</string>
+    <string name="defense">Difesa</string>
+    <string name="sp_attack">Attacco speciale</string>
+    <string name="sp_defense">Difesa speciale</string>
+    <string name="speed">Velocità</string>
+</resources>

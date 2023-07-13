@@ -7,8 +7,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import it.codeclub.pokeclub.configuration.Constants.BASE_URL
-import it.codeclub.pokeclub.configuration.Constants.DB_NAME
+import it.codeclub.pokeclub.utils.Constants.BASE_URL
+import it.codeclub.pokeclub.utils.Constants.DB_NAME
 import it.codeclub.pokeclub.db.Converters
 import it.codeclub.pokeclub.db.PokemonDao
 import it.codeclub.pokeclub.db.PokemonDatabase

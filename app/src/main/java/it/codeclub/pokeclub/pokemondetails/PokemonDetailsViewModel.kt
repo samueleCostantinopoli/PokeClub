@@ -2,8 +2,17 @@ package it.codeclub.pokeclub.pokemondetails
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import it.codeclub.pokeclub.db.PokemonRepository
+import it.codeclub.pokeclub.db.entities.PokemonWithAbilities
+import it.codeclub.pokeclub.utils.Resource
+import javax.inject.Inject
 
 @HiltViewModel
-class PokemonDetailsViewModel: ViewModel() {
+class PokemonDetailsViewModel @Inject constructor (
+    private val pokemonRepository: PokemonRepository
+): ViewModel() {
 
+    suspend fun getPokemonInfo(pokemonName: String): Resource<PokemonWithAbilities> {
+        return pokemonRepository.getPokemonDetails(pokemonName)
+    }
 }

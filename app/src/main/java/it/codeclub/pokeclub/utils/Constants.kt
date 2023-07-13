@@ -1,4 +1,4 @@
-package it.codeclub.pokeclub.configuration
+package it.codeclub.pokeclub.utils
 
 object Constants {
 

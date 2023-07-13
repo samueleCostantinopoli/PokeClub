@@ -1,5 +1,7 @@
 package it.codeclub.pokeclub.pokemonlist
 
+import android.content.Context
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,9 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,35 +39,47 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle.Companion.Italic
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.ui.text.font.FontStyle.Companion.Italic
-import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.SubcomposeAsyncImage
 import it.codeclub.pokeclub.R
+import it.codeclub.pokeclub.domain.FilterType
 
 @Preview
 @Composable
-fun call(){
-    PokedexScreen()
+fun Call() {
+
 }
 
 @Preview
 @Composable
 fun PreviewChangeableImage() {
     MaterialTheme {
-        PokedexScreen()
+
     }
 }
 
 @Composable
-fun PokedexScreen() {
-
+fun PokedexScreen(
+    context: Context,
+    pokemonListViewModel: PokemonListViewModel = hiltViewModel()
+) {
     val boxVersion = remember { mutableStateOf(false) }
-    val boxTipe = remember { mutableStateOf(false) }
+    val boxType = remember { mutableStateOf(false) }
     val boxAbility = remember { mutableStateOf(false) }
+
+    var isFavouritesFilterActive by remember {
+        mutableStateOf(false)
+    }
+
+    var isCapturedFilterActive by remember {
+        mutableStateOf(false)
+    }
 
     // Box che racchiude tutta la schermata
     Box(
@@ -73,29 +89,27 @@ fun PokedexScreen() {
             .fillMaxWidth()
     ) {
         // Box bianco in alto con il titolo "Pokedex" e i bottoni
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFFFFFFFF)) // Colore bianco blocco superiore
-                .drawBehind {
-                    val shadowColor = Color(0xFFCCCCCC)
-                    // Linea utilizzata per separare le scritte in alto con la lista dei pokemon
-                    drawLine(
-                        color = Color.DarkGray,
-                        start = Offset(0.0F, size.height),
-                        end = Offset(size.width, size.height),
-                        strokeWidth = 0.5.dp.toPx()
-                    )
-                    // Effetto ombra sotto la linea creata in precedenza
-                    drawRect(
-                        color = shadowColor,
-                        topLeft = Offset(0.0F, size.height),
-                        size = Size(size.width, 4.dp.toPx())
-                    )
-                }
-        ) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFFFFFFFF)) // Colore bianco blocco superiore
+            .drawBehind {
+                val shadowColor = Color(0xFFCCCCCC)
+                // Linea utilizzata per separare le scritte in alto con la lista dei pokemon
+                drawLine(
+                    color = Color.DarkGray,
+                    start = Offset(0.0F, size.height),
+                    end = Offset(size.width, size.height),
+                    strokeWidth = 0.5.dp.toPx()
+                )
+                // Effetto ombra sotto la linea creata in precedenza
+                drawRect(
+                    color = shadowColor,
+                    topLeft = Offset(0.0F, size.height),
+                    size = Size(size.width, 4.dp.toPx())
+                )
+            }) {
             Text(
-                text = "Pokédex",
+                text = context.getString(R.string.app_name),
                 fontSize = 30.sp,
                 modifier = Modifier.padding(16.dp),
                 fontWeight = Bold
@@ -103,27 +117,39 @@ fun PokedexScreen() {
             // Inserimento dell'immagine "stella", che è anche cliccabile per accedere ai pokemon salvati come preferiti
             Image(
                 painter = painterResource(R.drawable.star),
-                contentDescription = "Stella dei preferiti",
+                contentDescription = context.getString(R.string.favourites_filter),
                 modifier = Modifier
-                    //TODO .clickable(onClick = /* Azione della stella dei preferiti */)
+                    .clickable {
+                        if (isFavouritesFilterActive)
+                            pokemonListViewModel.filterBy(FilterType.NONE)
+                        else
+                            pokemonListViewModel.filterBy(FilterType.FAVOURITES)
+                        isFavouritesFilterActive = !isFavouritesFilterActive
+                    }
                     .padding(start = 250.dp, top = 15.dp)
                     .size(height = 45.dp, width = 35.dp),
             )
             // Immagine della pokeball cliccabile, che serve a visualizzare la squadra salvata
             Image(
                 painter = painterResource(R.drawable.smallpokeball),
-                contentDescription = "Stella dei preferiti",
+                contentDescription = context.getString(R.string.captured_filter),
                 modifier = Modifier
-                    //TODO .clickable(onClick = /* Azione della stella dei preferiti */)
+                    .clickable {
+                        if (isCapturedFilterActive)
+                            pokemonListViewModel.filterBy(FilterType.NONE)
+                        else
+                            pokemonListViewModel.filterBy(FilterType.CAPTURED)
+                        isCapturedFilterActive = !isCapturedFilterActive
+                    }
                     .padding(start = 297.dp, top = 15.dp)
                     .size(height = 45.dp, width = 35.dp),
             )
             // Immagine impostazioni
             Image(
                 painter = painterResource(R.drawable.settings),
-                contentDescription = "Stella dei preferiti",
+                contentDescription = context.getString(R.string.settings),
                 modifier = Modifier
-                    //TODO .clickable(onClick = /* Azione della stella dei preferiti */)
+                    //TODO .clickable(onClick = /* Vai alla pagina delle impostazioni */)
                     .padding(start = 350.dp, top = 27.dp)
                     .scale(1.65f)
             )
@@ -136,7 +162,7 @@ fun PokedexScreen() {
             ) {
                 // Primo bottono per il filtro "VERSIONE"
                 Button(
-                    onClick = { boxVersion.value =  !boxVersion.value },
+                    onClick = { boxVersion.value = !boxVersion.value },
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 8.dp)
@@ -148,7 +174,7 @@ fun PokedexScreen() {
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = "VERSIONE")
+                    Text(text = context.getString(R.string.version))
                 }
 
                 // Linea verticale divisoria per i bottoni dei filtri
@@ -162,7 +188,7 @@ fun PokedexScreen() {
                 )
                 // Secondo bottone per il filtro "TIPO"
                 Button(
-                    onClick = { boxTipe.value =  !boxTipe.value },
+                    onClick = { boxType.value = !boxType.value },
                     modifier = Modifier
                         .weight(1f)
                         .height(40.dp)
@@ -173,7 +199,7 @@ fun PokedexScreen() {
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = "TIPO")
+                    Text(text = context.getString(R.string.type))
                 }
                 // Linea verticale divisoria per i bottoni dei filtri
                 Divider(
@@ -186,7 +212,7 @@ fun PokedexScreen() {
                 )
                 // Terzo bottone per il filtro "ABILITA'"
                 Button(
-                    onClick = { boxAbility.value =  !boxAbility.value },
+                    onClick = { boxAbility.value = !boxAbility.value },
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 8.dp)
@@ -198,12 +224,12 @@ fun PokedexScreen() {
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = "ABILITA'")
+                    Text(text = context.getString(R.string.ability))
                 }
             }
         }
 
-        if(boxVersion.value){
+        if (boxVersion.value) {
             Box(
                 modifier = Modifier
                     .zIndex(1f)
@@ -214,11 +240,9 @@ fun PokedexScreen() {
                         shape = RoundedCornerShape(8.dp),
                     )
                     .background(Color.White),
-            )
-            {
+            ) {
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     items(8) { index ->
                         // Box che contiene le versioni dei pokemon
@@ -236,7 +260,7 @@ fun PokedexScreen() {
                                 fontSize = 22.sp,
                                 modifier = Modifier
                                     .align(Alignment.Center)
-                                    .padding(top = 6.dp , bottom = 6.dp),
+                                    .padding(top = 6.dp, bottom = 6.dp),
                                 color = Color.DarkGray
                             )
                         }
@@ -245,7 +269,7 @@ fun PokedexScreen() {
             }
         }
 
-        if(boxTipe.value){
+        if (boxType.value) {
             Box(
                 modifier = Modifier
                     .zIndex(1f)
@@ -260,16 +284,15 @@ fun PokedexScreen() {
 
             {
                 Text(
-                    text = "Seleziona una versione",
+                    text = context.getString(R.string.select_version),
                     fontSize = 24.sp,
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .padding(top = 6.dp , bottom = 6.dp),
+                        .padding(top = 6.dp, bottom = 6.dp),
                     color = Color.DarkGray
                 )
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     items(8) { index ->
                         // Box che contiene le versioni dei pokemon
@@ -288,7 +311,7 @@ fun PokedexScreen() {
                                 fontSize = 22.sp,
                                 modifier = Modifier
                                     .align(Alignment.Center)
-                                    .padding(top = 6.dp , bottom = 6.dp),
+                                    .padding(top = 6.dp, bottom = 6.dp),
                                 color = Color.DarkGray
                             )
                         }
@@ -297,7 +320,7 @@ fun PokedexScreen() {
             }
         }
 
-        if(boxAbility.value){
+        if (boxAbility.value) {
             Box(
                 modifier = Modifier
                     .zIndex(1f)
@@ -308,11 +331,9 @@ fun PokedexScreen() {
                         shape = RoundedCornerShape(8.dp),
                     )
                     .background(Color.White),
-            )
-            {
+            ) {
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     items(8) { index ->
                         // Box che contiene le versioni dei pokemon
@@ -330,7 +351,7 @@ fun PokedexScreen() {
                                 fontSize = 22.sp,
                                 modifier = Modifier
                                     .align(Alignment.Center)
-                                    .padding(top = 6.dp , bottom = 6.dp),
+                                    .padding(top = 6.dp, bottom = 6.dp),
                                 color = Color.DarkGray
                             )
                         }
@@ -339,15 +360,15 @@ fun PokedexScreen() {
             }
         }
 
+        val pokemonList by remember { pokemonListViewModel.pokemonList }
+
         // Lazy Column con i rettangoli
         LazyColumn(
             modifier = Modifier
                 .padding(top = 135.dp, start = 16.dp, end = 16.dp)
                 .fillMaxSize()
         ) {
-            items(10) { index ->
-                var starImage by remember { mutableStateOf(true) }
-                var pokeImage by remember { mutableStateOf(true) }
+            items(pokemonList) { pokemon ->
                 // Box principale per gli elementi della Lazy Column
                 Box(
                     modifier = Modifier
@@ -368,7 +389,7 @@ fun PokedexScreen() {
                         ) {
                             // Numero del pokemon nel pokedex
                             Text(
-                                text = "#00${index + 1}",
+                                text = "#${pokemon.pokemonId.toString().padStart(3, '0')}",
                                 fontSize = 19.sp,
                                 fontStyle = Italic,
                                 color = Color.Gray,
@@ -377,9 +398,9 @@ fun PokedexScreen() {
                             // Box creato per avere una dimensione fissa del testo "nome pokemon"
                             Box(
                                 modifier = Modifier.size(width = 137.dp, height = 28.dp)
-                            ){
+                            ) {
                                 Text(
-                                    text = "Nome pokemon",
+                                    text = pokemon.name,
                                     fontSize = 18.sp,
                                     color = Color.Black,
                                     modifier = Modifier.padding(top = 1.dp)
@@ -387,38 +408,41 @@ fun PokedexScreen() {
                             }
                             // Immagine della stella per indicare se il pokemon è tra i preferiti
                             Box(
-                                modifier = Modifier
-                                    .clickable { starImage = !starImage },
-                                contentAlignment = Alignment.Center
+                                modifier = Modifier.clickable {
+                                    pokemonListViewModel.toggleFavourite(pokemon = pokemon)
+                                }, contentAlignment = Alignment.Center
                             ) {
-                                val imageRes = if (starImage) R.drawable.starempty else R.drawable.star
+                                val imageRes =
+                                    if (pokemon.isFavourite) R.drawable.star else R.drawable.starempty
                                 Image(
                                     painter = painterResource(imageRes),
-                                    contentDescription = "Changeable Image",
-                                    modifier = Modifier
-                                        .size(height = 30.dp, width = 30.dp),
+                                    contentDescription = context.getString(
+                                        if (pokemon.isFavourite) R.string.favourite else R.string.not_favourite
+                                    ),
+                                    modifier = Modifier.size(height = 30.dp, width = 30.dp)
                                 )
                             }
 
                             // Immagine della pokeball per indicare se il pokemon è nella mia squadra
                             Box(
-                                modifier = Modifier
-                                    .clickable { pokeImage = !pokeImage },
-                                contentAlignment = Alignment.Center
+                                modifier = Modifier.clickable {
+                                    pokemonListViewModel.toggleCaptured(pokemon = pokemon)
+                                }, contentAlignment = Alignment.Center
                             ) {
-                                val imageRes = if (pokeImage) R.drawable.smallpokeballempty else R.drawable.smallpokeball
+                                val imageRes =
+                                    if (pokemon.isCaptured) R.drawable.smallpokeball else R.drawable.smallpokeballempty
                                 Image(
                                     painter = painterResource(imageRes),
-                                    contentDescription = "Changeable Image",
-                                    modifier = Modifier
-                                        .size(height = 30.dp, width = 30.dp)
+                                    contentDescription = context.getString(
+                                        if (pokemon.isCaptured) R.string.captured else R.string.not_captured
+                                    ),
+                                    modifier = Modifier.size(height = 30.dp, width = 30.dp)
                                 )
                             }
 
                         }
                         Row(
-                            modifier = Modifier
-                                .fillMaxSize()
+                            modifier = Modifier.fillMaxSize()
                         ) {
                             // Box che contiene il "tipo" del pokemon
                             Box(
@@ -432,30 +456,31 @@ fun PokedexScreen() {
                             ) {
 
                                 Text(
-                                    text = "tipo",
+                                    text = context.getString(pokemon.type.value),
                                     fontSize = 16.sp,
-                                    modifier = Modifier.padding(start = 43.dp,end = 43.dp),
+                                    modifier = Modifier.padding(start = 43.dp, end = 43.dp),
                                     color = Color.DarkGray
                                 )
                             }
                             // Secondo box per i pokemon che hanno un doppio tipo
-                            Box(
-                                modifier = Modifier
-                                    .padding(start = 6.dp, top = 10.dp)
-                                    .border(
-                                        BorderStroke(1.dp, Color.Gray),
-                                        shape = RoundedCornerShape(2.dp),
+                            pokemon.secondType?.let {
+                                Box(
+                                    modifier = Modifier
+                                        .padding(start = 6.dp, top = 10.dp)
+                                        .border(
+                                            BorderStroke(1.dp, Color.Gray),
+                                            shape = RoundedCornerShape(2.dp),
+                                        )
+                                        .padding(start = 4.dp)
+                                ) {
+                                    Text(
+                                        text = context.getString(pokemon.secondType.value),
+                                        fontSize = 16.sp,
+                                        modifier = Modifier.padding(start = 43.dp, end = 43.dp),
+                                        color = Color.DarkGray
                                     )
-                                    .padding(start = 4.dp)
-                            ) {
-                                Text(
-                                    text = "tipo",
-                                    fontSize = 16.sp,
-                                    modifier = Modifier.padding(start = 43.dp,end = 43.dp),
-                                    color = Color.DarkGray
-                                )
+                                }
                             }
-
                         }
                     }
                     // Box utilizzato per contenere la foto del pokemon
@@ -467,20 +492,29 @@ fun PokedexScreen() {
                             .clip(RoundedCornerShape(bottomStart = 35.dp))
                             .background(Color.White),
                     ) {
-                        // Foto del pokemon
-                        Image(
-                            painter = painterResource(R.drawable.pokemon),
-                            contentDescription = "Immagine del pokemon",
-                            modifier = Modifier
-                                .size(80.dp)
-                                .align(Alignment.Center)
-
-                        )
+                        if (pokemon.isFavourite) {
+                            Image(
+                                painter = painterResource(R.drawable.pokemon),
+                                contentDescription = pokemon.name,
+                                modifier = Modifier
+                                    .size(80.dp)
+                                    .align(Alignment.Center)
+                            )
+                        } else {
+                            SubcomposeAsyncImage(model = pokemon.imageUrl,
+                                contentDescription = pokemon.name,
+                                loading = {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                })
+                        }
                     }
 
                 }
             }
         }
+        // TODO vedere se implementare come un FabButton
         // Menu in basso a destra, raffigurato da una pokeball
         Image(
             painter = painterResource(id = R.drawable.menupokeball),

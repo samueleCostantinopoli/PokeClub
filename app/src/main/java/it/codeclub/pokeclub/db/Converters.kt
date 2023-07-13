@@ -11,13 +11,13 @@ import java.io.ByteArrayOutputStream
 class Converters {
 
     @TypeConverter
-    fun getPokemonTypeFromString(value: String): PokemonType {
-        return value.let { PokemonType.valueOf(value) }
+    fun getPokemonTypeFromInt(value: Int): PokemonType {
+        return value.let { PokemonType.fromInt(it) }
     }
 
     @TypeConverter
-    fun pokemonTypeToString(pokemonType: PokemonType): String {
-        return pokemonType.toString()
+    fun pokemonTypeToString(pokemonType: PokemonType): Int {
+        return pokemonType.value
     }
 
     @TypeConverter

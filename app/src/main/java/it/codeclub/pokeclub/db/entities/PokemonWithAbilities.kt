@@ -1,15 +1,16 @@
 package it.codeclub.pokeclub.db.entities
 
 import androidx.room.Embedded
+import androidx.room.Entity
 import androidx.room.Junction
 import androidx.room.Relation
 
 data class PokemonWithAbilities(
-    @Embedded val pokemon: Pokemon,
+    @Embedded val pokemonDetails: PokemonDetails,
     @Relation(
-        parentColumn = "pokemonId",
+        parentColumn = "detailsId",
         entityColumn = "abilityId",
-        associateBy = Junction(PokemonAbility::class)
+        associateBy = Junction(PokemonDetailsAbilityCrossRef::class)
     )
     val abilities: List<Ability>
 )
