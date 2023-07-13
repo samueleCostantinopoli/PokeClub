@@ -522,7 +522,6 @@ fun PokedexScreen(
                 }
             },
 
-
             contentColor = contentColorFor(backgroundColor = Color.Transparent),
             modifier = Modifier
                 .padding(16.dp)
