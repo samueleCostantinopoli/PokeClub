@@ -1,35 +1,18 @@
 package it.codeclub.pokeclub.pokemonlist
 
 import android.content.Context
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +21,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle.Companion.Italic
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
@@ -49,6 +34,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import it.codeclub.pokeclub.R
 import it.codeclub.pokeclub.domain.FilterType
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -69,6 +56,12 @@ fun PokedexScreen(
     context: Context,
     pokemonListViewModel: PokemonListViewModel = hiltViewModel()
 ) {
+    var rotationState by remember { mutableStateOf(0f) }
+    val rotation by animateFloatAsState(targetValue = rotationState, finishedListener = {
+        rotationState = 0f
+    })
+    val coroutineScope = rememberCoroutineScope()
+    var isRotated by remember { mutableStateOf(false) }
     val boxVersion = remember { mutableStateOf(false) }
     val boxType = remember { mutableStateOf(false) }
     val boxAbility = remember { mutableStateOf(false) }
@@ -514,16 +507,74 @@ fun PokedexScreen(
                 }
             }
         }
-        // TODO vedere se implementare come un FabButton
-        // Menu in basso a destra, raffigurato da una pokeball
-        Image(
-            painter = painterResource(id = R.drawable.menupokeball),
-            contentDescription = "menu a tendina a forma di pokeball",
+        FloatingActionButton(
+            onClick = {
+                coroutineScope.launch {
+                    val totalRotation = 360f // Numero di gradi per una rotazione completa
+                    val duration = 30L // Durata totale della rotazione in millisecondi
+                    val increment =
+                        totalRotation / duration.toFloat() // Incremento di rotazione per ogni millisecondo
+                    for (i in 0 until duration.toInt()) {
+                        rotationState += increment
+                        delay(1) // Aggiungi un ritardo di 1 millisecondo
+                    }
+                    isRotated = !isRotated
+                }
+            },
+            contentColor = contentColorFor(backgroundColor = Color.Transparent),
             modifier = Modifier
-                //TODO .clickable(onClick = /* Azione per il menù */)
+                .padding(16.dp)
+                .size(86.dp)
+                .graphicsLayer(rotationZ = rotation)
+                .clickable { }
                 .align(Alignment.BottomEnd)
-                .padding(end = 32.dp, bottom = 30.dp)
-                .scale(2f),
-        )
+                .background(Color.Transparent)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.menupokeball), // Replace with your image resource
+                contentDescription = "FabButton",
+                modifier = Modifier.fillMaxSize(), // Modificatore per riempire l'intera area del pulsante
+                contentScale = ContentScale.FillBounds // Imposta la scala dell'immagine per adattarsi all'area del pulsante
+            )
+        }
+        if (isRotated) {
+            Column(
+                modifier = Modifier
+                    .padding(35.dp)
+                    .align(Alignment.CenterEnd)
+                    .offset(y = 260.dp)
+                    .offset(x = 30.dp)
+
+            ) {
+                Button(
+                    onClick = {
+                        // Aggiungi l'azione per il primo pulsante verticale
+                    },
+                    modifier = Modifier
+                        .width(125.dp)
+                        .height(30.dp),
+                    shape = androidx.compose.ui.graphics.RectangleShape,
+                ) {
+                    // Testo o contenuto del primo pulsante verticale
+                    Text(text = "cerca")
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = {
+                        // Aggiungi l'azione per il secondo pulsante verticale
+                    },
+                    modifier = Modifier
+                        .width(125.dp)
+                        .height(30.dp),
+                    shape = androidx.compose.ui.graphics.RectangleShape,
+                ) {
+                    // Testo o contenuto del secondo pulsante verticale
+                    Text(text = "team")
+                }
+            }
+        }
     }
 }
+
