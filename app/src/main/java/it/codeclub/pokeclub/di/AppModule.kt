@@ -7,12 +7,14 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import it.codeclub.pokeclub.utils.Constants.BASE_URL
-import it.codeclub.pokeclub.utils.Constants.DB_NAME
 import it.codeclub.pokeclub.db.Converters
 import it.codeclub.pokeclub.db.PokemonDao
 import it.codeclub.pokeclub.db.PokemonDatabase
+import it.codeclub.pokeclub.db.PokemonRepository
+import it.codeclub.pokeclub.db.PokemonRepositoryDbImpl
 import it.codeclub.pokeclub.remote.PokeAPI
+import it.codeclub.pokeclub.utils.Constants.BASE_URL
+import it.codeclub.pokeclub.utils.Constants.DB_NAME
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -46,5 +48,12 @@ object AppModule {
         )
             .addTypeConverter(Converters::class)
             .build()
+    }
+
+    @Provides
+    fun providePokemonRepository(
+        pokemonDao: PokemonDao
+    ): PokemonRepository {
+        return PokemonRepositoryDbImpl(pokemonDao)
     }
 }

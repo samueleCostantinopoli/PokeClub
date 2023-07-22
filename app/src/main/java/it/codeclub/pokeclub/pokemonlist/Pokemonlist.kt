@@ -1,6 +1,5 @@
 package it.codeclub.pokeclub.pokemonlist
 
-import android.content.Context
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -24,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle.Companion.Italic
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
 import it.codeclub.pokeclub.R
 import it.codeclub.pokeclub.domain.FilterType
@@ -53,7 +54,7 @@ fun PreviewChangeableImage() {
 
 @Composable
 fun PokedexScreen(
-    context: Context,
+    navController: NavController,
     pokemonListViewModel: PokemonListViewModel = hiltViewModel()
 ) {
     var rotationState by remember { mutableStateOf(0f) }
@@ -102,7 +103,7 @@ fun PokedexScreen(
                 )
             }) {
             Text(
-                text = context.getString(R.string.app_name),
+                text = stringResource(R.string.app_name),
                 fontSize = 30.sp,
                 modifier = Modifier.padding(16.dp),
                 fontWeight = Bold
@@ -110,7 +111,7 @@ fun PokedexScreen(
             // Inserimento dell'immagine "stella", che è anche cliccabile per accedere ai pokemon salvati come preferiti
             Image(
                 painter = painterResource(R.drawable.star),
-                contentDescription = context.getString(R.string.favourites_filter),
+                contentDescription = stringResource(R.string.favourites_filter),
                 modifier = Modifier
                     .clickable {
                         if (isFavouritesFilterActive)
@@ -125,7 +126,7 @@ fun PokedexScreen(
             // Immagine della pokeball cliccabile, che serve a visualizzare la squadra salvata
             Image(
                 painter = painterResource(R.drawable.smallpokeball),
-                contentDescription = context.getString(R.string.captured_filter),
+                contentDescription = stringResource(R.string.captured_filter),
                 modifier = Modifier
                     .clickable {
                         if (isCapturedFilterActive)
@@ -140,7 +141,7 @@ fun PokedexScreen(
             // Immagine impostazioni
             Image(
                 painter = painterResource(R.drawable.settings),
-                contentDescription = context.getString(R.string.settings),
+                contentDescription = stringResource(R.string.settings),
                 modifier = Modifier
                     //TODO .clickable(onClick = /* Vai alla pagina delle impostazioni */)
                     .padding(start = 350.dp, top = 27.dp)
@@ -167,7 +168,7 @@ fun PokedexScreen(
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = context.getString(R.string.version))
+                    Text(text = stringResource(R.string.version))
                 }
 
                 // Linea verticale divisoria per i bottoni dei filtri
@@ -192,7 +193,7 @@ fun PokedexScreen(
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = context.getString(R.string.type))
+                    Text(text = stringResource(R.string.type))
                 }
                 // Linea verticale divisoria per i bottoni dei filtri
                 Divider(
@@ -217,7 +218,7 @@ fun PokedexScreen(
                         contentColor = Color.White
                     )
                 ) {
-                    Text(text = context.getString(R.string.ability))
+                    Text(text = stringResource(R.string.ability))
                 }
             }
         }
@@ -277,7 +278,7 @@ fun PokedexScreen(
 
             {
                 Text(
-                    text = context.getString(R.string.select_version),
+                    text = stringResource(R.string.select_version),
                     fontSize = 24.sp,
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -409,7 +410,7 @@ fun PokedexScreen(
                                     if (pokemon.isFavourite) R.drawable.star else R.drawable.starempty
                                 Image(
                                     painter = painterResource(imageRes),
-                                    contentDescription = context.getString(
+                                    contentDescription = stringResource(
                                         if (pokemon.isFavourite) R.string.favourite else R.string.not_favourite
                                     ),
                                     modifier = Modifier.size(height = 30.dp, width = 30.dp)
@@ -426,7 +427,7 @@ fun PokedexScreen(
                                     if (pokemon.isCaptured) R.drawable.smallpokeball else R.drawable.smallpokeballempty
                                 Image(
                                     painter = painterResource(imageRes),
-                                    contentDescription = context.getString(
+                                    contentDescription = stringResource(
                                         if (pokemon.isCaptured) R.string.captured else R.string.not_captured
                                     ),
                                     modifier = Modifier.size(height = 30.dp, width = 30.dp)
@@ -449,7 +450,7 @@ fun PokedexScreen(
                             ) {
 
                                 Text(
-                                    text = context.getString(pokemon.type.value),
+                                    text = stringResource(pokemon.type.value),
                                     fontSize = 16.sp,
                                     modifier = Modifier.padding(start = 43.dp, end = 43.dp),
                                     color = Color.DarkGray
@@ -467,7 +468,7 @@ fun PokedexScreen(
                                         .padding(start = 4.dp)
                                 ) {
                                     Text(
-                                        text = context.getString(pokemon.secondType.value),
+                                        text = stringResource(pokemon.secondType.value),
                                         fontSize = 16.sp,
                                         modifier = Modifier.padding(start = 43.dp, end = 43.dp),
                                         color = Color.DarkGray

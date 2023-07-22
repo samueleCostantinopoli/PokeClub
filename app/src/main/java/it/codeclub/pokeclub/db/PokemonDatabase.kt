@@ -9,7 +9,11 @@ import it.codeclub.pokeclub.db.entities.PokemonDetailsAbilityCrossRef
 import it.codeclub.pokeclub.db.entities.PokemonEntity
 
 @Database(
-    entities = [PokemonEntity::class, PokemonDetails::class, Ability::class, PokemonDetailsAbilityCrossRef::class],
+    entities = [
+        PokemonEntity::class,
+        PokemonDetails::class,
+        Ability::class,
+        PokemonDetailsAbilityCrossRef::class],
     version = 1,
     exportSchema = false
 )
