@@ -52,6 +52,11 @@ fun PreviewChangeableImage() {
     }
 }
 
+fun intToColor(colorValue: Int): Color {
+    return Color(colorValue)
+}
+
+
 @Composable
 fun PokedexScreen(
     navController: NavController,
@@ -364,12 +369,14 @@ fun PokedexScreen(
         ) {
             items(pokemonList) { pokemon ->
                 // Box principale per gli elementi della Lazy Column
+                val color = intToColor(pokemon.dominantColor)
+                pokemon.dominantColor
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp)
                         .clip(RoundedCornerShape(15.dp))
-                        .background(Color.Green),
+                        .background(color),
                     contentAlignment = Alignment.TopCenter
                 ) {
                     Column(

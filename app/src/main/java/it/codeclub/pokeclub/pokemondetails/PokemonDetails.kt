@@ -144,31 +144,16 @@ fun SecondScreen(
                         )
                     }
                     //terza riga con tipo del pokemon
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 0.dp, top = 120.dp)
-                    ) {
-                        Box(
+                    if (pokemonDetails.pokemonDetails.pokemon.secondType != null) {
+                        Row(
                             modifier = Modifier
-                                .weight(1f)
-                                .padding(end = 4.dp)
-                                .height(32.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(color = Color.White) // TODO put type color
-                                .padding(8.dp),
-                            contentAlignment = Alignment.Center
+                                .fillMaxWidth()
+                                .padding(start = 0.dp, top = 120.dp)
                         ) {
-                            Text(
-                                text = pokemonDetails.pokemonDetails.pokemon.type.name,
-                                color = Color.White
-                            )
-                        }
-                        pokemonDetails.pokemonDetails.pokemon.secondType!!.let { type ->
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .padding(start = 4.dp)
+                                    .padding(end = 4.dp)
                                     .height(32.dp)
                                     .clip(RoundedCornerShape(8.dp))
                                     .background(color = Color.White) // TODO put type color
@@ -176,38 +161,60 @@ fun SecondScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = type.name,
+                                    text = pokemonDetails.pokemonDetails.pokemon.type.name,
                                     color = Color.White
                                 )
+                            }
+                            pokemonDetails.pokemonDetails.pokemon.secondType!!.let { type ->
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(start = 4.dp)
+                                        .height(32.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(color = Color.White) // TODO put type color
+                                        .padding(8.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = type.name,
+                                        color = Color.White
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    else{
+                        //val colorType1
+                        //DA RIDIMENSIONARE LA RIGA IN MODO CHE SI ESPANDA PER TUTTO L BOX
+                        pokemonDetails.pokemonDetails.pokemon.secondType.let {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 0.dp, top = 120.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(end = 4.dp)
+                                        .height(32.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(color = Color.White) //TODO
+                                        .padding(8.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    pokemonDetails.pokemonDetails.pokemon.type?.let { it1 ->
+                                        Text(
+                                            text = it1.name,
+                                            color = Color.White
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
                 }
-                /*
-                //DA RIDIMENSIONARE LA RIGA IN MODO CHE SI ESPANDA PER TUTTO L BOX
-                pokemonDetails.pokemon.secondType.let {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 0.dp, top = 120.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(end = 4.dp)
-                                .height(32.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(color = colorType1)
-                                .padding(8.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = pokemonDetails.pokemon.secondType.name,
-                                color = Color.White
-                            )
-                        }
-                    }
-                }*/
+                
             }
         }
         //secondo box con l'anagrafica del pokemon, ovvero peso ed altezza
