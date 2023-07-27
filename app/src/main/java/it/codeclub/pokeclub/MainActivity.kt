@@ -21,10 +21,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         //viene lanciata una nuova activity
         setContent {
-            /*val database=PokemonDatabase_Impl()
-            val pokemonRepositoryDbImpl:PokemonRepositoryDbImpl= PokemonRepositoryDbImpl(PokemonDao_Impl(database))
-            val pokemonListViewModel:PokemonListViewModel=PokemonListViewModel(pokemonRepositoryDbImpl)
-            PokedexScreen(this, pokemonListViewModel)*/
             PokeClubTheme {
                 val navController = rememberNavController()
                 NavHost(

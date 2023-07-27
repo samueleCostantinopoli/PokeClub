@@ -46,14 +46,14 @@ object AppModule {
             PokemonDatabase::class.java,
             DB_NAME
         )
-            .addTypeConverter(Converters::class)
+            .addTypeConverter(Converters())
             .build()
     }
 
     @Provides
     fun providePokemonRepository(
-        pokemonDao: PokemonDao
+        pokemonDatabase: PokemonDatabase
     ): PokemonRepository {
-        return PokemonRepositoryDbImpl(pokemonDao)
+        return PokemonRepositoryDbImpl(pokemonDatabase.pokemonDao())
     }
 }
