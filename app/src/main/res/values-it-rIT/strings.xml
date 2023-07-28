@@ -39,4 +39,5 @@
     <string name="sp_attack">Attacco speciale</string>
     <string name="sp_defense">Difesa speciale</string>
     <string name="speed">Velocità</string>
+    <string name="select_type">Seleziona il tipo</string>
 </resources>

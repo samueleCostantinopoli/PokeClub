@@ -10,6 +10,7 @@
     <string name="type">Type</string>
     <string name="ability">Ability</string>
     <string name="select_version">Select a version</string>
+    <string name="select_type">Select type</string>
     <string name="favourite">Favourite</string>
     <string name="not_favourite">Not favourite</string>
     <string name="captured">Captured</string>

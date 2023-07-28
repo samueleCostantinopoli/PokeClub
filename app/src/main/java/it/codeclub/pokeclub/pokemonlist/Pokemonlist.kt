@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,6 +22,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -68,9 +70,12 @@ fun PokedexScreen(
     })
     val coroutineScope = rememberCoroutineScope()
     var isRotated by remember { mutableStateOf(false) }
-    val boxVersion = remember { mutableStateOf(false) }
-    val boxType = remember { mutableStateOf(false) }
+    var boxVersion by remember { mutableStateOf(false) }
+    var boxType by remember { mutableStateOf(false) }
     val boxAbility = remember { mutableStateOf(false) }
+
+    var isClickOutsideHandledVersion by remember { mutableStateOf(false) }
+    var isClickOutsideHandledType by remember { mutableStateOf(false) }
 
     var isFavouritesFilterActive by remember {
         mutableStateOf(false)
@@ -161,7 +166,7 @@ fun PokedexScreen(
             ) {
                 // Primo bottono per il filtro "VERSIONE"
                 Button(
-                    onClick = { boxVersion.value = !boxVersion.value },
+                    onClick = { boxVersion = !boxVersion },
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 8.dp)
@@ -187,7 +192,7 @@ fun PokedexScreen(
                 )
                 // Secondo bottone per il filtro "TIPO"
                 Button(
-                    onClick = { boxType.value = !boxType.value },
+                    onClick = { boxType = !boxType },
                     modifier = Modifier
                         .weight(1f)
                         .height(40.dp)
@@ -228,7 +233,7 @@ fun PokedexScreen(
             }
         }
 
-        if (boxVersion.value) {
+        if (boxVersion) {
             Box(
                 modifier = Modifier
                     .zIndex(1f)
@@ -238,37 +243,57 @@ fun PokedexScreen(
                         BorderStroke(2.dp, Color.Gray),
                         shape = RoundedCornerShape(8.dp),
                     )
+                    .pointerInput (Unit) {
+                        detectTapGestures { boxVersion = false }
+                    }
+                    .clickable{ boxVersion = false }
                     .background(Color.White),
             ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
+                Column (
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(8) { index ->
-                        // Box che contiene le versioni dei pokemon
-                        Box(
-                            modifier = Modifier
-                                .padding(top = 14.dp, start = 8.dp, end = 8.dp)
-                                .border(
-                                    BorderStroke(2.dp, Color.Gray),
-                                    shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp),
-                                )
-                                .fillMaxWidth(),
-                        ) {
-                            Text(
-                                text = "${index + 1}",
-                                fontSize = 22.sp,
+                    Text(
+                        text = stringResource(R.string.select_version),
+                        fontSize = 24.sp,
+                        modifier = Modifier
+                            .padding(top = 6.dp, bottom = 6.dp),
+                        color = Color.DarkGray
+                    )
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        items(8) { index ->
+                            // Box che contiene le versioni dei pokemon
+                            Box(
                                 modifier = Modifier
-                                    .align(Alignment.Center)
-                                    .padding(top = 6.dp, bottom = 6.dp),
-                                color = Color.DarkGray
-                            )
+                                    .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                                    .border(
+                                        BorderStroke(2.dp, Color.Gray),
+                                        shape = RoundedCornerShape(
+                                            topStart = 10.dp,
+                                            topEnd = 10.dp
+                                        ),
+                                    )
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = "${index + 1}",
+                                    fontSize = 22.sp,
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                        .padding(top = 6.dp, bottom = 6.dp),
+                                    color = Color.DarkGray
+                                )
+                            }
                         }
                     }
                 }
+
             }
         }
 
-        if (boxType.value) {
+        if (boxType) {
             Box(
                 modifier = Modifier
                     .zIndex(1f)
@@ -278,41 +303,48 @@ fun PokedexScreen(
                         BorderStroke(2.dp, Color.Gray),
                         shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp),
                     )
+                    .pointerInput (Unit) {
+                                         detectTapGestures { boxType = false }
+                    }
+                    .clickable{ boxType = false }
                     .background(Color.White),
-            )
-
-            {
-                Text(
-                    text = stringResource(R.string.select_version),
-                    fontSize = 24.sp,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(top = 6.dp, bottom = 6.dp),
-                    color = Color.DarkGray
-                )
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
                 ) {
-                    items(8) { index ->
-                        // Box che contiene le versioni dei pokemon
-                        Box(
-                            modifier = Modifier
-                                .padding(top = 34.dp, start = 8.dp, end = 8.dp)
-                                .border(
-                                    BorderStroke(2.dp, Color.Gray),
-                                    shape = RoundedCornerShape(8.dp),
-                                )
-                                .fillMaxWidth(),
-                        ) {
+                Column (
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
 
-                            Text(
-                                text = "${index + 1}",
-                                fontSize = 22.sp,
+                    Text(
+                        text = stringResource(R.string.select_type),
+                        fontSize = 24.sp,
+                        modifier = Modifier
+                            .padding(top = 6.dp, bottom = 8.dp),
+                        color = Color.DarkGray
+                    )
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        items(8) { index ->
+                            // Box che contiene le versioni dei pokemon
+                            Box(
                                 modifier = Modifier
-                                    .align(Alignment.Center)
-                                    .padding(top = 6.dp, bottom = 6.dp),
-                                color = Color.DarkGray
-                            )
+                                    .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                                    .border(
+                                        BorderStroke(2.dp, Color.Gray),
+                                        shape = RoundedCornerShape(8.dp),
+                                    )
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = "${index + 1}",
+                                    fontSize = 22.sp,
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                        .padding(top = 6.dp, bottom = 6.dp),
+                                    color = Color.DarkGray
+                                )
+                            }
                         }
                     }
                 }
@@ -320,44 +352,24 @@ fun PokedexScreen(
         }
 
         if (boxAbility.value) {
-            Box(
-                modifier = Modifier
-                    .zIndex(1f)
-                    .padding(top = 535.dp, start = 16.dp, end = 16.dp)
-                    .fillMaxSize()
-                    .border(
-                        BorderStroke(2.dp, Color.Gray),
-                        shape = RoundedCornerShape(8.dp),
-                    )
-                    .background(Color.White),
-            ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(8) { index ->
-                        // Box che contiene le versioni dei pokemon
-                        Box(
-                            modifier = Modifier
-                                .padding(top = 14.dp, start = 8.dp, end = 8.dp)
-                                .border(
-                                    BorderStroke(2.dp, Color.Gray),
-                                    shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp),
-                                )
-                                .fillMaxWidth(),
-                        ) {
-                            Text(
-                                text = "${index + 1}",
-                                fontSize = 22.sp,
-                                modifier = Modifier
-                                    .align(Alignment.Center)
-                                    .padding(top = 6.dp, bottom = 6.dp),
-                                color = Color.DarkGray
-                            )
-                        }
-                    }
-                }
-            }
+            //TODO ricerca abilità
         }
+        /*
+        DisposableEffect(isClickOutsideHandledVersion){
+            if(isClickOutsideHandledVersion){
+                boxVersion = false
+                isClickOutsideHandledVersion = false
+            }
+            onDispose { }
+        }
+
+        DisposableEffect(isClickOutsideHandledType){
+            if(isClickOutsideHandledType){
+                boxType = false
+                isClickOutsideHandledType = false
+            }
+            onDispose { }
+        }*/
 
         val pokemonList by remember { pokemonListViewModel.pokemonList }
 
