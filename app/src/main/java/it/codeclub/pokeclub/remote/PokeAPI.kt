@@ -1,5 +1,8 @@
 package it.codeclub.pokeclub.remote
 
+import it.codeclub.pokeclub.remote.data.Ability
+import it.codeclub.pokeclub.remote.data.AbilityDetails
+import it.codeclub.pokeclub.remote.data.AbilityList
 import it.codeclub.pokeclub.remote.data.Pokemon
 import it.codeclub.pokeclub.remote.data.PokemonList
 import retrofit2.http.GET
@@ -18,4 +21,15 @@ interface PokeAPI {
     suspend fun getPokemonInfo(
         @Path("name") name: String
     ): Pokemon
+
+    @GET("ability")
+    suspend fun getAbilityList(
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int,
+    ): AbilityList
+
+    @GET("ability/")
+    suspend fun getAbilityDetails(
+        @Path("name") name: String
+    ): AbilityDetails
 }

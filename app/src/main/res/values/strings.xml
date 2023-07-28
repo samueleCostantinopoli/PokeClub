@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">PokeClub</string>
+    <string name="error">Error</string>
 
     <!-- List screen -->
     <string name="favourites_filter">Favourites filter</string>

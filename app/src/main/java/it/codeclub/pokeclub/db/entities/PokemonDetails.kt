@@ -6,8 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class PokemonDetails(
-    @PrimaryKey val detailsId: Int,
-    @Embedded val pokemon: PokemonEntity,
+    @PrimaryKey(autoGenerate = true) val detailsId: Long = 0,
     val pokemonEntityId: Int,
     val height: Double,
     val weight: Double,

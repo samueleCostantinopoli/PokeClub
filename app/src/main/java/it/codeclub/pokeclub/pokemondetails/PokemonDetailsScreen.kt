@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import it.codeclub.pokeclub.R
-import it.codeclub.pokeclub.db.entities.PokemonWithAbilities
+import it.codeclub.pokeclub.db.entities.PokemonAndDetails
 import it.codeclub.pokeclub.utils.Resource
 import java.util.Locale
 
@@ -49,17 +49,17 @@ fun SecondScreen(
     pokemonDetailsViewModel: PokemonDetailsViewModel = hiltViewModel()
 ) {
     val pokemonInfo =
-        produceState<Resource<PokemonWithAbilities>>(initialValue = Resource.Loading()) {
+        produceState<Resource<PokemonAndDetails>>(initialValue = Resource.Loading()) {
             value = pokemonDetailsViewModel.getPokemonInfo(pokemonName)
         }.value
 
     //val remember per ricordare il valore dei filtri e l'apparizione della finestra che mostra le abilità
     val showDialog = remember { mutableStateOf(false) }
     val dialogText = remember { mutableStateOf("") }
-    var isFavourite by remember { mutableStateOf(pokemonInfo.data?.pokemonDetails?.pokemon?.isFavourite!!) }
+    var isFavourite by remember { mutableStateOf(pokemonInfo.data?.pokemon?.isFavourite!!) }
     //in base al valore inziale della var isFavourite la schermata viene settata con la stella vuota o piena
     val favouriteImage = if (isFavourite) R.drawable.star else R.drawable.starempty
-    var isCaptured by remember { mutableStateOf(pokemonInfo.data?.pokemonDetails?.pokemon?.isCaptured!!) }
+    var isCaptured by remember { mutableStateOf(pokemonInfo.data?.pokemon?.isCaptured!!) }
     //in base al valore inziale della var isCaptured la schermata viene settata con la pokeball vuota o piena
     val capturedImage = if (isCaptured) R.drawable.smallpokeball else R.drawable.smallpokeballempty
 
@@ -69,7 +69,7 @@ fun SecondScreen(
                 .fillMaxSize()
                 .background(
                     color = Color(
-                        pokemonDetails.pokemonDetails.pokemon.dominantColor ?: 0xFFFFFF
+                        pokemonDetails.pokemon.dominantColor
                     )
                 )
         ) {
@@ -127,7 +127,7 @@ fun SecondScreen(
                     ) {
                         Text(
                             text = "#${
-                                pokemonDetails.pokemonDetails.pokemon.pokemonId.toString()
+                                pokemonDetails.pokemon.pokemonId.toString()
                                     .padStart(3, '0')
                             }",
                             color = Color(0xff505050),
@@ -144,7 +144,7 @@ fun SecondScreen(
                         )
                     }
                     //terza riga con tipo del pokemon
-                    if (pokemonDetails.pokemonDetails.pokemon.secondType != null) {
+                    if (pokemonDetails.pokemon.secondType != null) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -161,11 +161,11 @@ fun SecondScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = pokemonDetails.pokemonDetails.pokemon.type.name,
+                                    text = pokemonDetails.pokemon.type.name,
                                     color = Color.White
                                 )
                             }
-                            pokemonDetails.pokemonDetails.pokemon.secondType!!.let { type ->
+                            pokemonDetails.pokemon.secondType.let { type ->
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
@@ -183,11 +183,10 @@ fun SecondScreen(
                                 }
                             }
                         }
-                    }
-                    else{
+                    } else {
                         //val colorType1
                         //DA RIDIMENSIONARE LA RIGA IN MODO CHE SI ESPANDA PER TUTTO L BOX
-                        pokemonDetails.pokemonDetails.pokemon.secondType.let {
+                        pokemonDetails.pokemon.secondType.let {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -203,7 +202,7 @@ fun SecondScreen(
                                         .padding(8.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    pokemonDetails.pokemonDetails.pokemon.type?.let { it1 ->
+                                    pokemonDetails.pokemon.type.let { it1 ->
                                         Text(
                                             text = it1.name,
                                             color = Color.White
@@ -214,7 +213,7 @@ fun SecondScreen(
                         }
                     }
                 }
-                
+
             }
         }
         //secondo box con l'anagrafica del pokemon, ovvero peso ed altezza
@@ -246,7 +245,7 @@ fun SecondScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = pokemonDetails.pokemonDetails.height.toString(),
+                        text = pokemonDetails.details.height.toString(),
                         color = Color.Black
                     )
                 }
@@ -266,7 +265,7 @@ fun SecondScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = pokemonDetails.pokemonDetails.weight.toString(),
+                        text = pokemonDetails.details.weight.toString(),
                         color = Color.Black
                     )
                 }
@@ -452,12 +451,12 @@ fun SecondScreen(
         }
 
         val statsValues = listOf(
-            pokemonDetails.pokemonDetails.lp,
-            pokemonDetails.pokemonDetails.attack,
-            pokemonDetails.pokemonDetails.defense,
-            pokemonDetails.pokemonDetails.spAttack,
-            pokemonDetails.pokemonDetails.spDefense,
-            pokemonDetails.pokemonDetails.speed
+            pokemonDetails.details.lp,
+            pokemonDetails.details.attack,
+            pokemonDetails.details.defense,
+            pokemonDetails.details.spAttack,
+            pokemonDetails.details.spDefense,
+            pokemonDetails.details.speed
         )
 
         val weightValues = calculateFloatList(statsValues)
@@ -504,7 +503,7 @@ fun SecondScreen(
                     val weight = weightValues[index]
                     val color = colorStatsList.getOrElse(index) { Color.Gray }
                     //invoco la funzione che genera la riga della statistica con le caratteristiche in questione
-                    createStatRow(name, value?.toInt().toString(), weight, color)()
+                    createStatRow(name, value.toInt().toString(), weight, color)()
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }

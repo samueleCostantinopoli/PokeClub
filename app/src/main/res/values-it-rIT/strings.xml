@@ -19,6 +19,7 @@
     <string name="rock">Roccia</string>
     <string name="steel">Acciaio</string>
     <string name="water">Acqua</string>
+    <string name="error">Errore</string>
     <string name="favourites_filter">Filtro preferiti</string>
     <string name="captured_filter">Filtro catturati</string>
     <string name="settings">Impostazioni</string>

@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import it.codeclub.pokeclub.db.entities.Ability
 import it.codeclub.pokeclub.db.entities.PokemonDetails
-import it.codeclub.pokeclub.db.entities.PokemonDetailsAbilityCrossRef
+import it.codeclub.pokeclub.db.entities.PokemonAbilityCrossRef
 import it.codeclub.pokeclub.db.entities.PokemonEntity
 
 @Database(
@@ -13,7 +13,7 @@ import it.codeclub.pokeclub.db.entities.PokemonEntity
         PokemonEntity::class,
         PokemonDetails::class,
         Ability::class,
-        PokemonDetailsAbilityCrossRef::class],
+        PokemonAbilityCrossRef::class],
     version = 1,
     exportSchema = false
 )

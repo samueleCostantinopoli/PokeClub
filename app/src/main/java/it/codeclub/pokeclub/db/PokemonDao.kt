@@ -1,11 +1,16 @@
 package it.codeclub.pokeclub.db
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import it.codeclub.pokeclub.db.entities.Ability
+import it.codeclub.pokeclub.db.entities.AbilityWithPokemon
+import it.codeclub.pokeclub.db.entities.PokemonAbilityCrossRef
+import it.codeclub.pokeclub.db.entities.PokemonAndDetails
+import it.codeclub.pokeclub.db.entities.PokemonDetails
 import it.codeclub.pokeclub.db.entities.PokemonEntity
-import it.codeclub.pokeclub.db.entities.PokemonWithAbilities
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -20,14 +25,33 @@ interface PokemonDao {
     @Query("SELECT * FROM PokemonEntity WHERE isCaptured = 1")
     fun getCaptured(): Flow<List<PokemonEntity>>
 
+    @Query("SELECT * FROM Ability")
+    fun getAbilities(): Flow<List<Ability>>
+
     @Transaction
-    @Query("SELECT * FROM PokemonDetails WHERE name = :name")
-    fun getPokemonDetails(name: String): List<PokemonWithAbilities>
+    @Query("SELECT * FROM Ability WHERE abilityId = :abilityId")
+    fun getPokemonWithAbility(abilityId: Long): Flow<AbilityWithPokemon>
+
+    @Transaction
+    @Query("SELECT * FROM PokemonEntity WHERE name = :name")
+    fun getPokemonDetails(name: String): Flow<PokemonAndDetails>
 
     /**
      * Used to add pokemon to favourites or to captured group
      */
     @Update
-    fun update(pokemon: PokemonEntity)
+    suspend fun update(pokemonEntity: PokemonEntity)
+
+    @Insert
+    suspend fun insert(pokemonEntity: PokemonEntity)
+
+    @Insert
+    suspend fun insert(pokemonDetails: PokemonDetails): Long
+
+    @Insert
+    suspend fun insert(ability: Ability)
+
+    @Insert
+    suspend fun insert(pokemonAbilityCrossRef: PokemonAbilityCrossRef)
 
 }
