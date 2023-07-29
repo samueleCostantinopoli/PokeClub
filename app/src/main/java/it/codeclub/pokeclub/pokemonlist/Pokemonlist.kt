@@ -1,6 +1,7 @@
 package it.codeclub.pokeclub.pokemonlist
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -64,19 +65,16 @@ fun PokedexScreen(
     navController: NavController,
     pokemonListViewModel: PokemonListViewModel = hiltViewModel()
 ) {
-    var rotationState by remember { mutableStateOf(0f) }
-    val rotation by animateFloatAsState(targetValue = rotationState, finishedListener = {
-        rotationState = 0f
-    })
+    var rotate by remember  { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     var isRotated by remember { mutableStateOf(false) }
     var boxVersion by remember { mutableStateOf(false) }
     var boxType by remember { mutableStateOf(false) }
     val boxAbility = remember { mutableStateOf(false) }
-
-    var isClickOutsideHandledVersion by remember { mutableStateOf(false) }
-    var isClickOutsideHandledType by remember { mutableStateOf(false) }
-
+    val rotationState = animateFloatAsState(
+        targetValue = if (isRotated) 360f else 0f,
+        animationSpec = tween(durationMillis = 1000) // Durata dell'animazione in millisecondi
+    )
     var isFavouritesFilterActive by remember {
         mutableStateOf(false)
     }
@@ -243,13 +241,13 @@ fun PokedexScreen(
                         BorderStroke(2.dp, Color.Gray),
                         shape = RoundedCornerShape(8.dp),
                     )
-                    .pointerInput (Unit) {
+                    .pointerInput(Unit) {
                         detectTapGestures { boxVersion = false }
                     }
-                    .clickable{ boxVersion = false }
+                    .clickable { boxVersion = false }
                     .background(Color.White),
             ) {
-                Column (
+                Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
@@ -303,13 +301,13 @@ fun PokedexScreen(
                         BorderStroke(2.dp, Color.Gray),
                         shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp),
                     )
-                    .pointerInput (Unit) {
-                                         detectTapGestures { boxType = false }
+                    .pointerInput(Unit) {
+                        detectTapGestures { boxType = false }
                     }
-                    .clickable{ boxType = false }
+                    .clickable { boxType = false }
                     .background(Color.White),
-                ) {
-                Column (
+            ) {
+                Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
@@ -527,76 +525,69 @@ fun PokedexScreen(
                 }
             }
         }
-        FloatingActionButton(
+        IconButton(
             onClick = {
                 coroutineScope.launch {
-                    val totalRotation = 360f // Numero di gradi per una rotazione completa
-                    val duration = 30L // Durata totale della rotazione in millisecondi
-                    val increment =
-                        totalRotation / duration.toFloat() // Incremento di rotazione per ogni millisecondo
-                    for (i in 0 until duration.toInt()) {
-                        rotationState += increment
-                        delay(1) // Aggiungi un ritardo di 1 millisecondo
-                    }
                     isRotated = !isRotated
+                    delay(900) // Attendiamo un secondo
+                    rotate = !rotate
                 }
             },
-
-            contentColor = contentColorFor(backgroundColor = Color.Transparent),
             modifier = Modifier
                 .padding(16.dp)
                 .size(86.dp)
-                .graphicsLayer(rotationZ = rotation)
+                .graphicsLayer(rotationZ = rotationState.value)
                 .clickable { }
                 .align(Alignment.BottomEnd)
-                .background(Color.Transparent)
+                .background(Color.Unspecified)
         ) {
             Image(
-
-                painter = painterResource(id = R.drawable.menupokeball), // Replace with your image resource
+                painter = painterResource(id = R.drawable.menupokeball),
                 contentDescription = "FabButton",
                 modifier = Modifier.fillMaxSize(), // Modificatore per riempire l'intera area del pulsante
                 contentScale = ContentScale.FillBounds // Imposta la scala dell'immagine per adattarsi all'area del pulsante
             )
         }
-        if (isRotated) {
-            Column(
-                modifier = Modifier
-                    .padding(35.dp)
-                    .align(Alignment.CenterEnd)
-                    .offset(y = 260.dp)
-                    .offset(x = 30.dp)
 
-            ) {
-                Button(
-                    onClick = {
-                        // Aggiungi l'azione per il primo pulsante verticale
-                    },
+        if (rotate) {
+                Column(
                     modifier = Modifier
-                        .width(125.dp)
-                        .height(30.dp),
-                    shape = androidx.compose.ui.graphics.RectangleShape,
-                ) {
-                    // Testo o contenuto del primo pulsante verticale
-                    Text(text = "cerca")
-                }
+                        .padding(35.dp)
+                        .offset(y = 590.dp)
+                        .offset(x = 239.dp)
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Button(
-                    onClick = {
-                        // Aggiungi l'azione per il secondo pulsante verticale
-                    },
-                    modifier = Modifier
-                        .width(125.dp)
-                        .height(30.dp),
-                    shape = androidx.compose.ui.graphics.RectangleShape,
                 ) {
-                    // Testo o contenuto del secondo pulsante verticale
-                    Text(text = "team")
+                    Button(
+                        onClick = {
+                            // Aggiungi l'azione per il primo pulsante verticale
+                        },
+                        modifier = Modifier
+                            .width(125.dp)
+                            .height(30.dp),
+                        shape = androidx.compose.ui.graphics.RectangleShape,
+                    ) {
+                        // Testo o contenuto del primo pulsante verticale
+                        Text(text = "cerca")
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Button(
+                        onClick = {
+                            // Aggiungi l'azione per il secondo pulsante verticale
+                        },
+                        modifier = Modifier
+                            .width(125.dp)
+                            .height(30.dp),
+                        shape = androidx.compose.ui.graphics.RectangleShape,
+                    ) {
+                        // Testo o contenuto del secondo pulsante verticale
+                        Text(text = "team")
+                    }
                 }
             }
-        }
+
     }
 }
+
 
