@@ -124,6 +124,7 @@ fun firstRow(
                             Icon(
                                 painter = painterResource(R.drawable.send),
                                 contentDescription = "Send",
+                                modifier=Modifier.size(26.dp),
                                 tint = Color.Black
                             )
                         }
@@ -188,6 +189,7 @@ fun firstRow(
                             Icon(
                                 painter = painterResource(R.drawable.send),
                                 contentDescription = "Send",
+                                modifier=Modifier.size(26.dp),
                                 tint = Color.Black
                             )
                         }
