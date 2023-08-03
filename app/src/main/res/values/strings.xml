@@ -15,6 +15,8 @@
     <string name="not_favourite">Not favourite</string>
     <string name="captured">Captured</string>
     <string name="not_captured">Not captured</string>
+    <string name="pokeClubSchermataPrincipale">PokeClub</string>
+    <string name="ok">ok</string>
 
     <!-- Details screen -->
     <string name="height">Height</string>

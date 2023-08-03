@@ -58,7 +58,7 @@ fun SecondScreen(
     val dialogText = remember { mutableStateOf("") }
     var isFavourite by remember { mutableStateOf(pokemonInfo.data?.pokemon?.isFavourite!!) }
     //in base al valore inziale della var isFavourite la schermata viene settata con la stella vuota o piena
-    val favouriteImage = if (isFavourite) R.drawable.star else R.drawable.starempty
+    val favouriteImage = if (isFavourite) R.drawable.fillstar else R.drawable.starempty
     var isCaptured by remember { mutableStateOf(pokemonInfo.data?.pokemon?.isCaptured!!) }
     //in base al valore inziale della var isCaptured la schermata viene settata con la pokeball vuota o piena
     val capturedImage = if (isCaptured) R.drawable.smallpokeball else R.drawable.smallpokeballempty

@@ -1,8 +1,6 @@
 package it.codeclub.pokeclub.pokemonlist
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -21,8 +19,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.BottomStart
-import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -35,7 +31,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.InspectableModifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -54,7 +49,6 @@ import coil.compose.SubcomposeAsyncImage
 import it.codeclub.pokeclub.R
 import it.codeclub.pokeclub.domain.FilterType
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 @Preview
@@ -148,7 +142,7 @@ fun PokedexScreen(
                 )
                 // Inserimento dell'immagine "stella", che è anche cliccabile per accedere ai pokemon salvati come preferiti
                 Image(
-                    painter = painterResource(R.drawable.star),
+                    painter = painterResource(R.drawable.fillstar),
                     contentDescription = stringResource(R.string.favourites_filter),
                     modifier = Modifier
                         .clickable {
@@ -512,7 +506,7 @@ fun PokedexScreen(
                                 }, contentAlignment = Alignment.Center
                             ) {
                                 val imageRes =
-                                    if (pokemon.isFavourite) R.drawable.star else R.drawable.starempty
+                                    if (pokemon.isFavourite) R.drawable.fillstar else R.drawable.starempty
                                 Image(
                                     painter = painterResource(imageRes),
                                     contentDescription = stringResource(

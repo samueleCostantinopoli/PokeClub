@@ -5,14 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
-import it.codeclub.pokeclub.pokemonlist.PokedexScreen
+import it.codeclub.pokeclub.NewMainView.MainView
 import it.codeclub.pokeclub.ui.theme.PokeClubTheme
 
 @AndroidEntryPoint
@@ -28,7 +27,14 @@ class MainActivity : ComponentActivity() {
                     startDestination = "pokemon_list_screen"
                 ) {
                     composable("pokemon_list_screen") {
-                        PokedexScreen(navController)
+                        //PokedexScreen è la schermata con la quale il maestro cantarini
+                        //ha fatto la prova con i pokemon, in caso di errore con la mia basta
+                        //togliere il commento e lanciare quella,presente in pokemonList
+                        //PokedexScreen(navController)
+
+                        //MainView è la nuova schermata presente in SchermataPrincipale
+                        //nella cartella NewMainView
+                        MainView(navController)
                     }
                     composable(
                         "pokemon_detail_screen/{dominantColor}/{pokemonName}",
