@@ -1,9 +1,7 @@
 package it.codeclub.pokeclub.db.entities
 
-import androidx.room.Entity
 import it.codeclub.pokeclub.R
 
-@Entity
 enum class PokemonType(val value: Int) {
 
     BUG(R.string.bug),
@@ -23,9 +21,20 @@ enum class PokemonType(val value: Int) {
     PSYCHIC(R.string.psychic),
     ROCK(R.string.rock),
     STEEL(R.string.steel),
-    WATER(R.string.water);
+    WATER(R.string.water),
+    NULL(-1);
 
     companion object {
-        fun fromInt(value: Int) = PokemonType.values().first { it.value == value }
+        fun fromInt(value: Int): PokemonType {
+            var realValue = value
+            when (realValue) {
+                2131492948 -> realValue = 2131492949
+                2131492984 -> realValue = 2131492986
+                2131492963 -> realValue = 2131492965
+            }
+
+            val type = PokemonType.values().find { it.value == realValue }
+            return type ?: NULL
+        }
     }
 }

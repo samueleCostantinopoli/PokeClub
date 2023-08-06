@@ -12,7 +12,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import it.codeclub.pokeclub.NewMainView.MainView
+import it.codeclub.pokeclub.download_data.DownloadDataScreen
 import it.codeclub.pokeclub.ui.theme.PokeClubTheme
+import it.codeclub.pokeclub.utils.Constants.FIRST_START_PREF
+import it.codeclub.pokeclub.utils.Constants.PREFS_FILE
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -22,39 +25,48 @@ class MainActivity : ComponentActivity() {
         setContent {
             PokeClubTheme {
                 val navController = rememberNavController()
-                NavHost(
-                    navController = navController,
-                    startDestination = "pokemon_list_screen"
-                ) {
-                    composable("pokemon_list_screen") {
-                        //PokedexScreen è la schermata con la quale il maestro cantarini
-                        //ha fatto la prova con i pokemon, in caso di errore con la mia basta
-                        //togliere il commento e lanciare quella,presente in pokemonList
-                        //PokedexScreen(navController)
 
-                        //MainView è la nuova schermata presente in SchermataPrincipale
-                        //nella cartella NewMainView
-                        MainView(navController)
-                    }
-                    composable(
-                        "pokemon_detail_screen/{dominantColor}/{pokemonName}",
-                        arguments = listOf(
-                            navArgument("dominantColor") {
-                                type = NavType.IntType
-                            },
-                            navArgument("pokemonName") {
-                                type = NavType.StringType
-                            }
-                        )
+                if (getSharedPreferences(PREFS_FILE, MODE_PRIVATE).getBoolean(
+                        FIRST_START_PREF,
+                        true
+                    )
+                )
+                    DownloadDataScreen()
+                else {
+                    NavHost(
+                        navController = navController,
+                        startDestination = "pokemon_list_screen"
                     ) {
-                        val dominantColor = remember {
-                            val color = it.arguments?.getInt("dominantColor")
-                            color?.let { Color(it) } ?: Color.White
-                        }
-                        val pokemonName = remember {
-                            it.arguments?.getString("pokemonName")
-                        }
+                        composable("pokemon_list_screen") {
+                            //PokedexScreen è la schermata con la quale il maestro cantarini
+                            //ha fatto la prova con i pokemon, in caso di errore con la mia basta
+                            //togliere il commento e lanciare quella,presente in pokemonList
+                            //PokedexScreen(navController)
 
+                            //MainView è la nuova schermata presente in SchermataPrincipale
+                            //nella cartella NewMainView
+                            MainView(navController)
+                        }
+                        composable(
+                            "pokemon_detail_screen/{dominantColor}/{pokemonName}",
+                            arguments = listOf(
+                                navArgument("dominantColor") {
+                                    type = NavType.IntType
+                                },
+                                navArgument("pokemonName") {
+                                    type = NavType.StringType
+                                }
+                            )
+                        ) {
+                            val dominantColor = remember {
+                                val color = it.arguments?.getInt("dominantColor")
+                                color?.let { Color(it) } ?: Color.White
+                            }
+                            val pokemonName = remember {
+                                it.arguments?.getString("pokemonName")
+                            }
+
+                        }
                     }
                 }
             }

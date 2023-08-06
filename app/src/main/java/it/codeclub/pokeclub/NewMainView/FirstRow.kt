@@ -225,7 +225,7 @@ fun firstRow(
                 if(favourite.value==1){
                     painterResource(id = R.drawable.fillstar)
                 }else{
-                    painterResource(id = R.drawable.starempty)
+                    painterResource(id = R.drawable.star)
                      },
                 contentDescription = "star",
                 //tint = if (favourite.value == 1) Color.Red else Color.Black,

@@ -9,4 +9,8 @@ object Constants {
     const val LIMIT = 20
 
     const val DB_NAME = "pokemon.db"
+
+    const val PREFS_FILE = "prefs"
+
+    const val FIRST_START_PREF = "first_start"
 }

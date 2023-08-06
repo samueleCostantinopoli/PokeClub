@@ -28,7 +28,7 @@ interface PokeAPI {
         @Query("offset") offset: Int,
     ): AbilityList
 
-    @GET("ability/")
+    @GET("ability/{name}")
     suspend fun getAbilityDetails(
         @Path("name") name: String
     ): AbilityDetails

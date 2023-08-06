@@ -252,7 +252,7 @@ fun secondRow(
                                 }, contentAlignment = Alignment.Center
                             ) {
                                 val imageRes =
-                                    if (pokemon.isFavourite) R.drawable.fillstar else R.drawable.starempty
+                                    if (pokemon.isFavourite) R.drawable.fillstar else R.drawable.star
                                 Image(
                                     painter = painterResource(imageRes),
                                     contentDescription = stringResource(

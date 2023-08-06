@@ -9,15 +9,42 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -45,7 +72,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
 import it.codeclub.pokeclub.R
 import it.codeclub.pokeclub.domain.FilterType
 import kotlinx.coroutines.delay
@@ -70,7 +99,11 @@ fun intToColor(colorValue: Int): Color {
 }
 
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(
+    ExperimentalComposeUiApi::class,
+    ExperimentalMaterial3Api::class,
+    ExperimentalAnimationApi::class
+)
 @Composable
 fun PokedexScreen(
     navController: NavController,
@@ -134,183 +167,182 @@ fun PokedexScreen(
                     size = Size(size.width, 4.dp.toPx())
                 )
             }) {
-                Text(
-                    text = stringResource(R.string.app_name),
-                    fontSize = 30.sp,
-                    modifier = Modifier.padding(16.dp),
-                    fontWeight = Bold
-                )
-                // Inserimento dell'immagine "stella", che è anche cliccabile per accedere ai pokemon salvati come preferiti
-                Image(
-                    painter = painterResource(R.drawable.fillstar),
-                    contentDescription = stringResource(R.string.favourites_filter),
-                    modifier = Modifier
-                        .clickable {
-                            if (isFavouritesFilterActive)
-                                pokemonListViewModel.filterBy(FilterType.NONE)
-                            else
-                                pokemonListViewModel.filterBy(FilterType.FAVOURITES)
-                            isFavouritesFilterActive = !isFavouritesFilterActive
-                        }
-                        .padding(start = 250.dp, top = 15.dp)
-                        .size(height = 45.dp, width = 35.dp),
-                )
-                // Immagine della pokeball cliccabile, che serve a visualizzare la squadra salvata
-                Image(
-                    painter = painterResource(R.drawable.smallpokeball),
-                    contentDescription = stringResource(R.string.captured_filter),
-                    modifier = Modifier
-                        .clickable {
-                            if (isCapturedFilterActive)
-                                pokemonListViewModel.filterBy(FilterType.NONE)
-                            else
-                                pokemonListViewModel.filterBy(FilterType.CAPTURED)
-                            isCapturedFilterActive = !isCapturedFilterActive
-                        }
-                        .padding(start = 297.dp, top = 15.dp)
-                        .size(height = 45.dp, width = 35.dp),
-                )
-                // Immagine impostazioni
-                Image(
-                    painter = painterResource(R.drawable.settings),
-                    contentDescription = stringResource(R.string.settings),
-                    modifier = Modifier
-                        //TODO .clickable(onClick = /* Vai alla pagina delle impostazioni */)
-                        .padding(start = 350.dp, top = 27.dp)
-                        .scale(1.65f)
-                )
-                // Linea utilizzata per inserire i filtri
-                if (!isSearch) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 0.dp, top = 65.dp, bottom = 6.dp)
-                        ,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        // Primo bottono per il filtro "VERSIONE"
-                        Button(
-                            onClick = { boxVersion = !boxVersion },
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(start = 8.dp)
-                                .height(40.dp)
-                                .padding(top = 6.dp),
-                            shape = RoundedCornerShape(8.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.DarkGray, // Colore del bottone più scuro
-                                contentColor = Color.White
-                            )
-                        ) {
-                            Text(text = stringResource(R.string.version))
-                        }
-
-                        // Linea verticale divisoria per i bottoni dei filtri
-                        Divider(
-                            color = Color.Gray,
-                            modifier = Modifier
-                                .padding(horizontal = 4.dp)
-                                .height(40.dp)
-                                .width(2.dp)
-                                .padding(top = 6.dp)
-                        )
-                        // Secondo bottone per il filtro "TIPO"
-                        Button(
-                            onClick = { boxType = !boxType },
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(40.dp)
-                                .padding(top = 6.dp),
-                            shape = RoundedCornerShape(8.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.DarkGray, // Colore del bottone più scuro
-                                contentColor = Color.White
-                            )
-                        ) {
-                            Text(text = stringResource(R.string.type))
-                        }
-                        // Linea verticale divisoria per i bottoni dei filtri
-                        Divider(
-                            color = Color.Gray,
-                            modifier = Modifier
-                                .padding(horizontal = 4.dp)
-                                .height(38.dp)
-                                .width(2.dp)
-                                .padding(top = 6.dp)
-                        )
-                        // Terzo bottone per il filtro "ABILITA'"
-                        Button(
-                            onClick = { boxAbility.value = !boxAbility.value },
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(end = 8.dp)
-                                .height(40.dp)
-                                .padding(top = 6.dp),
-                            shape = RoundedCornerShape(8.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.DarkGray, // Colore del bottone più scuro
-                                contentColor = Color.White
-                            )
-                        ) {
-                            Text(text = stringResource(R.string.ability))
-                        }
+            Text(
+                text = stringResource(R.string.app_name),
+                fontSize = 30.sp,
+                modifier = Modifier.padding(16.dp),
+                fontWeight = Bold
+            )
+            // Inserimento dell'immagine "stella", che è anche cliccabile per accedere ai pokemon salvati come preferiti
+            Image(
+                painter = painterResource(R.drawable.star),
+                contentDescription = stringResource(R.string.favourites_filter),
+                modifier = Modifier
+                    .clickable {
+                        if (isFavouritesFilterActive)
+                            pokemonListViewModel.filterBy(FilterType.NONE)
+                        else
+                            pokemonListViewModel.filterBy(FilterType.FAVOURITES)
+                        isFavouritesFilterActive = !isFavouritesFilterActive
                     }
-                } else {
-                    Row(
-                    ) {
-                        //compare la barra di ricerca
-                        TextField(
-                            value = searchText.value,
-                            onValueChange = { searchText.value = it },
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                            keyboardActions = KeyboardActions(
-                                onSend = {
-                                    saveSearch.value = searchText.value
-                                    //tutto questo codice viene eseguito dopo aver cliccato invio
-                                    // questa parte di codice permette di
-                                    //far sparire la tastiera e di rendere invisibile la barra di ricerca
-                                    keyboardController?.hide()
-                                    focusManager.clearFocus()
-                                    //codice che permette di far sparire la barra di ricerca quando clicco invio
-                                    //salvo la ricerca di dell'utente nella variabile che verrà usata per la query
-                                }
-                            ),
-                            modifier = Modifier
-                                .width(350.dp)
-                                .padding(start = 5.dp, top = 65.dp, bottom = 6.dp)
-                                .background(Color.White, shape = CircleShape),
-                            textStyle = TextStyle(color = Color.Black,fontSize = 20.sp),
-                            shape = CircleShape,
-                            colors = TextFieldDefaults.textFieldColors(
-                                //backgroundColor = Color.DarkGray,
-                                cursorColor = Color.White,
-                                //textColor = Color.White,
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent,
-                                disabledIndicatorColor = Color.Transparent
-                            ),
-                            placeholder = { Text("ex: Charizard", fontSize = 20.sp) }
+                    .padding(start = 250.dp, top = 15.dp)
+                    .size(height = 45.dp, width = 35.dp),
+            )
+            // Immagine della pokeball cliccabile, che serve a visualizzare la squadra salvata
+            Image(
+                painter = painterResource(R.drawable.smallpokeball),
+                contentDescription = stringResource(R.string.captured_filter),
+                modifier = Modifier
+                    .clickable {
+                        if (isCapturedFilterActive)
+                            pokemonListViewModel.filterBy(FilterType.NONE)
+                        else
+                            pokemonListViewModel.filterBy(FilterType.CAPTURED)
+                        isCapturedFilterActive = !isCapturedFilterActive
+                    }
+                    .padding(start = 297.dp, top = 15.dp)
+                    .size(height = 45.dp, width = 35.dp),
+            )
+            // Immagine impostazioni
+            Image(
+                painter = painterResource(R.drawable.settings),
+                contentDescription = stringResource(R.string.settings),
+                modifier = Modifier
+                    //TODO .clickable(onClick = /* Vai alla pagina delle impostazioni */)
+                    .padding(start = 350.dp, top = 27.dp)
+                    .scale(1.65f)
+            )
+            // Linea utilizzata per inserire i filtri
+            if (!isSearch) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 0.dp, top = 65.dp, bottom = 6.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // Primo bottono per il filtro "VERSIONE"
+                    Button(
+                        onClick = { boxVersion = !boxVersion },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 8.dp)
+                            .height(40.dp)
+                            .padding(top = 6.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.DarkGray, // Colore del bottone più scuro
+                            contentColor = Color.White
                         )
-                        //button cerca
-                        IconButton(
-                            onClick = {
-                                //scompare la barra di ricerca
-                                 isSearch=!isSearch
-                                //verifico quello che e' stato scritto dall'utente sia stato preso
-                                //con successo
-                                println(saveSearch.value) //non funziona
-                            },
-                            modifier = Modifier
-                                .align(CenterVertically)
-                                .padding(top = 52.dp, end = 10.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.search),
-                                contentDescription = "Search",
-                            )
-                        }
+                    ) {
+                        Text(text = stringResource(R.string.version))
+                    }
+
+                    // Linea verticale divisoria per i bottoni dei filtri
+                    Divider(
+                        color = Color.Gray,
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .height(40.dp)
+                            .width(2.dp)
+                            .padding(top = 6.dp)
+                    )
+                    // Secondo bottone per il filtro "TIPO"
+                    Button(
+                        onClick = { boxType = !boxType },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(40.dp)
+                            .padding(top = 6.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.DarkGray, // Colore del bottone più scuro
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(text = stringResource(R.string.type))
+                    }
+                    // Linea verticale divisoria per i bottoni dei filtri
+                    Divider(
+                        color = Color.Gray,
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .height(38.dp)
+                            .width(2.dp)
+                            .padding(top = 6.dp)
+                    )
+                    // Terzo bottone per il filtro "ABILITA'"
+                    Button(
+                        onClick = { boxAbility.value = !boxAbility.value },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp)
+                            .height(40.dp)
+                            .padding(top = 6.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.DarkGray, // Colore del bottone più scuro
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(text = stringResource(R.string.ability))
                     }
                 }
+            } else {
+                Row(
+                ) {
+                    //compare la barra di ricerca
+                    TextField(
+                        value = searchText.value,
+                        onValueChange = { searchText.value = it },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                        keyboardActions = KeyboardActions(
+                            onSend = {
+                                saveSearch.value = searchText.value
+                                //tutto questo codice viene eseguito dopo aver cliccato invio
+                                // questa parte di codice permette di
+                                //far sparire la tastiera e di rendere invisibile la barra di ricerca
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                                //codice che permette di far sparire la barra di ricerca quando clicco invio
+                                //salvo la ricerca di dell'utente nella variabile che verrà usata per la query
+                            }
+                        ),
+                        modifier = Modifier
+                            .width(350.dp)
+                            .padding(start = 5.dp, top = 65.dp, bottom = 6.dp)
+                            .background(Color.White, shape = CircleShape),
+                        textStyle = TextStyle(color = Color.Black, fontSize = 20.sp),
+                        shape = CircleShape,
+                        colors = TextFieldDefaults.textFieldColors(
+                            //backgroundColor = Color.DarkGray,
+                            cursorColor = Color.White,
+                            //textColor = Color.White,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
+                        placeholder = { Text("ex: Charizard", fontSize = 20.sp) }
+                    )
+                    //button cerca
+                    IconButton(
+                        onClick = {
+                            //scompare la barra di ricerca
+                            isSearch = !isSearch
+                            //verifico quello che e' stato scritto dall'utente sia stato preso
+                            //con successo
+                            println(saveSearch.value) //non funziona
+                        },
+                        modifier = Modifier
+                            .align(CenterVertically)
+                            .padding(top = 52.dp, end = 10.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.search),
+                            contentDescription = "Search",
+                        )
+                    }
+                }
+            }
         }
 
         if (boxVersion) {
@@ -506,7 +538,7 @@ fun PokedexScreen(
                                 }, contentAlignment = Alignment.Center
                             ) {
                                 val imageRes =
-                                    if (pokemon.isFavourite) R.drawable.fillstar else R.drawable.starempty
+                                    if (pokemon.isFavourite) R.drawable.star else R.drawable.star
                                 Image(
                                     painter = painterResource(imageRes),
                                     contentDescription = stringResource(
@@ -557,7 +589,7 @@ fun PokedexScreen(
                             }
 
                             // Secondo box per i pokemon che hanno un doppio tipo
-                            pokemon.secondType?.let {
+                            if (pokemon.secondType != null) {
                                 Box(
                                     modifier = Modifier
                                         .padding(start = 6.dp, top = 10.dp)
@@ -596,13 +628,18 @@ fun PokedexScreen(
                                     .align(Alignment.Center)
                             )
                         } else {
-                            SubcomposeAsyncImage(model = pokemon.imageUrl,
+
+                           /* SubcomposeAsyncImage(
+                                model = pokemon.imageUrl,
                                 contentDescription = pokemon.name,
-                                loading = {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.fillMaxSize()
-                                    )
-                                })
+                            ) {
+                                val state = painter.state
+                                if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
+                                    CircularProgressIndicator()
+                                } else {
+                                    SubcomposeAsyncImageContent()
+                                }
+                            }*/
                         }
                     }
 

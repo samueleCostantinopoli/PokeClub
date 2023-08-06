@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import androidx.room.Upsert
 import it.codeclub.pokeclub.db.entities.Ability
 import it.codeclub.pokeclub.db.entities.AbilityWithPokemon
 import it.codeclub.pokeclub.db.entities.PokemonAbilityCrossRef
@@ -42,16 +43,16 @@ interface PokemonDao {
     @Update
     suspend fun update(pokemonEntity: PokemonEntity)
 
-    @Insert
+    @Upsert
     suspend fun insert(pokemonEntity: PokemonEntity)
 
-    @Insert
+    @Upsert
     suspend fun insert(pokemonDetails: PokemonDetails): Long
 
-    @Insert
+    @Upsert
     suspend fun insert(ability: Ability)
 
-    @Insert
+    @Upsert
     suspend fun insert(pokemonAbilityCrossRef: PokemonAbilityCrossRef)
 
 }

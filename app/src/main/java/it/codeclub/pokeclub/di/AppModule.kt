@@ -12,6 +12,7 @@ import it.codeclub.pokeclub.db.PokemonDao
 import it.codeclub.pokeclub.db.PokemonDatabase
 import it.codeclub.pokeclub.db.PokemonRepository
 import it.codeclub.pokeclub.db.PokemonRepositoryDbImpl
+import it.codeclub.pokeclub.local.SharedPrefsRepository
 import it.codeclub.pokeclub.remote.PokeAPI
 import it.codeclub.pokeclub.utils.Constants.BASE_URL
 import it.codeclub.pokeclub.utils.Constants.DB_NAME
@@ -56,4 +57,10 @@ object AppModule {
     ): PokemonRepository {
         return PokemonRepositoryDbImpl(pokemonDatabase.pokemonDao())
     }
+
+    @Provides
+    fun provideSharedPrefsRepository(
+        @ApplicationContext context: Context
+    ): SharedPrefsRepository =
+        SharedPrefsRepository(context)
 }

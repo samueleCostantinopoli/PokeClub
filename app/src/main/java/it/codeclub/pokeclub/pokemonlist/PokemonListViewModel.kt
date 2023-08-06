@@ -85,9 +85,9 @@ class PokemonListViewModel @Inject constructor(
         }
     }
 
-    fun loadPokemon() {
+    private fun loadPokemon() {
         viewModelScope.launch {
-            pokemonRepository.getPokemon().onEach {
+            pokemonRepository.getPokemon().collect {
                 pokemonList.value = it
             }
         }

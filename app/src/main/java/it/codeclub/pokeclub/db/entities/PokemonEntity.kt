@@ -10,11 +10,13 @@ data class PokemonEntity(
     @PrimaryKey val pokemonId: Int,
     val name: String,
     val type: PokemonType,
+    @ColumnInfo(defaultValue = "null")
     val secondType: PokemonType? = null,
     var isFavourite: Boolean = false,   // Pokemon not favourite by default
     var isCaptured: Boolean = false,   // Pokemon not favourite by default
-    val dominantColor: Int = 0xfffffff,  // White as default sprite dominant color
+    var dominantColor: Int = 0xfffffff,  // White as default sprite dominant color
+    @ColumnInfo(defaultValue = "Not provided")
     val imageUrl: String,
-    @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
-    val image: Bitmap? = null,
+    @ColumnInfo(typeAffinity = ColumnInfo.BLOB, defaultValue = "0")
+    val image: Bitmap? = null
 )
