@@ -28,14 +28,10 @@ class PokemonRepositoryDbImpl @Inject constructor(
         pokemonDao.getPokemonWithAbility(abilityId)
 
     @Throws(RepositoryException::class)
-    override suspend fun getPokemonDetails(name: String): Resource<PokemonAndDetails> {
+    override suspend fun getPokemonDetails(name: String): Flow<PokemonAndDetails> {
         if (name.isEmpty())
             throw RepositoryException("Error")
-        var resource: Resource<PokemonAndDetails> = Resource.Error(R.string.error)
-        pokemonDao.getPokemonDetails(name).collect {
-            resource = Resource.Success(it)
-        }
-        return resource
+        return pokemonDao.getPokemonDetails(name)
     }
 
     override suspend fun update(pokemon: PokemonEntity) = pokemonDao.update(pokemon)

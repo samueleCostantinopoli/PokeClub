@@ -18,7 +18,7 @@ interface PokemonRepository {
 
     suspend fun getAbilities(): Flow<List<Ability>>
     suspend fun getPokemonWithAbility(abilityId: Long): Flow<AbilityWithPokemon>
-    suspend fun getPokemonDetails(name: String): Resource<PokemonAndDetails>
+    suspend fun getPokemonDetails(name: String): Flow<PokemonAndDetails>
     suspend fun update(pokemon: PokemonEntity)
     suspend fun insertNewPokemonEntity(pokemonEntity: PokemonEntity)
     suspend fun insertNewPokemonDetails(pokemonDetails: PokemonDetails): Long

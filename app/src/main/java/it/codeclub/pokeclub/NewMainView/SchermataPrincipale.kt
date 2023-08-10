@@ -91,11 +91,29 @@ fun MainView(
         ) {
             val expandedWidth = maxWidth - 16.dp * 2
             //prima row che contiene nome dell'app stella impostazioni e pokeball cattura
-            firstRow(favourite, smallPokeballClick, isSearchExpanded,focusManager,keyboardController,saveSearch,searchText,isAbilityClicked
-            ,searchAbility,saveAbility)
+            firstRow(
+                favourite,
+                smallPokeballClick,
+                isSearchExpanded,
+                focusManager,
+                keyboardController,
+                saveSearch,
+                searchText,
+                isAbilityClicked,
+                searchAbility,
+                saveAbility
+            )
 
             //second row ( button version type e ability) piu lazy column che mostra i pokemon
-            secondRow(boxVersion,boxType,boxAbility,pokemonListViewModel,isAbilityClicked,isSearchExpanded)
+            secondRow(
+                navController,
+                boxVersion,
+                boxType,
+                boxAbility,
+                pokemonListViewModel,
+                isAbilityClicked,
+                isSearchExpanded
+            )
 
             //pokeball finale in basso a sinistra
             //button pokeball che ruota
@@ -111,7 +129,7 @@ fun MainView(
                     .padding(end = 28.dp, bottom = 10.dp)
                     .size(86.dp)
                     .graphicsLayer(rotationZ = rotationState.value)
-                   // .clickable { }
+                    // .clickable { }
                     .align(Alignment.BottomEnd)
                     .background(Color.Unspecified)
 
@@ -152,8 +170,8 @@ fun MainView(
                             //apro la barra di ricerca
                             isSearchExpanded.value = !isSearchExpanded.value
                             // se la barra di ricerca per abilità e' aperta la chiudo
-                            if(isAbilityClicked.value){
-                                isAbilityClicked.value=!isAbilityClicked.value
+                            if (isAbilityClicked.value) {
+                                isAbilityClicked.value = !isAbilityClicked.value
                             }
                             //chiudo la pokeball
                             coroutineScope.launch {

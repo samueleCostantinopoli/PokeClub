@@ -628,18 +628,21 @@ fun PokedexScreen(
                                     .align(Alignment.Center)
                             )
                         } else {
-
-                           /* SubcomposeAsyncImage(
-                                model = pokemon.imageUrl,
-                                contentDescription = pokemon.name,
-                            ) {
-                                val state = painter.state
-                                if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
-                                    CircularProgressIndicator()
-                                } else {
-                                    SubcomposeAsyncImageContent()
+                            if (pokemon.isFavourite) {
+                                // TODO load image from db
+                            } else {
+                                SubcomposeAsyncImage(
+                                    model = pokemon.imageUrl,
+                                    contentDescription = pokemon.name,
+                                ) {
+                                    val state = painter.state
+                                    if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
+                                        CircularProgressIndicator()
+                                    } else {
+                                        SubcomposeAsyncImageContent()
+                                    }
                                 }
-                            }*/
+                            }
                         }
                     }
 

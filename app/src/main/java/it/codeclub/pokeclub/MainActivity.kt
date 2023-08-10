@@ -13,6 +13,7 @@ import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import it.codeclub.pokeclub.NewMainView.MainView
 import it.codeclub.pokeclub.download_data.DownloadDataScreen
+import it.codeclub.pokeclub.pokemondetails.DetailsScreen
 import it.codeclub.pokeclub.ui.theme.PokeClubTheme
 import it.codeclub.pokeclub.utils.Constants.FIRST_START_PREF
 import it.codeclub.pokeclub.utils.Constants.PREFS_FILE
@@ -48,24 +49,17 @@ class MainActivity : ComponentActivity() {
                             MainView(navController)
                         }
                         composable(
-                            "pokemon_detail_screen/{dominantColor}/{pokemonName}",
+                            "pokemon_detail_screen/{pokemonName}",
                             arguments = listOf(
-                                navArgument("dominantColor") {
-                                    type = NavType.IntType
-                                },
                                 navArgument("pokemonName") {
                                     type = NavType.StringType
                                 }
                             )
                         ) {
-                            val dominantColor = remember {
-                                val color = it.arguments?.getInt("dominantColor")
-                                color?.let { Color(it) } ?: Color.White
-                            }
                             val pokemonName = remember {
-                                it.arguments?.getString("pokemonName")
+                                it.arguments!!.getString("pokemonName")
                             }
-
+                            DetailsScreen(pokemonName!!)
                         }
                     }
                 }

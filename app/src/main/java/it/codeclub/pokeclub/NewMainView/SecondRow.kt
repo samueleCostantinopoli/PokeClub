@@ -40,6 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
 import it.codeclub.pokeclub.R
 import it.codeclub.pokeclub.pokemonlist.PokemonListViewModel
 import it.codeclub.pokeclub.pokemonlist.intToColor
@@ -47,6 +48,7 @@ import it.codeclub.pokeclub.ui.theme.AppGrey
 
 @Composable
 fun secondRow(
+    navController: NavController,
     boxVersion: MutableState<Boolean>,
     boxType: MutableState<Boolean>,
     boxAbility: MutableState<Boolean>,
@@ -74,17 +76,17 @@ fun secondRow(
     //variabile utilizzata per capire se e' la prima volta che l'utente ha cliccato sul box version
     //in quel caso i selected iniziali devono per forza essere settati tutti a false poiche l'utente
     //non ha ancora cliccato su nessuna versione, perciò i background saranno tutti bianchi
-    var firstTimeVersion= remember {
+    var firstTimeVersion = remember {
         mutableStateOf(0)
     }
 
     //variabile utilizzata dal sensei cantarini, qui andrà il numero di versioni che ci sono
     //sulla api, per ora la metto statica per vedere se funziona correttamente
-    var numeroVersioni=8
+    var numeroVersioni = 8
 
     //variabile che contiene al lista dei tipi, anche questa dovrà essere popolata dal
     //maestro cantarini, per ora aggiungo un paio di stringhe statiche che rappresentano i tipi
-    var  typeList = remember { mutableStateOf(mutableListOf<String>()) }
+    var typeList = remember { mutableStateOf(mutableListOf<String>()) }
 
     //questa lista non sarà presente
     val pokemonTypes = listOf(
@@ -104,11 +106,11 @@ fun secondRow(
 
     //variabile utilizzata per capire se è la prima volta che si clicca sul box type ( duale
     // di first time version
-    var firstTimeType= remember {
+    var firstTimeType = remember {
         mutableStateOf(0)
     }
     //il tutto è contenuto in una riga
-    Column(modifier=Modifier.fillMaxSize()){
+    Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
                 .padding(top = Dimensions.distanzaDallaPrimaRiga)
@@ -119,11 +121,13 @@ fun secondRow(
             //qui abbiamo i 3 tipi di filtri
             // Primo button per il filtro "VERSIONE"
             Button(
-                onClick = { boxVersion.value= !boxVersion.value
+                onClick = {
+                    boxVersion.value = !boxVersion.value
                     //se box type e' aperto lo chiudo
-                    if (boxType.value){
-                        boxType.value=!boxType.value
-                    }},
+                    if (boxType.value) {
+                        boxType.value = !boxType.value
+                    }
+                },
                 modifier = Modifier
                     .weight(1f)
                     .padding(start = 8.dp)
@@ -149,11 +153,13 @@ fun secondRow(
             )
             // Secondo bottone per il filtro "TIPO"
             Button(
-                onClick = { boxType.value= !boxType.value
+                onClick = {
+                    boxType.value = !boxType.value
                     //se il box version e' aperto lo chiudo, non voglio 2 box aperti contemporaneamente
-                    if(boxVersion.value){
-                        boxVersion.value=!boxVersion.value
-                    }},
+                    if (boxVersion.value) {
+                        boxVersion.value = !boxVersion.value
+                    }
+                },
                 modifier = Modifier
                     .weight(1f)
                     .height(40.dp)
@@ -179,11 +185,12 @@ fun secondRow(
             Button(
                 onClick = {
                     //verifico se la barra di ricerca del pokemon ( per nome è aperta) nel caso la chiudo
-                    if(isSearchExpanded.value) {
-                        isSearchExpanded.value=!isSearchExpanded.value
+                    if (isSearchExpanded.value) {
+                        isSearchExpanded.value = !isSearchExpanded.value
                     }
                     // quando clicco deve aprirsi la barra di ricerca per abilità(che si trova in first row)
-                    isAbilityClicked.value = !isAbilityClicked.value },
+                    isAbilityClicked.value = !isAbilityClicked.value
+                },
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 8.dp)
@@ -214,7 +221,10 @@ fun secondRow(
                         .fillMaxWidth()
                         .padding(bottom = 16.dp)
                         .clip(RoundedCornerShape(15.dp))
-                        .background(color),
+                        .background(color)
+                        .clickable {
+                            navController.navigate("pokemon_detail_screen/${pokemon.name}")
+                        },
                     contentAlignment = Alignment.TopCenter
                 ) {
                     Column(
@@ -336,7 +346,7 @@ fun secondRow(
         Box(
             modifier = Modifier
                 .zIndex(1f)
-                .padding(top=500.dp, start = 16.dp, end = 16.dp)
+                .padding(top = 500.dp, start = 16.dp, end = 16.dp)
                 .fillMaxSize()
                 .border(
                     BorderStroke(2.dp, Color.Gray),
@@ -355,7 +365,7 @@ fun secondRow(
                         .padding(top = 6.dp, bottom = 6.dp),
                     color = Color.DarkGray
                 )
-                Column{
+                Column {
                     LazyColumn(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
@@ -366,15 +376,15 @@ fun secondRow(
                         //qui andranno il numero di versioni che sono disponibili, 8 per esempio
                         items(numeroVersioni) { index ->
                             //verifico se il box viene aperto per la prima volta o se e' stato gia aperto
-                            if(firstTimeVersion.value==0){
+                            if (firstTimeVersion.value == 0) {
                                 //e' la prima volta che apro il box, l'utente non ha selezionato ancora nulla
                                 //tutti gli item sono su false, li aggiungo alla lista che ne tiene traccia
                                 for (i in 0 until numeroVersioni) {
                                     //imposto a false ogni singolo elemento
-                                    selectedItemStates.add(i,false)
+                                    selectedItemStates.add(i, false)
                                 }
                                 //fatto ciò, questa vale come prima volta di apertura del box, imposto a 1 first time
-                                firstTimeVersion.value=1
+                                firstTimeVersion.value = 1
                                 //fino al prossimo avvio dell'app non posso piu rientrare in questo if
 
                             }
@@ -383,7 +393,8 @@ fun secondRow(
                             //background diventerà grigio ( facendo capire che e' stato selezionato) altrimenti
                             //sarà bianco
 
-                            var backgroundColor = if (selectedItemStates[index]) Color.Gray else Color.White
+                            var backgroundColor =
+                                if (selectedItemStates[index]) Color.Gray else Color.White
 
                             // qui c'e' la card che non e' altro composta da un box e al suo interno
                             // il testo che indica il nuomero di versione
@@ -400,7 +411,7 @@ fun secondRow(
                                     .fillMaxWidth()
                                     .clickable {
                                         //quando clicco il box voglio salvare la scelta dell' utente
-                                        selectedItemStates[index]= !selectedItemStates[index]
+                                        selectedItemStates[index] = !selectedItemStates[index]
                                         if (selectedItemStates[index]) {
                                             versionList.value.add((index + 1).toString())
                                         } else {
@@ -428,7 +439,7 @@ fun secondRow(
                     Text(
                         text = stringResource(R.string.ok),
                         fontSize = 24.sp,
-                        textAlign= TextAlign.Center,
+                        textAlign = TextAlign.Center,
                         modifier = Modifier
                             .padding(top = 16.dp, bottom = 10.dp, start = 26.dp)
                             .clickable {
@@ -474,7 +485,7 @@ fun secondRow(
                         .padding(top = 6.dp, bottom = 6.dp),
                     color = Color.DarkGray
                 )
-                Column{
+                Column {
                     LazyColumn(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
@@ -485,15 +496,15 @@ fun secondRow(
                         //qui andranno il numero di tipi di pokemon presenti
                         items(pokemonTypes.size) { index ->
                             //verifico se il box viene aperto per la prima volta o se e' stato gia aperto
-                            if(firstTimeType.value==0){
+                            if (firstTimeType.value == 0) {
                                 //e' la prima volta che apro il box, l'utente non ha selezionato ancora nulla
                                 //tutti gli item sono su false, li aggiungo alla lista che ne tiene traccia
                                 for (i in pokemonTypes.indices) {
                                     //imposto a false ogni singolo elemento
-                                    selectedTypeState.add(i,false)
+                                    selectedTypeState.add(i, false)
                                 }
                                 //fatto ciò, questa vale come prima volta di apertura del box, imposto a 1 first time
-                                firstTimeType.value=1
+                                firstTimeType.value = 1
                                 //fino al prossimo avvio dell'app non posso piu rientrare in questo if
 
                             }
@@ -502,7 +513,8 @@ fun secondRow(
                             //background diventerà grigio ( facendo capire che e' stato selezionato) altrimenti
                             //sarà bianco
 
-                            var backgroundColor = if (selectedTypeState[index]) Color.Gray else Color.White
+                            var backgroundColor =
+                                if (selectedTypeState[index]) Color.Gray else Color.White
 
                             // qui c'e' la card che non e' altro composta da un box e al suo interno
                             // il testo che indica il nuomero di versione
@@ -519,7 +531,7 @@ fun secondRow(
                                     .fillMaxWidth()
                                     .clickable {
                                         //quando clicco il box voglio salvare la scelta dell' utente
-                                        selectedTypeState[index]= !selectedTypeState[index]
+                                        selectedTypeState[index] = !selectedTypeState[index]
                                         if (selectedTypeState[index]) {
                                             typeList.value.add(pokemonTypes[index])
                                         } else {
@@ -547,7 +559,7 @@ fun secondRow(
                     Text(
                         text = stringResource(R.string.ok),
                         fontSize = 24.sp,
-                        textAlign= TextAlign.Center,
+                        textAlign = TextAlign.Center,
                         modifier = Modifier
                             .padding(top = 16.dp, bottom = 10.dp, start = 26.dp)
                             .clickable {
