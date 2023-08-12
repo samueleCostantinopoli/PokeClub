@@ -19,14 +19,17 @@
     <string name="ok" translatable="false">ok</string>
 
     <!-- Details screen -->
+    <string name="stats">Base stats</string>
+    <string name="description">Description</string>
     <string name="height">Height</string>
     <string name="weight">Weight</string>
     <string name="lp">LP</string>
     <string name="attack">Attack</string>
     <string name="defense">Defense</string>
-    <string name="sp_attack">Special attack</string>
-    <string name="sp_defense">Special defense</string>
+    <string name="sp_attack">Sp. att.</string>
+    <string name="sp_defense">Sp. def.</string>
     <string name="speed">Speed</string>
+    <string name="total">Total</string>
 
     <!-- Pokemon types -->
     <string name="bug">Bug</string>

@@ -80,6 +80,8 @@ import it.codeclub.pokeclub.domain.FilterType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+
+
 @Preview
 @Composable
 fun Call() {
@@ -627,7 +629,7 @@ fun PokedexScreen(
                                     .size(80.dp)
                                     .align(Alignment.Center)
                             )
-                        } else {
+                        }else {
                             if (pokemon.isFavourite) {
                                 // TODO load image from db
                             } else {

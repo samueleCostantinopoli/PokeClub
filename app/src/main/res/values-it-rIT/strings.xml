@@ -35,8 +35,11 @@
     <string name="lp">PS</string>
     <string name="attack">Attacco</string>
     <string name="defense">Difesa</string>
-    <string name="sp_attack">Attacco speciale</string>
-    <string name="sp_defense">Difesa speciale</string>
+    <string name="sp_attack">Att. sp.</string>
+    <string name="sp_defense">Dif. sp.</string>
     <string name="speed">Velocità</string>
     <string name="select_type">Seleziona il tipo</string>
+    <string name="stats">Statistiche base</string>
+    <string name="description">Descrzione</string>
+    <string name="total">Totale</string>
 </resources>

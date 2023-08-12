@@ -34,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -82,7 +83,7 @@ fun DetailsScreen(
                 ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxSize()
                             .background(
                                 color = Color(
                                     pokemonDetails.pokemon.dominantColor
@@ -112,10 +113,10 @@ fun DetailsScreen(
                                     painter = painterResource(R.drawable.pokemon),
                                     contentDescription = "pokemon image",
                                     modifier = Modifier
-                                        .padding(start = 150.dp, top = 8.dp)
+                                        .padding(start = 170.dp, top = 8.dp)
                                         .scale(1.4f)
                                 )
-                                Spacer(modifier = Modifier.width(90.dp))
+                                Spacer(modifier = Modifier.width(100.dp))
                                 Image(
                                     painter = painterResource(favouriteImage),
                                     contentDescription = stringResource(if (isFavourite) R.string.favourite else R.string.not_favourite),
@@ -174,8 +175,8 @@ fun DetailsScreen(
                                         .padding(end = 4.dp)
                                         .height(32.dp)
                                         .clip(RoundedCornerShape(8.dp))
-                                        .background(color = Color.White) // TODO put type color
-                                        .padding(8.dp),
+                                        .background(color = Color.Black) // TODO put type color
+                                        .padding(4.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
@@ -192,8 +193,8 @@ fun DetailsScreen(
                                                 .padding(start = 4.dp)
                                                 .height(32.dp)
                                                 .clip(RoundedCornerShape(8.dp))
-                                                .background(color = Color.White) // TODO put type color
-                                                .padding(8.dp),
+                                                .background(color = Color.Black) // TODO put type color
+                                                .padding(4.dp),
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Text(
@@ -203,8 +204,7 @@ fun DetailsScreen(
                                         }
                                     }
                                 } else {
-                                    //val colorType1
-                                    //DA RIDIMENSIONARE LA RIGA IN MODO CHE SI ESPANDA PER TUTTO L BOX
+                                    // caso in cui il pokemon ha un solo tipo
                                     pokemonDetails.pokemon.secondType.let {
                                         Row(
                                             modifier = Modifier
@@ -217,8 +217,8 @@ fun DetailsScreen(
                                                     .padding(end = 4.dp)
                                                     .height(32.dp)
                                                     .clip(RoundedCornerShape(8.dp))
-                                                    .background(color = Color.White) //TODO
-                                                    .padding(8.dp),
+                                                    .background(color = Color.Black) //TODO
+                                                    .padding(4.dp),
                                                 contentAlignment = Alignment.Center
                                             ) {
                                                 pokemonDetails.pokemon.type.let { it1 ->
@@ -234,120 +234,27 @@ fun DetailsScreen(
                             }
 
                         }
-                    }
-                    //secondo box con l'anagrafica del pokemon, ovvero peso ed altezza
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                            .background(
-                                color = Color(0xffffffff),
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(8.dp)
-                    ) {
-                        Row(
+
+                        //secondo box con l'anagrafica del pokemon, ovvero peso ed altezza
+                        Box(
                             modifier = Modifier
-                                .align(Alignment.TopStart)
-                                .padding(start = 0.dp, top = 4.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(end = 4.dp)
-                                    .height(32.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(color = Color(0xffffffff))
-                                    .border(
-                                        width = 1.dp,
-                                        color = Color(0xff757575),
-                                        shape = RoundedCornerShape(8.dp)
-                                    )
-                                    .padding(2.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = pokemonDetails.details.height.toString(),
-                                    color = Color.Black
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                                .background(
+                                    color = Color(0xffffffff),
+                                    shape = RoundedCornerShape(8.dp)
                                 )
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(start = 4.dp)
-                                    .height(32.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(color = Color(0xffffffff))
-                                    .border(
-                                        width = 1.dp,
-                                        color = Color(0xff757575),
-                                        shape = RoundedCornerShape(8.dp)
-                                    )
-                                    .padding(2.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = pokemonDetails.details.weight.toString(),
-                                    color = Color.Black
-                                )
-                            }
-                        }
-                        Row(
-                            modifier = Modifier
-                                .align(Alignment.TopStart)
-                                .padding(start = 0.dp, top = 40.dp)
+                                .padding(8.dp)
                         ) {
-                            Text(
-                                text = stringResource(R.string.height),
-                                color = Color(0xFF757575),
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(start = 65.dp, end = 8.dp)
-                                    .align(Alignment.CenterVertically)
-                            )
-                            Text(
-                                text = stringResource(R.string.weight),
-                                color = Color(0xFF757575),
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(
-                                        start = 75.dp,
-                                        end = 8.dp
-                                    ) // Esempio di padding personalizzato
-                                    .align(Alignment.CenterVertically)
-                            )
-                        }
-                    }
-                    //abilità del pokemon: testo + box
-                    Text(
-                        text = "Abilità",
-                        fontSize = 16.sp,
-                        color = Color(0xff505050),
-                        modifier = Modifier
-                            //.align(Alignment.CenterHorizontally) // TODO fix this
-                            .padding(top = 4.dp)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                            .background(
-                                color = Color(0xffffffff),
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(8.dp)
-                    ) {
-                        //abilità primaria
-                        pokemonInfo.value.data!!.abilities[0].let { ability ->
                             Row(
                                 modifier = Modifier
                                     .align(Alignment.TopStart)
-                                    .padding(start = 0.dp, top = 0.dp)
+                                    .padding(start = 0.dp, top = 4.dp)
                             ) {
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .padding(end = 0.dp)
+                                        .padding(end = 4.dp)
                                         .height(32.dp)
                                         .clip(RoundedCornerShape(8.dp))
                                         .background(color = Color(0xffffffff))
@@ -360,85 +267,129 @@ fun DetailsScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = when (Locale.getDefault().language.lowercase()) {
-                                            "it" -> ability.name_it
-                                            else -> ability.name_en
-                                        },
+                                        text = pokemonDetails.details.height.toString(),
                                         color = Color.Black
                                     )
-                                    //bottone info per la descrizione dell'abilità primaria
-                                    Image(
-                                        painter = painterResource(R.drawable.info),
-                                        contentDescription = "info",
-                                        modifier = Modifier
-                                            .size(22.dp)
-                                            .align(Alignment.TopEnd)
-                                            .clickable {
-                                                showDialog.value = true
-                                                dialogText.value =
-                                                    when (Locale.getDefault().language.lowercase()) {
-                                                        "it" -> ability.effect_it
-                                                        else -> ability.effect_en
-                                                    }
-                                            }
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(start = 4.dp)
+                                        .height(32.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(color = Color(0xffffffff))
+                                        .border(
+                                            width = 1.dp,
+                                            color = Color(0xff757575),
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                        .padding(2.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = pokemonDetails.details.weight.toString(),
+                                        color = Color.Black
                                     )
                                 }
                             }
-                        }
-                        pokemonInfo.value.data!!.abilities[1].let { ability ->
                             Row(
                                 modifier = Modifier
                                     .align(Alignment.TopStart)
                                     .padding(start = 0.dp, top = 40.dp)
                             ) {
-                                Box(
+                                Text(
+                                    text = stringResource(R.string.height),
+                                    color = Color(0xFF757575),
                                     modifier = Modifier
                                         .weight(1f)
-                                        .padding(end = 0.dp)
-                                        .height(32.dp)
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(color = Color(0xffffffff))
-                                        .border(
-                                            width = 1.dp,
-                                            color = Color(0xff757575),
-                                            shape = RoundedCornerShape(8.dp)
-                                        )
-                                        .padding(2.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = when (Locale.getDefault().language.lowercase()) {
-                                            "it" -> ability.name_it
-                                            else -> ability.name_en
-                                        },
-                                        color = Color.Black
-                                    )
-                                    //bottone info con la descrizione dell'abilità speciale
-                                    Image(
-                                        painter = painterResource(R.drawable.info),
-                                        contentDescription = "info",
-                                        modifier = Modifier
-                                            .size(22.dp)
-                                            .align(Alignment.TopEnd)
-                                            .clickable {
-                                                showDialog.value = true
-                                                dialogText.value =
-                                                    when (Locale.getDefault().language.lowercase()) {
-                                                        "it" -> ability.effect_it
-                                                        else -> ability.effect_en
-                                                    }
-                                            }
-                                    )
-                                }
+                                        .padding(start = 65.dp, end = 8.dp)
+                                        .align(Alignment.CenterVertically)
+                                )
+                                Text(
+                                    text = stringResource(R.string.weight),
+                                    color = Color(0xFF757575),
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(
+                                            start = 75.dp,
+                                            end = 8.dp
+                                        ) // Esempio di padding personalizzato
+                                        .align(Alignment.CenterVertically)
+                                )
                             }
                         }
-                        if (pokemonInfo.value.data!!.abilities.size > 2)
-                            pokemonInfo.value.data!!.abilities[2].let { ability ->
-                                val topPadding = 80
+                        //abilità del pokemon: testo + box
+                        Text(
+                            text = stringResource(R.string.ability),
+                            fontSize = 16.sp,
+                            color = Color(0xff505050),
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 4.dp)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                                .background(
+                                    color = Color(0xffffffff),
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .padding(8.dp)
+                        ) {
+                            //abilità primaria
+                            pokemonInfo.value.data!!.abilities[0].let { ability ->
                                 Row(
                                     modifier = Modifier
                                         .align(Alignment.TopStart)
-                                        .padding(start = 0.dp, top = topPadding.dp)
+                                        .padding(start = 0.dp, top = 0.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(end = 0.dp)
+                                            .height(32.dp)
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .background(color = Color(0xffffffff))
+                                            .border(
+                                                width = 1.dp,
+                                                color = Color(0xff757575),
+                                                shape = RoundedCornerShape(8.dp)
+                                            )
+                                            .padding(2.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = when (Locale.getDefault().language.lowercase()) {
+                                                "it" -> ability.name_it
+                                                else -> ability.name_en
+                                            },
+                                            color = Color.Black
+                                        )
+                                        //bottone info per la descrizione dell'abilità primaria
+                                        Image(
+                                            painter = painterResource(R.drawable.info),
+                                            contentDescription = "info",
+                                            modifier = Modifier
+                                                .size(27.dp)
+                                                .align(Alignment.TopEnd)
+                                                .clickable {
+                                                    showDialog.value = true
+                                                    dialogText.value =
+                                                        when (Locale.getDefault().language.lowercase()) {
+                                                            "it" -> ability.effect_it
+                                                            else -> ability.effect_en
+                                                        }
+                                                }
+                                        )
+                                    }
+                                }
+                            }
+                            pokemonInfo.value.data!!.abilities[1].let { ability ->
+                                Row(
+                                    modifier = Modifier
+                                        .align(Alignment.TopStart)
+                                        .padding(start = 0.dp, top = 40.dp)
                                 ) {
                                     Box(
                                         modifier = Modifier
@@ -467,7 +418,7 @@ fun DetailsScreen(
                                             painter = painterResource(R.drawable.info),
                                             contentDescription = "info",
                                             modifier = Modifier
-                                                .size(22.dp)
+                                                .size(27.dp)
                                                 .align(Alignment.TopEnd)
                                                 .clickable {
                                                     showDialog.value = true
@@ -481,85 +432,156 @@ fun DetailsScreen(
                                     }
                                 }
                             }
-                    }
-
-                    val statsValues = listOf(
-                        pokemonDetails.details.lp,
-                        pokemonDetails.details.attack,
-                        pokemonDetails.details.defense,
-                        pokemonDetails.details.spAttack,
-                        pokemonDetails.details.spDefense,
-                        pokemonDetails.details.speed
-                    )
-
-                    val weightValues = calculateFloatList(statsValues)
-
-                    val colorStatsList = listOf(
-                        Color(0xFFE1FFD3),
-                        Color(0xFFFFFBE6),
-                        Color(0xFFFFC499),
-                        Color(0xFFB2E3EF),
-                        Color(0xFF9EB5FF),
-                        Color(0xFFEF8DEC)
-                    )
-
-                    val statsName = listOf(
-                        stringResource(R.string.lp),
-                        stringResource(R.string.attack),
-                        stringResource(R.string.defense),
-                        stringResource(R.string.sp_attack),
-                        stringResource(R.string.sp_defense),
-                        stringResource(R.string.speed)
-                    )
-
-                    //statistiche base del pokemon: testo + box con i valori delle statistiche
-                    Text(
-                        text = "Statistiche base",
-                        fontSize = 16.sp,
-                        color = Color(0xff505050),
-                        modifier = Modifier
-                            //.align(Alignment.CenterHorizontally) // TODO fix this
-                            .padding(top = 4.dp)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                            .background(
-                                color = Color(0xFFFFFFFF),
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(8.dp)
-                    ) {
-                        Column {
-                            //indicizzo statsName per nome della stat, valore, lo spazio che occupa nella riga e il colore
-                            //questo per ogni statistica di base
-                            statsName.forEachIndexed { index, name ->
-                                val value = statsValues[index].toFloat()
-                                val weight = weightValues[index]
-                                val color = colorStatsList.getOrElse(index) { Color.Gray }
-                                //invoco la funzione che genera la riga della statistica con le caratteristiche in questione
-                                createStatRow(name, value.toInt().toString(), weight, color)()
-                                Spacer(modifier = Modifier.height(8.dp))
-                            }
+                            if (pokemonInfo.value.data!!.abilities.size > 2)
+                                pokemonInfo.value.data!!.abilities[2].let { ability ->
+                                    val topPadding = 80
+                                    Row(
+                                        modifier = Modifier
+                                            .align(Alignment.TopStart)
+                                            .padding(start = 0.dp, top = topPadding.dp)
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .padding(end = 0.dp)
+                                                .height(32.dp)
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .background(color = Color(0xffffffff))
+                                                .border(
+                                                    width = 1.dp,
+                                                    color = Color(0xff757575),
+                                                    shape = RoundedCornerShape(8.dp)
+                                                )
+                                                .padding(2.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = when (Locale.getDefault().language.lowercase()) {
+                                                    "it" -> ability.name_it
+                                                    else -> ability.name_en
+                                                },
+                                                color = Color.Black
+                                            )
+                                            //bottone info con la descrizione dell'abilità speciale
+                                            Image(
+                                                painter = painterResource(R.drawable.info),
+                                                contentDescription = "info",
+                                                modifier = Modifier
+                                                    .size(27.dp)
+                                                    .align(Alignment.TopEnd)
+                                                    .clickable {
+                                                        showDialog.value = true
+                                                        dialogText.value =
+                                                            when (Locale.getDefault().language.lowercase()) {
+                                                                "it" -> ability.effect_it
+                                                                else -> ability.effect_en
+                                                            }
+                                                    }
+                                            )
+                                        }
+                                    }
+                                }
                         }
-                    }
-                    //check per il click della info sulle abilità con la conseguente apertura della finistra di descrizione
-                    if (showDialog.value) {
-                        AlertDialog(
-                            onDismissRequest = { showDialog.value = false },
-                            title = { Text(text = "Descrizione abilità") },
-                            text = { Text(text = dialogText.value) },
-                            confirmButton = {
-                                Button(
-                                    onClick = { showDialog.value = false },
-                                    content = { Text("OK") }
+
+                        val statsValues = listOf(
+                            pokemonDetails.details.lp,
+                            pokemonDetails.details.attack,
+                            pokemonDetails.details.defense,
+                            pokemonDetails.details.spAttack,
+                            pokemonDetails.details.spDefense,
+                            pokemonDetails.details.speed
+                        )
+
+                        val weightValues = calculateFloatList(statsValues)
+
+                        val colorStatsList = listOf(
+                            Color(0xFFE1FFD3),
+                            Color(0xFFFFFBE6),
+                            Color(0xFFFFC499),
+                            Color(0xFFB2E3EF),
+                            Color(0xFF9EB5FF),
+                            Color(0xFFEF8DEC)
+                        )
+
+                        val statsName = listOf(
+                            stringResource(R.string.lp),
+                            stringResource(R.string.attack),
+                            stringResource(R.string.defense),
+                            stringResource(R.string.sp_attack),
+                            stringResource(R.string.sp_defense),
+                            stringResource(R.string.speed)
+                        )
+
+                        val total = statsValues?.sum() ?: 0
+
+                        //statistiche base del pokemon: testo + box con i valori delle statistiche
+                        Text(
+                            text = stringResource(R.string.stats),
+                            fontSize = 16.sp,
+                            color = Color(0xff505050),
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 4.dp)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                                .background(
+                                    color = Color(0xFFFFFFFF),
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .padding(8.dp)
+                        ) {
+                            Column {
+                                //indicizzo statsName per nome della stat, valore, lo spazio che occupa nella riga e il colore
+                                //questo per ogni statistica di base
+                                statsName.forEachIndexed { index, name ->
+                                    val value = statsValues[index].toFloat()
+                                    val weight = weightValues[index]
+                                    val color = colorStatsList.getOrElse(index) { Color.Gray }
+                                    //invoco la funzione che genera la riga della statistica con le caratteristiche in questione
+                                    createStatRow(name, value.toInt().toString(), weight, color)()
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                }
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 260.dp)
+                                    .align(Alignment.Center)
+                            ) {
+                                Text(
+                                    text = buildString {
+                                        append(stringResource(R.string.total))
+                                        append(" : ")
+                                        append(total)
+                                    },
+                                    fontSize = 16.sp,
+                                    color = Color(0xff505050),
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 16.dp)
                                 )
                             }
-                        )
+                        }
+                        //check per il click della info sulle abilità con la conseguente apertura della finistra di descrizione
+                        if (showDialog.value) {
+                            AlertDialog(
+                                onDismissRequest = { showDialog.value = false },
+                                title = { Text(text = stringResource(R.string.description)) },
+                                text = { Text(text = dialogText.value) },
+                                confirmButton = {
+                                    Button(
+                                        onClick = { showDialog.value = false },
+                                        content = { Text("OK") }
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
-
             }
         }
     }
