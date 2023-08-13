@@ -5,6 +5,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -29,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import it.codeclub.pokeclub.R
 import it.codeclub.pokeclub.utils.Resource
+import it.codeclub.pokeclub.utils.UIUtils.adjustForBackground
 import java.util.Locale
 
 @Composable
@@ -79,14 +84,19 @@ fun DetailsScreen(
             pokemonInfo.value.data!!.let { pokemonDetails ->
                 Column(
                     modifier = Modifier
+                        .scrollable(rememberScrollState(), Orientation.Vertical)
                         .fillMaxSize()
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(
-                                color = Color(
-                                    pokemonDetails.pokemon.dominantColor
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color(
+                                            pokemonDetails.pokemon.dominantColor
+                                        ), Color.White
+                                    )
                                 )
                             )
                             .padding(8.dp)
@@ -322,7 +332,7 @@ fun DetailsScreen(
                         Text(
                             text = stringResource(R.string.ability),
                             fontSize = 16.sp,
-                            color = Color(0xff505050),
+                            color = Color(adjustForBackground(pokemonDetails.pokemon.dominantColor)),
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .padding(top = 4.dp)
@@ -512,13 +522,13 @@ fun DetailsScreen(
                             stringResource(R.string.speed)
                         )
 
-                        val total = statsValues?.sum() ?: 0
+                        val total = statsValues.sum()
 
                         //statistiche base del pokemon: testo + box con i valori delle statistiche
                         Text(
                             text = stringResource(R.string.stats),
                             fontSize = 16.sp,
-                            color = Color(0xff505050),
+                            color = Color(adjustForBackground(pokemonDetails.pokemon.dominantColor)),
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .padding(top = 4.dp)
