@@ -209,7 +209,7 @@ fun DetailsScreen(
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .padding(start = 0.dp, top = 120.dp)
+                                                .padding(start = 0.dp, top = 0.dp)
                                         ) {
                                             Box(
                                                 modifier = Modifier
@@ -596,8 +596,8 @@ fun createStatRow(
     color: Color
 ): @Composable () -> Unit {
     return {
-        val newWeightValue = if (weightValue == 1f) 0f else weightValue
-        val w = 3.1 - newWeightValue
+        val newWeightValue = weightValue * 3.1
+        val w = 3.1 - (3.1 - newWeightValue)
         Row(modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier = Modifier
@@ -640,12 +640,13 @@ fun createStatRow(
                     modifier = Modifier.align(Alignment.TopEnd)
                 )
             }
-            if (newWeightValue != 0f)
+            if (weightValue != 1f) {
                 Box(
                     modifier = Modifier
-                        .weight(weightValue)
+                        .weight((3.1 - newWeightValue).toFloat())
                         .background(color = Color(0xffffffff))
                 )
+            }
         }
     }
 }
@@ -657,8 +658,7 @@ fun calculateFloatList(statList: List<Int>): List<Float> {
 
     for (i in statList.indices) {
         val value = statList[i]
-        val v = 3.1f - (maxValue.toFloat() / value.toFloat())
-        val f = 3.1f - v
+        val f = (value.toFloat() / maxValue.toFloat())
         floatList.add(f)
     }
 
