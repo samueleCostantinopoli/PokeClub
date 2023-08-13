@@ -38,14 +38,15 @@ class DownloadDataViewModel @Inject constructor(
 
     var downloadStatus = DownloadStatus.INIT_DOWNLOAD
 
-    var abilityNumber = 0
-    var abilityCounter = 0
+    var downloadProgress = mutableStateOf(0.0f)
+    var abilityNumber = mutableStateOf(0)
+    var abilityCounter = mutableStateOf(0)
     private var abilityOffset = sharedPrefsRepository.getAbilityOffset()
     private val ability: AbilityDetails? = null
     var currentAbility = mutableStateOf(ability)
 
-    var pokemonNumber = 0
-    var pokemonCounter = 0
+    var pokemonNumber = mutableStateOf(0)
+    var pokemonCounter = mutableStateOf(0)
     private var pokemonOffset: Int = sharedPrefsRepository.getPokemonOffset()
     private val pokemon: Pokemon? = null
     var currentPokemon = mutableStateOf(pokemon)
@@ -57,6 +58,7 @@ class DownloadDataViewModel @Inject constructor(
             getAbilities()
             getPokemon()
             sharedPrefsRepository.updateFirstStartIndicator()
+
         }
     }
 
@@ -65,10 +67,11 @@ class DownloadDataViewModel @Inject constructor(
         var abilityList: AbilityList
         do {
             abilityList = pokeApi.getAbilityList(LIMIT, abilityOffset)
-            if (abilityNumber == 0)
-                abilityNumber = abilityList.count
+            if (abilityNumber.value == 0)
+                abilityNumber.value = abilityList.count
             storeAbilities(abilityList)
             abilityOffset += LIMIT
+            downloadProgress.value = abilityOffset.toFloat()/abilityNumber.value.toFloat()
         } while (abilityList.next != null)
     }
 
@@ -77,10 +80,12 @@ class DownloadDataViewModel @Inject constructor(
         var pokemonList: PokemonList
         do {
             pokemonList = pokeApi.getPokemonList(LIMIT, pokemonOffset)
-            if (pokemonNumber == 0)
-                pokemonNumber = pokemonList.count
+            if (pokemonNumber.value == 0)
+                pokemonNumber.value = pokemonList.count
             storePokemon(pokemonList)
             pokemonOffset += LIMIT
+
+            downloadProgress.value = pokemonOffset.toFloat()/pokemonNumber.value.toFloat()
         } while (pokemonList.next != null)
     }
 
@@ -114,7 +119,7 @@ class DownloadDataViewModel @Inject constructor(
                 effect_it = effectIt
             )
             pokemonRepository.insertNewAbility(abilityEntity)
-            abilityCounter++
+            abilityCounter.value++
         }
     }
 
@@ -203,7 +208,7 @@ class DownloadDataViewModel @Inject constructor(
                 )
                 pokemonRepository.insertPokemonAbilityCrossRef(pokemonAbilityCrossRef)
             }
-            pokemonCounter++
+            pokemonCounter.value++
         }
     }
 
