@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import it.codeclub.pokeclub.R
 import it.codeclub.pokeclub.pokemonlist.PokemonListViewModel
 import it.codeclub.pokeclub.pokemonlist.intToColor
@@ -205,7 +207,7 @@ fun secondRow(
                 Text(text = stringResource(R.string.ability))
             }
         }
-        //piu lay column che occupa il resto della schermata
+        //piu lazy column che occupa il resto della schermata
         LazyColumn(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
@@ -291,7 +293,7 @@ fun secondRow(
 
                         }
                         Row(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.padding(bottom = 5.dp)
                         ) {
                             // Box che contiene il "tipo" del pokemon
                             Box(
@@ -303,11 +305,10 @@ fun secondRow(
                                     )
                                     .padding(start = 4.dp)
                             ) {
-
                                 Text(
                                     text = stringResource(pokemon.type.value),
                                     fontSize = 16.sp,
-                                    modifier = Modifier.padding(start = 43.dp, end = 43.dp),
+                                    modifier = Modifier.padding(start = 34.dp, end = 34.dp),
                                     color = Color.DarkGray
                                 )
                             }
@@ -326,12 +327,29 @@ fun secondRow(
                                     Text(
                                         text = stringResource(pokemon.secondType.value),
                                         fontSize = 16.sp,
-                                        modifier = Modifier.padding(start = 43.dp, end = 43.dp),
+                                        modifier = Modifier.padding(start = 34.dp, end = 34.dp),
                                         color = Color.DarkGray
                                     )
                                 }
                             }
                         }
+                    }
+                    Box(modifier = Modifier
+                        .size(100.dp, 87.dp)
+                        .fillMaxHeight()
+                        .align(Alignment.CenterEnd)
+                        .clip(RoundedCornerShape(topStart = 35.dp))
+                        .clip(RoundedCornerShape(bottomStart = 35.dp)),
+                    ){
+                        Image(
+                            //painter = rememberAsyncImagePainter(pokemon.image),
+                            painter = painterResource(id = R.drawable.pokemon),
+                            contentDescription = pokemon.name,
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .fillMaxSize()
+                                .align(Alignment.Center),
+                        )
                     }
                 }
             }
