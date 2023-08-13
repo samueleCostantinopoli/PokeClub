@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
                         true
                     )
                 )
-                    DownloadDataScreen(navController)
+                    DownloadDataScreen()
                 else {
                     NavHost(
                         navController = navController,

@@ -28,7 +28,6 @@ import it.codeclub.pokeclub.R
 
 @Composable
 fun DownloadDataScreen(
-    navController: NavController,
     downloadDataViewModel: DownloadDataViewModel = hiltViewModel()
 ) {
 
