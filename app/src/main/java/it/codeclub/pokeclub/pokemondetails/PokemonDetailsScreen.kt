@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import it.codeclub.pokeclub.R
+import it.codeclub.pokeclub.db.entities.Ability
+import it.codeclub.pokeclub.ui.theme.*
 import it.codeclub.pokeclub.utils.Resource
 import java.util.Locale
 
@@ -65,9 +68,7 @@ fun DetailsScreen(
         }
 
         is Resource.Success -> {
-            //val remember per ricordare il valore dei filtri e l'apparizione della finestra che mostra le abilità
-            val showDialog = remember { mutableStateOf(false) }
-            val dialogText = remember { mutableStateOf("") }
+            //val remember per ricordare il valore dei filtri
             var isFavourite by remember { mutableStateOf(pokemonInfo.value.data?.pokemon?.isFavourite!!) }
             //in base al valore inziale della var isFavourite la schermata viene settata con la stella vuota o piena
             val favouriteImage = if (isFavourite) R.drawable.fillstar else R.drawable.star
@@ -81,14 +82,20 @@ fun DetailsScreen(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
+                    val type1Color = getColorForType(pokemonDetails.pokemon.type.name)
+                    val lighterTypeColor = type1Color.copy(alpha = 0.5f)
+
+                    val backgroundColorTop = if (pokemonDetails.pokemon.secondType != null) {
+                        val type2Color = getColorForType(pokemonDetails.pokemon.secondType.name)
+                        Brush.verticalGradient(listOf(type1Color, type2Color))
+                    } else {
+                        Brush.verticalGradient(listOf(lighterTypeColor, type1Color))
+                    }
+
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(
-                                color = Color(
-                                    pokemonDetails.pokemon.dominantColor
-                                )
-                            )
+                            .background(brush = backgroundColorTop)
                             .padding(8.dp)
                     ) {
                         //primo box in alto contenente le informazioni principali del pokemon e il valore dei filtri
@@ -175,7 +182,7 @@ fun DetailsScreen(
                                         .padding(end = 4.dp)
                                         .height(32.dp)
                                         .clip(RoundedCornerShape(8.dp))
-                                        .background(color = Color.Black) // TODO put type color
+                                        .background(getColorForType(pokemonDetails.pokemon.type.name))
                                         .padding(4.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
@@ -193,7 +200,7 @@ fun DetailsScreen(
                                                 .padding(start = 4.dp)
                                                 .height(32.dp)
                                                 .clip(RoundedCornerShape(8.dp))
-                                                .background(color = Color.Black) // TODO put type color
+                                                .background(getColorForType(pokemonDetails.pokemon.secondType.name))
                                                 .padding(4.dp),
                                             contentAlignment = Alignment.Center
                                         ) {
@@ -205,7 +212,7 @@ fun DetailsScreen(
                                     }
                                 } else {
                                     // caso in cui il pokemon ha un solo tipo
-                                    pokemonDetails.pokemon.secondType.let {
+                                    pokemonDetails.pokemon.type.let {
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
@@ -217,7 +224,7 @@ fun DetailsScreen(
                                                     .padding(end = 4.dp)
                                                     .height(32.dp)
                                                     .clip(RoundedCornerShape(8.dp))
-                                                    .background(color = Color.Black) //TODO
+                                                    .background(getColorForType(pokemonDetails.pokemon.type.name))
                                                     .padding(4.dp),
                                                 contentAlignment = Alignment.Center
                                             ) {
@@ -322,7 +329,7 @@ fun DetailsScreen(
                         Text(
                             text = stringResource(R.string.ability),
                             fontSize = 16.sp,
-                            color = Color(0xff505050),
+                            color = Color(0xffffffff),
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .padding(top = 4.dp)
@@ -337,150 +344,15 @@ fun DetailsScreen(
                                 )
                                 .padding(8.dp)
                         ) {
-                            //abilità primaria
-                            pokemonInfo.value.data!!.abilities[0].let { ability ->
-                                Row(
-                                    modifier = Modifier
-                                        .align(Alignment.TopStart)
-                                        .padding(start = 0.dp, top = 0.dp)
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .padding(end = 0.dp)
-                                            .height(32.dp)
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(color = Color(0xffffffff))
-                                            .border(
-                                                width = 1.dp,
-                                                color = Color(0xff757575),
-                                                shape = RoundedCornerShape(8.dp)
-                                            )
-                                            .padding(2.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(
-                                            text = when (Locale.getDefault().language.lowercase()) {
-                                                "it" -> ability.name_it
-                                                else -> ability.name_en
-                                            },
-                                            color = Color.Black
-                                        )
-                                        //bottone info per la descrizione dell'abilità primaria
-                                        Image(
-                                            painter = painterResource(R.drawable.info),
-                                            contentDescription = "info",
-                                            modifier = Modifier
-                                                .size(27.dp)
-                                                .align(Alignment.TopEnd)
-                                                .clickable {
-                                                    showDialog.value = true
-                                                    dialogText.value =
-                                                        when (Locale.getDefault().language.lowercase()) {
-                                                            "it" -> ability.effect_it
-                                                            else -> ability.effect_en
-                                                        }
-                                                }
-                                        )
+                            Column {
+                                //generezione dinamiche delle abilità del pokemon
+                                pokemonInfo.value.data!!.abilities.forEachIndexed { index, ability ->
+                                    AbilityRow(ability = ability)
+                                    if (index < pokemonInfo.value.data!!.abilities.size - 1) {
+                                        Spacer(modifier = Modifier.height(8.dp))
                                     }
                                 }
                             }
-                            pokemonInfo.value.data!!.abilities[1].let { ability ->
-                                Row(
-                                    modifier = Modifier
-                                        .align(Alignment.TopStart)
-                                        .padding(start = 0.dp, top = 40.dp)
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .padding(end = 0.dp)
-                                            .height(32.dp)
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(color = Color(0xffffffff))
-                                            .border(
-                                                width = 1.dp,
-                                                color = Color(0xff757575),
-                                                shape = RoundedCornerShape(8.dp)
-                                            )
-                                            .padding(2.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(
-                                            text = when (Locale.getDefault().language.lowercase()) {
-                                                "it" -> ability.name_it
-                                                else -> ability.name_en
-                                            },
-                                            color = Color.Black
-                                        )
-                                        //bottone info con la descrizione dell'abilità speciale
-                                        Image(
-                                            painter = painterResource(R.drawable.info),
-                                            contentDescription = "info",
-                                            modifier = Modifier
-                                                .size(27.dp)
-                                                .align(Alignment.TopEnd)
-                                                .clickable {
-                                                    showDialog.value = true
-                                                    dialogText.value =
-                                                        when (Locale.getDefault().language.lowercase()) {
-                                                            "it" -> ability.effect_it
-                                                            else -> ability.effect_en
-                                                        }
-                                                }
-                                        )
-                                    }
-                                }
-                            }
-                            if (pokemonInfo.value.data!!.abilities.size > 2)
-                                pokemonInfo.value.data!!.abilities[2].let { ability ->
-                                    val topPadding = 80
-                                    Row(
-                                        modifier = Modifier
-                                            .align(Alignment.TopStart)
-                                            .padding(start = 0.dp, top = topPadding.dp)
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .padding(end = 0.dp)
-                                                .height(32.dp)
-                                                .clip(RoundedCornerShape(8.dp))
-                                                .background(color = Color(0xffffffff))
-                                                .border(
-                                                    width = 1.dp,
-                                                    color = Color(0xff757575),
-                                                    shape = RoundedCornerShape(8.dp)
-                                                )
-                                                .padding(2.dp),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Text(
-                                                text = when (Locale.getDefault().language.lowercase()) {
-                                                    "it" -> ability.name_it
-                                                    else -> ability.name_en
-                                                },
-                                                color = Color.Black
-                                            )
-                                            //bottone info con la descrizione dell'abilità speciale
-                                            Image(
-                                                painter = painterResource(R.drawable.info),
-                                                contentDescription = "info",
-                                                modifier = Modifier
-                                                    .size(27.dp)
-                                                    .align(Alignment.TopEnd)
-                                                    .clickable {
-                                                        showDialog.value = true
-                                                        dialogText.value =
-                                                            when (Locale.getDefault().language.lowercase()) {
-                                                                "it" -> ability.effect_it
-                                                                else -> ability.effect_en
-                                                            }
-                                                    }
-                                            )
-                                        }
-                                    }
-                                }
                         }
 
                         val statsValues = listOf(
@@ -518,7 +390,7 @@ fun DetailsScreen(
                         Text(
                             text = stringResource(R.string.stats),
                             fontSize = 16.sp,
-                            color = Color(0xff505050),
+                            color = Color(0xffffffff),
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                                 .padding(top = 4.dp)
@@ -566,26 +438,113 @@ fun DetailsScreen(
                                 )
                             }
                         }
-                        //check per il click della info sulle abilità con la conseguente apertura della finistra di descrizione
-                        if (showDialog.value) {
-                            AlertDialog(
-                                onDismissRequest = { showDialog.value = false },
-                                title = { Text(text = stringResource(R.string.description)) },
-                                text = { Text(text = dialogText.value) },
-                                confirmButton = {
-                                    Button(
-                                        onClick = { showDialog.value = false },
-                                        content = { Text("OK") }
-                                    )
-                                }
-                            )
-                        }
+
                     }
                 }
             }
         }
     }
 }
+
+//funzione che mappa i colori in base al tipo
+fun getColorForType(typeName: String): Color {
+    return when (typeName) {
+        "BUG" -> bug
+        "DARK" -> dark
+        "DRAGON" -> dragon
+        "ELECTRIC" -> electric
+        "FAIRY" -> fairy
+        "FIGHTING" -> fighting
+        "FIRE" -> fire
+        "FLYING" -> flying
+        "GHOST" -> ghost
+        "GRASS" -> grass
+        "GROUND" -> ground
+        "ICE" -> ice
+        "NORMAL" -> normal
+        "POISON" -> poison
+        "PSYCHIC" -> psychic
+        "ROCK" -> rock
+        "STEEL" -> steel
+        "WATER" -> water
+        else -> Color.Black
+    }
+}
+
+
+//funzione che genera le righe delle abilità
+@Composable
+fun AbilityRow(ability: Ability) {
+    val showDialog = remember { mutableStateOf(false) }
+    val dialogText = remember { mutableStateOf("") }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 0.dp, top = 0.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 0.dp, top = 0.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 0.dp)
+                    .height(32.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(color = Color(0xffffffff))
+                    .border(
+                        width = 1.dp,
+                        color = Color(0xff757575),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(2.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = when (Locale.getDefault().language.lowercase()) {
+                        "it" -> ability.name_it
+                        else -> ability.name_en
+                    },
+                    color = Color.Black
+                )
+                //bottone info per la descrizione dell'abilità primaria
+                Image(
+                    painter = painterResource(R.drawable.info),
+                    contentDescription = "info",
+                    modifier = Modifier
+                        .size(27.dp)
+                        .align(Alignment.TopEnd)
+                        .clickable {
+                            showDialog.value = true
+                            dialogText.value =
+                                when (Locale.getDefault().language.lowercase()) {
+                                    "it" -> ability.effect_it
+                                    else -> ability.effect_en
+                                }
+                        }
+                )
+            }
+        }
+
+        //check per il click della info sulle abilità con la conseguente apertura della finistra di descrizione
+        if (showDialog.value) {
+            AlertDialog(
+                onDismissRequest = { showDialog.value = false },
+                title = { Text(text = stringResource(R.string.description)) },
+                text = { Text(text = dialogText.value) },
+                confirmButton = {
+                    Button(
+                        onClick = { showDialog.value = false },
+                        content = { Text("OK") }
+                    )
+                }
+            )
+        }
+    }
+}
+
 
 //funzione per la creazione della riga della statistica
 @SuppressLint("SuspiciousIndentation")
