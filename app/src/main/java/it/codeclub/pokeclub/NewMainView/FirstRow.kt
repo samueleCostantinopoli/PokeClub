@@ -3,9 +3,11 @@ package it.codeclub.pokeclub.NewMainView
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -73,12 +76,20 @@ fun firstRow(
                 modifier = Modifier.background(AppGrey)
             ) {
                 //qui metto il logo
-                Text(
+                Image(
+                    painter = painterResource(id = R.drawable.pokeclub),
+                    contentDescription = "Logo principale in alto a sinistra",
+                    modifier = Modifier
+                        .size(150.dp)
+                        .padding(start = 10.dp, top = 20.dp)
+                )
+                /*Text(
                     text = stringResource(id = R.string.pokeClubSchermataPrincipale),
                     fontSize = 33.sp,
                     modifier = Modifier.padding(17.dp),
                     fontWeight = FontWeight.Bold
                 )
+                */
             }
             //comparsa barra di ricerca ( quindi scomparsa nome)
             this@Row.AnimatedVisibility(

@@ -3,8 +3,11 @@ package it.codeclub.pokeclub
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,6 +16,7 @@ import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import it.codeclub.pokeclub.NewMainView.MainView
 import it.codeclub.pokeclub.download_data.DownloadDataScreen
+import it.codeclub.pokeclub.download_data.DownloadDataViewModel
 import it.codeclub.pokeclub.pokemondetails.DetailsScreen
 import it.codeclub.pokeclub.ui.theme.PokeClubTheme
 import it.codeclub.pokeclub.utils.Constants.FIRST_START_PREF
