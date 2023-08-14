@@ -346,7 +346,6 @@ fun secondRow(
                             painter = painterResource(id = R.drawable.pokemon),
                             contentDescription = pokemon.name,
                             modifier = Modifier
-                                .padding(2.dp)
                                 .fillMaxSize()
                                 .align(Alignment.Center),
                         )
