@@ -83,13 +83,6 @@ fun firstRow(
                         .size(150.dp)
                         .padding(start = 10.dp, top = 20.dp)
                 )
-                /*Text(
-                    text = stringResource(id = R.string.pokeClubSchermataPrincipale),
-                    fontSize = 33.sp,
-                    modifier = Modifier.padding(17.dp),
-                    fontWeight = FontWeight.Bold
-                )
-                */
             }
             //comparsa barra di ricerca ( quindi scomparsa nome)
             this@Row.AnimatedVisibility(
@@ -150,7 +143,7 @@ fun firstRow(
                         unfocusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent,
                     ),
-                    textStyle = TextStyle(fontSize = 20.sp),
+                    textStyle = TextStyle(fontSize = 16.sp),
                     placeholder = { Text("ex: Charizard", fontSize = 16.sp) }
                 )
             }
@@ -229,7 +222,7 @@ fun firstRow(
                 //volta viene settato a 1 e cosi' via
                 favourite.value = 1 - favourite.value
             },
-            modifier = Modifier.padding(top = 17.dp, bottom = 0.dp, start = 66.dp)
+            modifier = Modifier.padding(top = 17.dp, bottom = 0.dp, start = 15.dp,end=6.dp)
         ) {
             Icon(
                 painter =
@@ -248,7 +241,7 @@ fun firstRow(
             onClick = {
                 smallPokeballClick.value = 1 - smallPokeballClick.value
             },
-            modifier = Modifier.padding(top = 17.dp, bottom = 0.dp, start = 6.dp)
+            modifier = Modifier.padding(top = 17.dp, bottom = 0.dp, end = 6.dp)
         ) {
             Icon(
                 painter =
@@ -266,7 +259,7 @@ fun firstRow(
             onClick = {
                 //open settings
             },
-            modifier = Modifier.padding(top = 17.dp, bottom = 0.dp, start = 6.dp)
+            modifier = Modifier.padding(top = 17.dp, bottom = 0.dp, end = 6.dp)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.settings),
