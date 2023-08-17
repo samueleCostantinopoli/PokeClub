@@ -532,6 +532,7 @@ fun MainView(
                                                     topStart = 10.dp,
                                                     topEnd = 10.dp
                                                 ),
+
                                             )
                                             .fillMaxWidth()
                                             .clickable {
