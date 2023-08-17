@@ -2,6 +2,12 @@
     <string name="app_name" translatable="false">PokeClub</string>
     <string name="error">Error</string>
 
+    <!-- Download data screen -->
+    <string name="of">of</string>
+    <string name="downloading">Downloading</string>
+    <string name="abilities">abilities</string>
+    <string name="pokemon" translatable="false">pokemon</string>
+
     <!-- List screen -->
     <string name="favourites_filter">Favourites filter</string>
     <string name="captured_filter">Captured filter</string>
@@ -16,7 +22,7 @@
     <string name="captured">Captured</string>
     <string name="not_captured">Not captured</string>
     <string name="pokeClubSchermataPrincipale" translatable="false">PokeClub</string>
-    <string name="ok" translatable="false">ok</string>
+    <string name="ok" translatable="false">ok</string> <!--TODO remove this-->
 
     <!-- Details screen -->
     <string name="stats">Base stats</string>
