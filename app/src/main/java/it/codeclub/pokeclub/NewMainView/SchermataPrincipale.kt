@@ -28,6 +28,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -208,16 +209,16 @@ fun MainView(
                 Box(){
                     Column(){
                         if(rotate) {
-                            Button(
-                                onClick = {
-                                    // Aggiungi l'azione per il primo pulsante verticale
-                                },
-
-                                shape = RoundedCornerShape(12.dp),
-                            ) {
-                                // Testo o contenuto del primo pulsante verticale
-                                Text(text = "team")
-                            }
+                            //Button(
+                            //    onClick = {
+                            //        // Aggiungi l'azione per il primo pulsante verticale
+                            //    },
+                            //
+                            //    shape = RoundedCornerShape(22.dp),
+                            //) {
+                            //    // Testo o contenuto del primo pulsante verticale
+                            //    Text(text = "team ")
+                            //}
                             Button(
                                 onClick = {
                                     //apro la barra di ricerca
@@ -232,21 +233,23 @@ fun MainView(
                                         isRotated = !isRotated
                                     }
                                 },
-                                modifier = Modifier
-                                    .width(125.dp)
-                                    .height(33.dp),
-                                shape = RoundedCornerShape(12.dp),
+                                //modifier = Modifier
+                                //    .width(125.dp)
+                                //    .height(33.dp),
+                                shape = RoundedCornerShape(22.dp),
                             ) {
                                 Text(text = "cerca")
-                                Image(
-                                    painter = painterResource(id = R.drawable.search),
-                                    contentDescription = "search image",
-                                    modifier = Modifier.padding(start = 20.dp)
-                                )
+                                //Image(
+                                //    painter = painterResource(id = R.drawable.search),
+                                //    contentDescription = "search image",
+                                //    //modifier = Modifier.padding(start = 20.dp)
+                                //    modifier = Modifier.size(20.dp)
+                                //)
                             }
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(8.dp) )
                 IconButton(
                     onClick = {
                         coroutineScope.launch {
@@ -332,7 +335,8 @@ fun MainView(
 
             if (boxVersion.value) {
                 Box(
-                    modifier = Modifier.align(Alignment.BottomCenter)
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
                         .zIndex(1f)
                         .padding(start = 16.dp, end = 16.dp, bottom = 0.dp)
                         .border(
@@ -397,7 +401,8 @@ fun MainView(
                                             .fillMaxWidth()
                                             .clickable {
                                                 //quando clicco il box voglio salvare la scelta dell' utente
-                                                selectedItemStates[index] = !selectedItemStates[index]
+                                                selectedItemStates[index] =
+                                                    !selectedItemStates[index]
                                                 if (selectedItemStates[index]) {
                                                     versionList.value.add((index + 1).toString())
                                                 } else {
@@ -427,7 +432,7 @@ fun MainView(
                                 fontSize = 24.sp,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
-                                    .padding(top = 8.dp, bottom = 8.dp, start = 20.dp,end=20.dp)
+                                    .padding(top = 8.dp, bottom = 8.dp, start = 20.dp, end = 20.dp)
                                     .clickable {
                                         //chiudo il box, le variabili version sono state già salvate nella lista
                                         boxVersion.value = false
@@ -459,7 +464,8 @@ fun MainView(
             if (boxType.value) {
 
                 Box(
-                    modifier = Modifier.align(Alignment.BottomCenter)
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
                         .zIndex(1f)
                         .padding(start = 16.dp, end = 16.dp, bottom = 0.dp)
                         .border(
@@ -508,13 +514,13 @@ fun MainView(
                                     //background diventerà grigio ( facendo capire che e' stato selezionato) altrimenti
                                     //sarà bianco
 
-                                    var backgroundColor =
-                                        if (selectedTypeState[index]) getColorForType(pokemonTypes[index])
-                                            else
-                                            Color.White
                                     //adjustColorIntensity( getColorForType(pokemonTypes[index]),0.5f)
+                                    //var backgroundColor:Color?=null
 
 
+
+                                    var backgroundColor=if (selectedTypeState[index]) getColorForType(pokemonTypes[index]) else
+                                        Color.White
                                     // qui c'e' la card che non e' altro composta da un box e al suo interno
                                     // il testo che indica il nuomero di versione
                                     Box(
@@ -531,9 +537,14 @@ fun MainView(
                                             .clickable {
                                                 //quando clicco il box voglio salvare la scelta dell' utente
                                                 selectedTypeState[index] = !selectedTypeState[index]
+                                                //se il tipo viene selezionato per la ricerca
                                                 if (selectedTypeState[index]) {
-                                                    typeList.value.add(pokemonTypes[index])
-                                                } else {
+                                                    //verifico se ne ha già selezionati 2 di tipi
+                                                        typeList.value.add(pokemonTypes[index])
+                                                }
+                                                //se il tipo viene rimosso ( quindi era stato precedentemente selezionato)
+                                                //lo rimuovo dalla lista dei selezionati
+                                                else {
                                                     typeList.value.remove(pokemonTypes[index])
                                                 }
                                             }
@@ -560,7 +571,7 @@ fun MainView(
                                 fontSize = 24.sp,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
-                                    .padding(top = 8.dp, bottom = 8.dp, start = 20.dp,end=20.dp)
+                                    .padding(top = 8.dp, bottom = 8.dp, start = 20.dp, end = 20.dp)
                                     .clickable {
                                         //chiudo il box, le variabili version sono state già salvate nella lista
                                         boxType.value = false
