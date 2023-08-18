@@ -35,8 +35,8 @@ class DownloadDataViewModel @Inject constructor(
     private val pokemonRepository: PokemonRepository,
     private val sharedPrefsRepository: SharedPrefsRepository
 ) : ViewModel() {
-
-    var downloadStatus = DownloadStatus.INIT_DOWNLOAD
+    
+    var currentStatus = mutableStateOf(DownloadStatus.INIT_DOWNLOAD)
 
     var downloadProgress = mutableStateOf(0.0f)
     var abilityNumber = mutableStateOf(0)
@@ -55,37 +55,39 @@ class DownloadDataViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getAbilities()
-            getPokemon()
-            sharedPrefsRepository.updateFirstStartIndicator()
-
+            if (sharedPrefsRepository.getFirstStartIndicator()) {
+                getAbilities()
+                getPokemon()
+                sharedPrefsRepository.updateFirstStartIndicator()
+            }
+            currentStatus.value = DownloadStatus.DONE
         }
     }
 
     private suspend fun getAbilities() {
-        downloadStatus = DownloadStatus.ABILITY_DOWNLOAD
         var abilityList: AbilityList
         do {
             abilityList = pokeApi.getAbilityList(LIMIT, abilityOffset)
             if (abilityNumber.value == 0)
                 abilityNumber.value = abilityList.count
             storeAbilities(abilityList)
+            currentStatus.value = DownloadStatus.ABILITY_DOWNLOAD
             abilityOffset += LIMIT
-            downloadProgress.value = abilityOffset.toFloat()/abilityNumber.value.toFloat()
+            downloadProgress.value = abilityOffset.toFloat() / abilityNumber.value.toFloat()
         } while (abilityList.next != null)
     }
 
     private suspend fun getPokemon() {
-        downloadStatus = DownloadStatus.POKEMON_DOWNLOAD
         var pokemonList: PokemonList
         do {
             pokemonList = pokeApi.getPokemonList(LIMIT, pokemonOffset)
             if (pokemonNumber.value == 0)
                 pokemonNumber.value = pokemonList.count
             storePokemon(pokemonList)
+            currentStatus.value = DownloadStatus.POKEMON_DOWNLOAD
             pokemonOffset += LIMIT
 
-            downloadProgress.value = pokemonOffset.toFloat()/pokemonNumber.value.toFloat()
+            downloadProgress.value = pokemonOffset.toFloat() / pokemonNumber.value.toFloat()
         } while (pokemonList.next != null)
     }
 
@@ -229,6 +231,7 @@ class DownloadDataViewModel @Inject constructor(
     enum class DownloadStatus {
         INIT_DOWNLOAD,
         ABILITY_DOWNLOAD,
-        POKEMON_DOWNLOAD
+        POKEMON_DOWNLOAD,
+        DONE
     }
 }

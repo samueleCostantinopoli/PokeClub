@@ -95,7 +95,9 @@ fun PreviewChangeableImage() {
 
     }
 }
-
+//ad ogni pokemon è associato un colore dominante, questa funziona mappa l'intero nel colore
+//rendendo cosi possibile la diverificazione dei colori ( questa cosa si nota
+//soprattutto nelle evoluzioni della schermata principale associate ai pokemon)
 fun intToColor(colorValue: Int): Color {
     return Color(colorValue)
 }
