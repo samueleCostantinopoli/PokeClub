@@ -33,11 +33,11 @@
     <string name="height">Altezza</string>
     <string name="weight">Peso</string>
     <string name="lp">PS</string>
-    <string name="attack">Attacco</string>
-    <string name="defense">Difesa</string>
+    <string name="attack">Att</string>
+    <string name="defense">Dif</string>
     <string name="sp_attack">Att. sp.</string>
     <string name="sp_defense">Dif. sp.</string>
-    <string name="speed">Velocità</string>
+    <string name="speed">Vel</string>
     <string name="select_type">Seleziona il tipo</string>
     <string name="stats">Statistiche base</string>
     <string name="description">Descrzione</string>

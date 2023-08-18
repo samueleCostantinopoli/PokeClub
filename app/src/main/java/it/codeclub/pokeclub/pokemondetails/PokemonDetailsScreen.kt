@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,10 +16,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
@@ -91,355 +95,402 @@ fun DetailsScreen(
                     } else {
                         Brush.verticalGradient(listOf(lighterTypeColor, type1Color))
                     }
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(brush = backgroundColorTop)
-                            .padding(8.dp)
-                    ) {
-                        //primo box in alto contenente le informazioni principali del pokemon e il valore dei filtri
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                                .background(
-                                    color = Color(0xFFFFFFFF),
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                .padding(8.dp)
-                        ) {
-                            //prima riga con immagine pokemon, preferito e catturato
-                            Row(
+                            Column(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .align(Alignment.TopStart)
+                                    .fillMaxSize()
+                                    .background(brush = backgroundColorTop)
+                                    .padding(8.dp)
                             ) {
-                                // TODO get real image
-                                Image(
-                                    painter = painterResource(R.drawable.pokemon),
-                                    contentDescription = "pokemon image",
-                                    modifier = Modifier
-                                        .padding(start = 170.dp, top = 8.dp)
-                                        .scale(1.4f)
-                                )
-                                Spacer(modifier = Modifier.width(100.dp))
-                                Image(
-                                    painter = painterResource(favouriteImage),
-                                    contentDescription = stringResource(if (isFavourite) R.string.favourite else R.string.not_favourite),
-                                    modifier = Modifier
-                                        .size(28.dp)
-                                        .padding(end = 3.dp)
-                                        .clickable { isFavourite = !isFavourite }
-                                )
-                                Image(
-                                    painter = painterResource(capturedImage),
-                                    contentDescription = stringResource(if (isCaptured) R.string.captured else R.string.not_captured),
-                                    modifier = Modifier
-                                        .size(28.dp)
-                                        .padding(end = 1.dp)
-                                        .padding(top = 3.dp)
-                                        .clickable { isCaptured = !isCaptured }
-                                )
-                            }
-                            //seconda riga con id e nome del pokemon
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 80.dp, start = 110.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "#${
-                                        pokemonDetails.pokemon.pokemonId.toString()
-                                            .padStart(3, '0')
-                                    }",
-                                    color = Color(0xff505050),
-                                    fontSize = 16.sp,
-                                    fontStyle = FontStyle.Italic,
-                                    fontWeight = FontWeight.Light
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = pokemonName.replaceFirstChar {
-                                        if (it.isLowerCase()) it.titlecase(
-                                            Locale.getDefault()
-                                        ) else it.toString()
-                                    },
-                                    color = Color(0xff505050),
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 20.sp
-                                )
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 0.dp, top = 120.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(end = 4.dp)
-                                        .height(32.dp)
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(getColorForType(pokemonDetails.pokemon.type.name))
-                                        .padding(4.dp),
-                                    contentAlignment = Alignment.Center
+                                LazyColumn(
+                                    modifier = Modifier.fillMaxSize()
                                 ) {
-                                    Text(
-                                        text = pokemonDetails.pokemon.type.name,
-                                        color = Color.White
-                                    )
-                                }
-                                //terza riga con tipo del pokemon
-                                if (pokemonDetails.pokemon.secondType != null) {
-                                    pokemonDetails.pokemon.secondType.let { type ->
+                                    item {
+                                        //primo box in alto contenente le informazioni principali del pokemon e il valore dei filtri
                                         Box(
                                             modifier = Modifier
-                                                .weight(1f)
-                                                .padding(start = 4.dp)
-                                                .height(32.dp)
-                                                .clip(RoundedCornerShape(8.dp))
-                                                .background(getColorForType(pokemonDetails.pokemon.secondType.name))
-                                                .padding(4.dp),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Text(
-                                                text = type.name,
-                                                color = Color.White
-                                            )
-                                        }
-                                    }
-                                } else {
-                                    // caso in cui il pokemon ha un solo tipo
-                                    pokemonDetails.pokemon.type.let {
-                                        Row(
-                                            modifier = Modifier
                                                 .fillMaxWidth()
-                                                .padding(start = 0.dp, top = 0.dp)
+                                                .padding(vertical = 4.dp)
+                                                .background(
+                                                    color = Color(0xFFFFFFFF),
+                                                    shape = RoundedCornerShape(8.dp)
+                                                )
+                                                .padding(8.dp)
                                         ) {
-                                            Box(
+                                            //prima riga con immagine pokemon, preferito e catturato
+                                            Row(
                                                 modifier = Modifier
-                                                    .weight(1f)
-                                                    .padding(end = 4.dp)
-                                                    .height(32.dp)
-                                                    .clip(RoundedCornerShape(8.dp))
-                                                    .background(getColorForType(pokemonDetails.pokemon.type.name))
-                                                    .padding(4.dp),
-                                                contentAlignment = Alignment.Center
+                                                    .fillMaxWidth()
+                                                    .align(Alignment.TopStart)
                                             ) {
-                                                pokemonDetails.pokemon.type.let { it1 ->
+                                                // TODO get real image
+                                                Image(
+                                                    painter = painterResource(R.drawable.pokemon),
+                                                    contentDescription = "pokemon image",
+                                                    modifier = Modifier
+                                                        .align(Alignment.CenterVertically)
+                                                        .weight(1f)
+                                                        .scale(1.4f)
+                                                        .padding(
+                                                            start = 40.dp,
+                                                            top = 10.dp
+                                                        ) //da centrare bene l'immagine appena disponibile la vera immagine del pokemon
+                                                )
+                                                Row(
+                                                    verticalAlignment = Alignment.Top
+                                                ) {
+                                                    Image(
+                                                        painter = painterResource(favouriteImage),
+                                                        contentDescription = stringResource(if (isFavourite) R.string.favourite else R.string.not_favourite),
+                                                        modifier = Modifier
+                                                            .size(28.dp)
+                                                            .padding(end = 3.dp)
+                                                            .padding(top = 3.dp)
+                                                            .clickable {
+                                                                isFavourite = !isFavourite
+                                                            }
+                                                    )
+                                                    Image(
+                                                        painter = painterResource(capturedImage),
+                                                        contentDescription = stringResource(if (isCaptured) R.string.captured else R.string.not_captured),
+                                                        modifier = Modifier
+                                                            .size(28.dp)
+                                                            .padding(end = 1.dp)
+                                                            .padding(top = 3.dp)
+                                                            .clickable { isCaptured = !isCaptured }
+                                                    )
+                                                }
+                                            }
+                                            //seconda riga con id e nome del pokemon
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(top = 80.dp, start = 110.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Text(
+                                                    text = "#${
+                                                        pokemonDetails.pokemon.pokemonId.toString()
+                                                            .padStart(3, '0')
+                                                    }",
+                                                    color = Color(0xff505050),
+                                                    fontSize = 16.sp,
+                                                    fontStyle = FontStyle.Italic,
+                                                    fontWeight = FontWeight.Light
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Text(
+                                                    text = pokemonName.replaceFirstChar {
+                                                        if (it.isLowerCase()) it.titlecase(
+                                                            Locale.getDefault()
+                                                        ) else it.toString()
+                                                    },
+                                                    color = Color(0xff505050),
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 20.sp
+                                                )
+                                            }
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(start = 0.dp, top = 120.dp)
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .weight(1f)
+                                                        .padding(end = 4.dp)
+                                                        .height(32.dp)
+                                                        .clip(RoundedCornerShape(8.dp))
+                                                        .background(getColorForType(pokemonDetails.pokemon.type.name))
+                                                        .padding(4.dp),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
                                                     Text(
-                                                        text = it1.name,
+                                                        text = pokemonDetails.pokemon.type.name,
                                                         color = Color.White
                                                     )
+                                                }
+                                                //terza riga con tipo del pokemon
+                                                if (pokemonDetails.pokemon.secondType != null) {
+                                                    pokemonDetails.pokemon.secondType.let { type ->
+                                                        Box(
+                                                            modifier = Modifier
+                                                                .weight(1f)
+                                                                .padding(start = 4.dp)
+                                                                .height(32.dp)
+                                                                .clip(RoundedCornerShape(8.dp))
+                                                                .background(
+                                                                    getColorForType(
+                                                                        pokemonDetails.pokemon.secondType.name
+                                                                    )
+                                                                )
+                                                                .padding(4.dp),
+                                                            contentAlignment = Alignment.Center
+                                                        ) {
+                                                            Text(
+                                                                text = type.name,
+                                                                color = Color.White
+                                                            )
+                                                        }
+                                                    }
+                                                } else {
+                                                    // caso in cui il pokemon ha un solo tipo
+                                                    pokemonDetails.pokemon.type.let {
+                                                        Row(
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .padding(start = 0.dp, top = 0.dp)
+                                                        ) {
+                                                            Box(
+                                                                modifier = Modifier
+                                                                    .weight(1f)
+                                                                    .padding(end = 4.dp)
+                                                                    .height(32.dp)
+                                                                    .clip(RoundedCornerShape(8.dp))
+                                                                    .background(
+                                                                        getColorForType(
+                                                                            pokemonDetails.pokemon.type.name
+                                                                        )
+                                                                    )
+                                                                    .padding(4.dp),
+                                                                contentAlignment = Alignment.Center
+                                                            ) {
+                                                                pokemonDetails.pokemon.type.let { it1 ->
+                                                                    Text(
+                                                                        text = it1.name,
+                                                                        color = Color.White
+                                                                    )
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                    item {
+
+                                        //secondo box con l'anagrafica del pokemon, ovvero peso ed altezza
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 8.dp)
+                                                .background(
+                                                    color = Color(0xffffffff),
+                                                    shape = RoundedCornerShape(8.dp)
+                                                )
+                                                .padding(8.dp)
+                                        ) {
+                                            Row(
+                                                modifier = Modifier
+                                                    .align(Alignment.TopStart)
+                                                    .padding(start = 0.dp, top = 4.dp)
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .weight(1f)
+                                                        .padding(end = 4.dp)
+                                                        .height(32.dp)
+                                                        .clip(RoundedCornerShape(8.dp))
+                                                        .background(color = Color(0xffffffff))
+                                                        .border(
+                                                            width = 1.dp,
+                                                            color = Color(0xff757575),
+                                                            shape = RoundedCornerShape(8.dp)
+                                                        )
+                                                        .padding(2.dp),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Text(
+                                                        text = pokemonDetails.details.height.toString(),
+                                                        color = Color.Black
+                                                    )
+                                                }
+                                                Box(
+                                                    modifier = Modifier
+                                                        .weight(1f)
+                                                        .padding(start = 4.dp)
+                                                        .height(32.dp)
+                                                        .clip(RoundedCornerShape(8.dp))
+                                                        .background(color = Color(0xffffffff))
+                                                        .border(
+                                                            width = 1.dp,
+                                                            color = Color(0xff757575),
+                                                            shape = RoundedCornerShape(8.dp)
+                                                        )
+                                                        .padding(2.dp),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Text(
+                                                        text = pokemonDetails.details.weight.toString(),
+                                                        color = Color.Black
+                                                    )
+                                                }
+                                            }
+                                            Row(
+                                                modifier = Modifier
+                                                    .align(Alignment.TopStart)
+                                                    .padding(start = 0.dp, top = 40.dp)
+                                            ) {
+                                                Text(
+                                                    text = stringResource(R.string.height),
+                                                    color = Color(0xFF757575),
+                                                    modifier = Modifier
+                                                        .weight(1f)
+                                                        .padding(start = 65.dp, end = 8.dp)
+                                                        .align(Alignment.CenterVertically)
+                                                )
+                                                Text(
+                                                    text = stringResource(R.string.weight),
+                                                    color = Color(0xFF757575),
+                                                    modifier = Modifier
+                                                        .weight(1f)
+                                                        .padding(
+                                                            start = 75.dp,
+                                                            end = 8.dp
+                                                        ) // Esempio di padding personalizzato
+                                                        .align(Alignment.CenterVertically)
+                                                )
+                                            }
+                                        }
+                                    }
+                                    item {
+                                        //abilità del pokemon: testo + box
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                        ) {
+                                            Text(
+                                                text = stringResource(R.string.ability),
+                                                fontSize = 16.sp,
+                                                color = Color(0xffffffff),
+                                                textAlign = TextAlign.Center,
+                                                modifier = Modifier
+                                                    .align(Alignment.Center)
+                                                    .padding(top = 4.dp)
+                                            )
+                                        }
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 8.dp)
+                                                .background(
+                                                    color = Color(0xffffffff),
+                                                    shape = RoundedCornerShape(8.dp)
+                                                )
+                                                .padding(8.dp)
+                                        ) {
+                                            Column {
+                                                //generezione dinamiche delle abilità del pokemon
+                                                pokemonInfo.value.data!!.abilities.forEachIndexed { index, ability ->
+                                                    AbilityRow(ability = ability)
+                                                    if (index < pokemonInfo.value.data!!.abilities.size - 1) {
+                                                        Spacer(modifier = Modifier.height(8.dp))
+                                                    }
                                                 }
                                             }
                                         }
                                     }
-                                }
-                            }
+                                    item {
 
-                        }
+                                        val statsValues = listOf(
+                                            pokemonDetails.details.lp,
+                                            pokemonDetails.details.attack,
+                                            pokemonDetails.details.defense,
+                                            pokemonDetails.details.spAttack,
+                                            pokemonDetails.details.spDefense,
+                                            pokemonDetails.details.speed
+                                        )
 
-                        //secondo box con l'anagrafica del pokemon, ovvero peso ed altezza
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp)
-                                .background(
-                                    color = Color(0xffffffff),
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                .padding(8.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .align(Alignment.TopStart)
-                                    .padding(start = 0.dp, top = 4.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(end = 4.dp)
-                                        .height(32.dp)
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(color = Color(0xffffffff))
-                                        .border(
-                                            width = 1.dp,
-                                            color = Color(0xff757575),
-                                            shape = RoundedCornerShape(8.dp)
+                                        val weightValues = calculateFloatList(statsValues)
+
+                                        val colorStatsList = listOf(
+                                            Color(0xFFE1FFD3),
+                                            Color(0xFFFFFBE6),
+                                            Color(0xFFFFC499),
+                                            Color(0xFFB2E3EF),
+                                            Color(0xFF9EB5FF),
+                                            Color(0xFFEF8DEC)
                                         )
-                                        .padding(2.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = pokemonDetails.details.height.toString(),
-                                        color = Color.Black
-                                    )
-                                }
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(start = 4.dp)
-                                        .height(32.dp)
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(color = Color(0xffffffff))
-                                        .border(
-                                            width = 1.dp,
-                                            color = Color(0xff757575),
-                                            shape = RoundedCornerShape(8.dp)
+
+                                        val statsName = listOf(
+                                            stringResource(R.string.lp),
+                                            stringResource(R.string.attack),
+                                            stringResource(R.string.defense),
+                                            stringResource(R.string.sp_attack),
+                                            stringResource(R.string.sp_defense),
+                                            stringResource(R.string.speed)
                                         )
-                                        .padding(2.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = pokemonDetails.details.weight.toString(),
-                                        color = Color.Black
-                                    )
-                                }
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .align(Alignment.TopStart)
-                                    .padding(start = 0.dp, top = 40.dp)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.height),
-                                    color = Color(0xFF757575),
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(start = 65.dp, end = 8.dp)
-                                        .align(Alignment.CenterVertically)
-                                )
-                                Text(
-                                    text = stringResource(R.string.weight),
-                                    color = Color(0xFF757575),
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(
-                                            start = 75.dp,
-                                            end = 8.dp
-                                        ) // Esempio di padding personalizzato
-                                        .align(Alignment.CenterVertically)
-                                )
-                            }
-                        }
-                        //abilità del pokemon: testo + box
-                        Text(
-                            text = stringResource(R.string.ability),
-                            fontSize = 16.sp,
-                            color = Color(0xffffffff),
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(top = 4.dp)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp)
-                                .background(
-                                    color = Color(0xffffffff),
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                .padding(8.dp)
-                        ) {
-                            Column {
-                                //generezione dinamiche delle abilità del pokemon
-                                pokemonInfo.value.data!!.abilities.forEachIndexed { index, ability ->
-                                    AbilityRow(ability = ability)
-                                    if (index < pokemonInfo.value.data!!.abilities.size - 1) {
-                                        Spacer(modifier = Modifier.height(8.dp))
+
+                                        val total = statsValues?.sum() ?: 0
+
+                                        //statistiche base del pokemon: testo + box con i valori delle statistiche
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                        ) {
+                                            Text(
+                                                text = stringResource(R.string.stats),
+                                                fontSize = 16.sp,
+                                                color = Color(0xffffffff),
+                                                modifier = Modifier
+                                                    .align(Alignment.Center)
+                                                    .padding(top = 4.dp)
+                                            )
+                                        }
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 8.dp)
+                                                .background(
+                                                    color = Color(0xFFFFFFFF),
+                                                    shape = RoundedCornerShape(8.dp)
+                                                )
+                                                .padding(8.dp)
+                                        ) {
+                                            Column {
+                                                //indicizzo statsName per nome della stat, valore, lo spazio che occupa nella riga e il colore
+                                                //questo per ogni statistica di base
+                                                statsName.forEachIndexed { index, name ->
+                                                    val value = statsValues[index].toFloat()
+                                                    val weight = weightValues[index]
+                                                    val color =
+                                                        colorStatsList.getOrElse(index) { Color.Gray }
+                                                    //invoco la funzione che genera la riga della statistica con le caratteristiche in questione
+                                                    createStatRow(
+                                                        name,
+                                                        value.toInt().toString(),
+                                                        weight,
+                                                        color
+                                                    )()
+                                                    Spacer(modifier = Modifier.height(8.dp))
+                                                }
+                                            }
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(top = 260.dp)
+                                                    .align(Alignment.Center)
+                                            ) {
+                                                Text(
+                                                    text = buildString {
+                                                        append(stringResource(R.string.total))
+                                                        append(" : ")
+                                                        append(total)
+                                                    },
+                                                    fontSize = 16.sp,
+                                                    color = Color(0xff505050),
+                                                    textAlign = TextAlign.Center,
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(top = 16.dp)
+                                                )
+                                            }
+                                        }
                                     }
+
                                 }
                             }
-                        }
-
-                        val statsValues = listOf(
-                            pokemonDetails.details.lp,
-                            pokemonDetails.details.attack,
-                            pokemonDetails.details.defense,
-                            pokemonDetails.details.spAttack,
-                            pokemonDetails.details.spDefense,
-                            pokemonDetails.details.speed
-                        )
-
-                        val weightValues = calculateFloatList(statsValues)
-
-                        val colorStatsList = listOf(
-                            Color(0xFFE1FFD3),
-                            Color(0xFFFFFBE6),
-                            Color(0xFFFFC499),
-                            Color(0xFFB2E3EF),
-                            Color(0xFF9EB5FF),
-                            Color(0xFFEF8DEC)
-                        )
-
-                        val statsName = listOf(
-                            stringResource(R.string.lp),
-                            stringResource(R.string.attack),
-                            stringResource(R.string.defense),
-                            stringResource(R.string.sp_attack),
-                            stringResource(R.string.sp_defense),
-                            stringResource(R.string.speed)
-                        )
-
-                        val total = statsValues?.sum() ?: 0
-
-                        //statistiche base del pokemon: testo + box con i valori delle statistiche
-                        Text(
-                            text = stringResource(R.string.stats),
-                            fontSize = 16.sp,
-                            color = Color(0xffffffff),
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(top = 4.dp)
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp)
-                                .background(
-                                    color = Color(0xFFFFFFFF),
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                .padding(8.dp)
-                        ) {
-                            Column {
-                                //indicizzo statsName per nome della stat, valore, lo spazio che occupa nella riga e il colore
-                                //questo per ogni statistica di base
-                                statsName.forEachIndexed { index, name ->
-                                    val value = statsValues[index].toFloat()
-                                    val weight = weightValues[index]
-                                    val color = colorStatsList.getOrElse(index) { Color.Gray }
-                                    //invoco la funzione che genera la riga della statistica con le caratteristiche in questione
-                                    createStatRow(name, value.toInt().toString(), weight, color)()
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                }
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 260.dp)
-                                    .align(Alignment.Center)
-                            ) {
-                                Text(
-                                    text = buildString {
-                                        append(stringResource(R.string.total))
-                                        append(" : ")
-                                        append(total)
-                                    },
-                                    fontSize = 16.sp,
-                                    color = Color(0xff505050),
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 16.dp)
-                                )
-                            }
-                        }
-
-                    }
                 }
             }
         }

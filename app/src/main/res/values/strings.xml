@@ -24,10 +24,10 @@
     <string name="height">Height</string>
     <string name="weight">Weight</string>
     <string name="lp">LP</string>
-    <string name="attack">Attack</string>
-    <string name="defense">Defense</string>
-    <string name="sp_attack">Sp. att.</string>
-    <string name="sp_defense">Sp. def.</string>
+    <string name="attack">Att</string>
+    <string name="defense">Def</string>
+    <string name="sp_attack">Sp. Att</string>
+    <string name="sp_defense">Sp. Def</string>
     <string name="speed">Speed</string>
     <string name="total">Total</string>
 
