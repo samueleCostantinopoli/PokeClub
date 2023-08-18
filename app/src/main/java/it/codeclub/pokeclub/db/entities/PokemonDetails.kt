@@ -1,6 +1,5 @@
 package it.codeclub.pokeclub.db.entities
 
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 

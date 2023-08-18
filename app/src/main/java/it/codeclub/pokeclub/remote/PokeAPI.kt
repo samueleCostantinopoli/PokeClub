@@ -1,6 +1,5 @@
 package it.codeclub.pokeclub.remote
 
-import it.codeclub.pokeclub.remote.data.Ability
 import it.codeclub.pokeclub.remote.data.AbilityDetails
 import it.codeclub.pokeclub.remote.data.AbilityList
 import it.codeclub.pokeclub.remote.data.Pokemon

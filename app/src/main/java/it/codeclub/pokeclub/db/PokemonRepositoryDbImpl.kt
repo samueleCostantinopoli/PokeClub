@@ -1,7 +1,6 @@
 package it.codeclub.pokeclub.db
 
 import dagger.hilt.android.scopes.ActivityScoped
-import it.codeclub.pokeclub.R
 import it.codeclub.pokeclub.db.entities.Ability
 import it.codeclub.pokeclub.db.entities.AbilityWithPokemon
 import it.codeclub.pokeclub.db.entities.PokemonAbilityCrossRef
@@ -9,7 +8,6 @@ import it.codeclub.pokeclub.db.entities.PokemonAndDetails
 import it.codeclub.pokeclub.db.entities.PokemonDetails
 import it.codeclub.pokeclub.db.entities.PokemonEntity
 import it.codeclub.pokeclub.exeptions.RepositoryException
-import it.codeclub.pokeclub.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

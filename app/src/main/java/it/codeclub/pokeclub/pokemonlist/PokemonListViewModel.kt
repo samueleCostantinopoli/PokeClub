@@ -25,7 +25,7 @@ class PokemonListViewModel @Inject constructor(
 
     private var cachedPokemonList = listOf<PokemonEntity>()
     private var isSearchStarting = true
-    var isSearching = mutableStateOf(false)
+    private var isSearching = mutableStateOf(false)
 
     init {
         loadPokemon()

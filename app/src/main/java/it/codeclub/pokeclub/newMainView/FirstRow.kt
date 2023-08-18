@@ -1,13 +1,11 @@
-package it.codeclub.pokeclub.NewMainView
+package it.codeclub.pokeclub.newMainView
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -25,23 +22,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.codeclub.pokeclub.R
 import it.codeclub.pokeclub.ui.theme.AppGrey
+import timber.log.Timber
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun firstRow(
+fun FirstRow(
     favourite: MutableState<Int>,
     smallPokeballClick: MutableState<Int>,
     isSearchExpanded: MutableState<Boolean>,
@@ -106,7 +101,7 @@ fun firstRow(
                             //salvo la ricerca di dell'utente nella variabile che verrà usata per la query
                             saveSearch.value = searchText.value
                             //verifica che ilk testo sia effettivamente preso
-                            Log.d("MyTag",saveSearch.value )
+                            Timber.tag("MyTag").d(saveSearch.value)
                         }
                     ),
                     //questo permette di continuare a scorrere orizzontalmente mentre si scrive sul
@@ -138,7 +133,7 @@ fun firstRow(
                         .fillMaxWidth()
                         .padding(top = 16.dp, start = 6.dp, end = 0.dp)
                         .background(Color.White, shape = CircleShape),
-                    colors = TextFieldDefaults.textFieldColors(
+                    colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent,
@@ -171,7 +166,7 @@ fun firstRow(
                             //salvo la ricerca di dell'utente nella variabile che verrà usata per la query
                             saveAbility.value = searchAbility.value
                             //verifica che ilk testo sia effettivamente preso
-                            Log.d("MyTag",saveAbility.value )
+                            Timber.tag("MyTag").d(saveAbility.value)
                         }
                     ),
                     //questo permette di continuare a scorrere orizzontalmente mentre si scrive sul
@@ -203,7 +198,7 @@ fun firstRow(
                         .fillMaxWidth()
                         .padding(top = 16.dp, start = 6.dp, end = 0.dp)
                         .background(Color.White, shape = CircleShape),
-                    colors = TextFieldDefaults.textFieldColors(
+                    colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent,

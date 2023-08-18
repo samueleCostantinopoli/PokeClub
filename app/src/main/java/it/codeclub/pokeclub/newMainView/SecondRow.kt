@@ -1,6 +1,5 @@
-package it.codeclub.pokeclub.NewMainView
+package it.codeclub.pokeclub.newMainView
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,10 +7,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,10 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,21 +33,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
 import it.codeclub.pokeclub.R
-import it.codeclub.pokeclub.db.entities.PokemonType
 import it.codeclub.pokeclub.pokemonlist.PokemonListViewModel
 import it.codeclub.pokeclub.pokemonlist.intToColor
 import it.codeclub.pokeclub.ui.theme.AppGrey
-import it.codeclub.pokeclub.ui.theme.bug
 
 @Composable
-fun secondRow(
+fun SecondRow(
     navController: NavController,
     boxVersion: MutableState<Boolean>,
     boxType: MutableState<Boolean>,
@@ -189,9 +178,7 @@ fun secondRow(
                         //.background(color)
                    // contentAlignment = Alignment.TopCenter
                 ) {
-                    Column(
-                        //modifier = Modifier.align(Alignment.Center)
-                    ) {
+                    Column{
                         Row(
                             modifier = Modifier
                                 .padding(start = 8.dp, top = 8.dp)
@@ -209,9 +196,7 @@ fun secondRow(
                                 modifier = Modifier.padding(start = 8.dp, end = 8.dp)
                             )
                             // Box creato per avere una dimensione fissa del testo "nome pokemon"
-                            Box(
-
-                            ) {
+                            Box{
                                 Text(
                                     text = pokemon.name,
                                     fontSize = 18.sp,

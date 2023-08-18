@@ -6,8 +6,6 @@ import it.codeclub.pokeclub.db.entities.PokemonAbilityCrossRef
 import it.codeclub.pokeclub.db.entities.PokemonAndDetails
 import it.codeclub.pokeclub.db.entities.PokemonDetails
 import it.codeclub.pokeclub.db.entities.PokemonEntity
-import it.codeclub.pokeclub.db.entities.PokemonWithAbilities
-import it.codeclub.pokeclub.utils.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface PokemonRepository {

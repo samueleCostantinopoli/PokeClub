@@ -2,11 +2,9 @@ package it.codeclub.pokeclub.db
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import it.codeclub.pokeclub.db.entities.PokemonType
-import timber.log.Timber
 import java.io.ByteArrayOutputStream
 
 @ProvidedTypeConverter

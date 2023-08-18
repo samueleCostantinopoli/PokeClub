@@ -81,7 +81,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-
 @Preview
 @Composable
 fun Call() {
@@ -114,13 +113,13 @@ fun PokedexScreen(
     pokemonListViewModel: PokemonListViewModel = hiltViewModel()
 ) {
 
-    var saveSearch = remember { mutableStateOf("") }
+    val saveSearch = remember { mutableStateOf("") }
     //variabili che permettono di gestire la keyboard della barra ricerca
     // ------------------------------------------
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     // ------------------------------------------
-    var searchText = remember { mutableStateOf("") }
+    val searchText = remember { mutableStateOf("") }
     //variabile utilizzata per capire se l'utente ha cliccato su cerca
     var isSearch by remember { mutableStateOf(false) }
     var rotate by remember { mutableStateOf(false) }
@@ -317,7 +316,7 @@ fun PokedexScreen(
                             .background(Color.White, shape = CircleShape),
                         textStyle = TextStyle(color = Color.Black, fontSize = 20.sp),
                         shape = CircleShape,
-                        colors = TextFieldDefaults.textFieldColors(
+                        colors = TextFieldDefaults.colors(
                             //backgroundColor = Color.DarkGray,
                             cursorColor = Color.White,
                             //textColor = Color.White,
@@ -467,25 +466,6 @@ fun PokedexScreen(
             }
         }
 
-        if (boxAbility.value) {
-            //TODO ricerca abilità
-        }
-        /*
-        DisposableEffect(isClickOutsideHandledVersion){
-            if(isClickOutsideHandledVersion){
-                boxVersion = false
-                isClickOutsideHandledVersion = false
-            }
-            onDispose { }
-        }
-
-        DisposableEffect(isClickOutsideHandledType){
-            if(isClickOutsideHandledType){
-                boxType = false
-                isClickOutsideHandledType = false
-            }
-            onDispose { }
-        }*/
 
         val pokemonList by remember { pokemonListViewModel.pokemonList }
 

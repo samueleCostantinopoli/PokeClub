@@ -1,7 +1,6 @@
-package it.codeclub.pokeclub.NewMainView
+package it.codeclub.pokeclub.newMainView
 
-import android.util.Log
-import androidx.compose.animation.ExperimentalAnimationApi
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -17,18 +16,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -39,7 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
@@ -75,10 +70,11 @@ import it.codeclub.pokeclub.ui.theme.steel
 import it.codeclub.pokeclub.ui.theme.water
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
+@SuppressLint("MutableCollectionMutableState")
 @OptIn(
-    ExperimentalAnimationApi::class, ExperimentalComposeUiApi::class,
-    ExperimentalMaterial3Api::class
+    ExperimentalComposeUiApi::class
 )
 @Composable
 fun MainView(
@@ -96,41 +92,41 @@ fun MainView(
 
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
-    var searchText = remember { mutableStateOf("") }
-    var saveSearch = remember { mutableStateOf("") }
+    val searchText = remember { mutableStateOf("") }
+    val saveSearch = remember { mutableStateOf("") }
 
     //variabile utilizzata per capire se l'utente ha cliccato su ability
     val isAbilityClicked = remember { mutableStateOf(false) }
-    var searchAbility = remember { mutableStateOf("") }
-    var saveAbility = remember { mutableStateOf("") }
+    val searchAbility = remember { mutableStateOf("") }
+    val saveAbility = remember { mutableStateOf("") }
     //variabile utilizzata per capire se l'utente ha cliccato su cerca
     val isSearchExpanded = remember { mutableStateOf(false) }
-    var favourite = remember {
+    val favourite = remember {
         mutableStateOf(0)
-    };
-    var smallPokeballClick = remember {
+    }
+    val smallPokeballClick = remember {
         mutableStateOf(0)
-    };
+    }
 
     //variabili usate per capire se bisogna aprire i box dei diversi filtri
-    var boxVersion = remember { mutableStateOf(false) }
-    var boxType = remember { mutableStateOf(false) }
+    val boxVersion = remember { mutableStateOf(false) }
+    val boxType = remember { mutableStateOf(false) }
 
     //variabile utilizzata per capire se e' la prima volta che l'utente ha cliccato sul box version
     //in quel caso i selected iniziali devono per forza essere settati tutti a false poiche l'utente
     //non ha ancora cliccato su nessuna versione, perciò i background saranno tutti bianchi
-    var firstTimeVersion= remember {
+    val firstTimeVersion= remember {
         mutableStateOf(0)
     }
 
     //variabile utilizzata dal sensei cantarini, qui andrà il numero di versioni che ci sono
     //sulla api, per ora la metto statica per vedere se funziona correttamente
-    var numeroVersioni=8
+    val numeroVersioni=8
 
     //lista che contiene le versioni che l'utente vuole filtrare per un pokemon
     //potrebbe contenere ad esempio ( 1,2,3) se l'utente vuole un pokemon che appartiene
     //alle prime 3 versioni
-    var versionList = remember { mutableStateOf(mutableListOf<String>()) }
+    val versionList = remember { mutableStateOf(mutableListOf<String>()) }
 
     //variabile utilizzata per capire se l'utente ha selezionato un elemento nel box value
     //se l'ha selezionato il backgound dell'elemento sarà di un colore diverso dagli altri
@@ -140,7 +136,7 @@ fun MainView(
 
     //variabile che contiene al lista dei tipi, anche questa dovrà essere popolata dal
     //maestro cantarini, per ora aggiungo un paio di stringhe statiche che rappresentano i tipi
-    var  typeList = remember { mutableStateOf(mutableListOf<String>()) }
+    val  typeList = remember { mutableStateOf(mutableListOf<String>()) }
 
     //questa lista non sarà presente
     val pokemonTypes = listOf("BUG",
@@ -168,7 +164,7 @@ fun MainView(
 
     //variabile utilizzata per capire se è la prima volta che si clicca sul box type ( duale
     // di first time version
-    var firstTimeType= remember {
+    val firstTimeType= remember {
         mutableStateOf(0)
     }
 
@@ -178,9 +174,9 @@ fun MainView(
                 .background(AppGrey)
                 .fillMaxWidth()
         ) {
-            val expandedWidth = maxWidth - 16.dp * 2
+            //val expandedWidth = maxWidth - 16.dp * 2
             //prima row che contiene nome dell'app stella impostazioni e pokeball cattura
-            firstRow(
+            FirstRow(
                 favourite,
                 smallPokeballClick,
                 isSearchExpanded,
@@ -194,7 +190,7 @@ fun MainView(
             )
 
             //second row ( button version type e ability) piu lazy column che mostra i pokemon
-            secondRow(
+            SecondRow(
                 navController,
                 boxVersion,
                 boxType,
@@ -206,8 +202,8 @@ fun MainView(
             //pokeball finale in basso a sinistra
             //button pokeball che ruota
             Column(modifier = Modifier.align(Alignment.BottomEnd)) {
-                Box(){
-                    Column(){
+                Box{
+                    Column{
                         if(rotate) {
                             //Button(
                             //    onClick = {
@@ -383,7 +379,7 @@ fun MainView(
                                     //background diventerà grigio ( facendo capire che e' stato selezionato) altrimenti
                                     //sarà bianco
 
-                                    var backgroundColor =
+                                    val backgroundColor =
                                         if (selectedItemStates[index]) Color.Gray else Color.White
 
                                     // qui c'e' la card che non e' altro composta da un box e al suo interno
@@ -437,7 +433,7 @@ fun MainView(
                                         //chiudo il box, le variabili version sono state già salvate nella lista
                                         boxVersion.value = false
                                         for (i in 0 until versionList.value.size) {
-                                            Log.d("MyTag", versionList.value[i])
+                                            Timber.tag("MyTag").d(versionList.value[i])
                                         }
                                     }
                                     .border(
@@ -519,7 +515,7 @@ fun MainView(
 
 
 
-                                    var backgroundColor=if (selectedTypeState[index]) getColorForType(pokemonTypes[index]) else
+                                    val backgroundColor=if (selectedTypeState[index]) getColorForType(pokemonTypes[index]) else
                                         Color.White
                                     // qui c'e' la card che non e' altro composta da un box e al suo interno
                                     // il testo che indica il nuomero di versione
@@ -577,7 +573,7 @@ fun MainView(
                                         //chiudo il box, le variabili version sono state già salvate nella lista
                                         boxType.value = false
                                         for (i in 0 until typeList.value.size) {
-                                            Log.d("MyTag", typeList.value[i])
+                                            Timber.tag("MyTag").d(typeList.value[i])
                                         }
                                     }
                                     .border(

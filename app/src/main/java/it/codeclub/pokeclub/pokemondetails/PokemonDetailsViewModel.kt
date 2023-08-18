@@ -1,6 +1,5 @@
 package it.codeclub.pokeclub.pokemondetails
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +8,6 @@ import it.codeclub.pokeclub.db.PokemonRepository
 import it.codeclub.pokeclub.db.entities.PokemonAndDetails
 import it.codeclub.pokeclub.utils.Resource
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
