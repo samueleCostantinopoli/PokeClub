@@ -257,7 +257,7 @@ fun FirstRow(
             modifier = Modifier.padding(top = 17.dp, bottom = 0.dp, end = 6.dp)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.settings),
+                painter = painterResource(id = R.drawable.colored_settings),
                 contentDescription = "settings",
                 modifier = Modifier.size(40.dp)
             )

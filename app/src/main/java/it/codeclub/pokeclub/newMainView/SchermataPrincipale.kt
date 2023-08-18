@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import it.codeclub.pokeclub.NewMainView.secondRow
 import it.codeclub.pokeclub.R
 import it.codeclub.pokeclub.pokemonlist.PokemonListViewModel
 import it.codeclub.pokeclub.ui.theme.AppGrey
@@ -190,7 +191,7 @@ fun MainView(
             )
 
             //second row ( button version type e ability) piu lazy column che mostra i pokemon
-            SecondRow(
+            secondRow(
                 navController,
                 boxVersion,
                 boxType,

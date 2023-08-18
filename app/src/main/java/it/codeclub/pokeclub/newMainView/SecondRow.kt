@@ -1,5 +1,6 @@
-package it.codeclub.pokeclub.newMainView
+package it.codeclub.pokeclub.NewMainView
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -7,8 +8,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,24 +28,35 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import it.codeclub.pokeclub.R
+import it.codeclub.pokeclub.db.entities.PokemonType
+import it.codeclub.pokeclub.newMainView.Dimensions
+import it.codeclub.pokeclub.newMainView.adjustColorIntensity
 import it.codeclub.pokeclub.pokemonlist.PokemonListViewModel
 import it.codeclub.pokeclub.pokemonlist.intToColor
 import it.codeclub.pokeclub.ui.theme.AppGrey
+import it.codeclub.pokeclub.ui.theme.bug
 
 @Composable
-fun SecondRow(
+fun secondRow(
     navController: NavController,
     boxVersion: MutableState<Boolean>,
     boxType: MutableState<Boolean>,
@@ -162,131 +176,126 @@ fun SecondRow(
                 // Box principale per gli elementi della Lazy Column
                 val color = intToColor(pokemon.dominantColor)
                 pokemon.dominantColor
-                Spacer(Modifier.height(18.dp) )
-                Row(modifier = Modifier
-                    .background(color, RoundedCornerShape(15.dp))
-                    .padding(bottom = 0.dp).fillMaxWidth().height(83.dp).clickable {
-                        //quando si clicca il box bisogna navigare nella schermata dettaglio
-                        navController.navigate("pokemon_detail_screen/${pokemon.name}")
-                    }
-                    //.clip(RoundedCornerShape(15.dp)))
-                ){
+                Spacer(Modifier.height(18.dp))
                 Row(
-                    modifier = Modifier.width(284.dp)
+                    modifier = Modifier
+                        .background(color, RoundedCornerShape(15.dp))
                         .padding(bottom = 0.dp)
-                        .clip(RoundedCornerShape(15.dp))
-                        //.background(color)
-                   // contentAlignment = Alignment.TopCenter
+                        .fillMaxWidth()
+                        .height(83.dp).clickable {
+                    //quando si clicca il box bisogna navigare nella schermata dettaglio
+                     navController.navigate("pokemon_detail_screen/${pokemon.name}")
+                     }
+                    //.clip(RoundedCornerShape(15.dp)))
                 ) {
-                    Column{
-                        Row(
-                            modifier = Modifier
-                                .padding(start = 8.dp, top = 8.dp)
-
+                    Row(
+                        modifier = Modifier//.weight(1f)
+                            .padding(bottom = 0.dp)
+                           // .clip(RoundedCornerShape(15.dp))
+                        //.background(color)
+                        // contentAlignment = Alignment.TopCenter
+                    ) {
+                        Column(
+                            //modifier = Modifier.align(Alignment.Center)
                         ) {
-                            Spacer(Modifier.height(18.dp) )
-                            // Numero del pokemon nel pokedex
-                            Text(
-                                text = "#${pokemon.pokemonId.toString().padStart(3, '0')}",
-                                fontSize = 19.sp,
-                                fontStyle = FontStyle.Italic,
-                                //come colore inserisco il colore dominante con intensità più alta
-                                color = if (isDominantBlack(color) || isDominantDarkBrown(color)) Color.LightGray
-                                else adjustColorIntensity(color, 0.4f),
-                                modifier = Modifier.padding(start = 8.dp, end = 8.dp)
-                            )
-                            // Box creato per avere una dimensione fissa del testo "nome pokemon"
-                            Box{
+                            Row(
+                                modifier = Modifier
+                                    .padding(start = 6.dp, top = 8.dp)
+
+                            ) {
+                                Spacer(Modifier.height(18.dp))
+                                // Numero del pokemon nel pokedex
                                 Text(
-                                    text = pokemon.name,
-                                    fontSize = 18.sp,
-                                    color = if (isDominantBlack(color) || isDominantDarkBrown(color)) Color.LightGray
+                                    text = "#${pokemon.pokemonId.toString().padStart(3, '0')}",
+                                    fontSize = 19.sp,
+                                    fontStyle = FontStyle.Italic,
+                                    //come colore inserisco il colore dominante con intensità più alta
+                                    color = if (isDominantBlack(color) || isDominantDarkBrown(
+                                            color
+                                        )
+                                    ) Color.LightGray
                                     else adjustColorIntensity(color, 0.4f),
-                                    modifier = Modifier.padding(top = 1.dp)
+                                    modifier = Modifier.padding(start = 6.dp, end = 6.dp)
                                 )
-                            }
-                            // Immagine della stella per indicare se il pokemon è tra i preferiti
+                                // Box creato per avere una dimensione fissa del testo "nome pokemon"
+                                Box(
+
+                                ) {
+                                    Text(
+                                        text = pokemon.name,
+                                        fontSize = 18.sp,
+                                        color = if (isDominantBlack(color) || isDominantDarkBrown(
+                                                color
+                                            )
+                                        ) Color.LightGray
+                                        else adjustColorIntensity(color, 0.4f),
+                                        modifier = Modifier.padding(top = 1.dp)
+                                    )
+                                }
+                                // Immagine della stella per indicare se il pokemon è tra i preferiti
                                 Box(
                                     modifier = Modifier
                                         // .clickable {
                                         //pokemonListViewModel.toggleFavourite(pokemon = pokemon)
                                         //}
-                                        .padding(start = 16.dp), //contentAlignment = Alignment.End
+                                        .padding(start = 10.dp), //contentAlignment = Alignment.End
                                 ) {
                                     val imageRes =
-                                        if (pokemon.isFavourite) R.drawable.fillstar else R.drawable.star
+                                        if (pokemon.isFavourite) R.drawable.fillstar else if(
+                                            (isDominantBlack(color) || isDominantDarkBrown(
+                                                color
+                                            ))) R.drawable.baseline_star_outline_24 else R.drawable.star
                                     Image(
                                         painter = painterResource(imageRes),
                                         contentDescription = stringResource(
                                             if (pokemon.isFavourite) R.string.favourite else R.string.not_favourite
                                         ),
-                                        modifier = Modifier.clickable {
-                                            pokemonListViewModel.toggleFavourite(
-                                                pokemon = pokemon
-                                            )
-                                        }
-                                            .size(height = 30.dp, width = 30.dp)
+                                        modifier = Modifier
+                                            .clickable {
+                                                pokemonListViewModel.toggleFavourite(
+                                                    pokemon = pokemon
+                                                )
+                                            }
+                                            .size(height = 25.dp, width = 25.dp)
                                             .align(
                                                 Alignment.CenterEnd
                                             )
                                     )
                                 }
 
-                            // Immagine della pokeball per indicare se il pokemon è nella mia squadra
-                            Box(
-                                modifier = Modifier.clickable {
-                                    pokemonListViewModel.toggleCaptured(pokemon = pokemon)
-                                }.padding(start = 6.dp),
-                                //contentAlignment = Alignment.Center
-                            ) {
-                                val imageRes =
-                                    if (pokemon.isCaptured) R.drawable.smallpokeball else R.drawable.smallpokeballempty
-                                Image(
-                                    painter = painterResource(imageRes),
-                                    contentDescription = stringResource(
-                                        if (pokemon.isCaptured) R.string.captured else R.string.not_captured
-                                    ),
-                                    modifier = Modifier
-                                        .size(height = 30.dp, width = 30.dp)
-                                        .align(
-                                            Alignment.CenterEnd
-                                        )
-                                )
-                            }
-
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier.padding(bottom = 5.dp)
-                        ) {
-                            // Box che contiene il "tipo" del pokemon
-                            Box(
-                                modifier = Modifier
-                                    .padding(start = 18.dp, top = 10.dp)
-                                    .border(
-                                        BorderStroke(
-                                            1.dp,
-                                            if (isDominantBlack(color) || isDominantDarkBrown(color)) Color.LightGray
-                                            else Color.Black
-                                        ),
-                                        shape = RoundedCornerShape(2.dp),
-                                    )
-                                    .padding(start = 4.dp)
-                            ) {
-                                Text(
-                                    text = "   " + stringResource(pokemon.type.value) + "   ",
-                                    fontSize = 16.sp,
-                                    modifier = Modifier.align(Alignment.Center),
-                                    color = if (isDominantBlack(color) || isDominantDarkBrown(color)) Color.LightGray
-                                    else Color.Black,
-                                )
-                            }
-
-                            // Secondo box per i pokemon che hanno un doppio tipo
-                            pokemon.secondType?.let {
+                                // Immagine della pokeball per indicare se il pokemon è nella mia squadra
                                 Box(
                                     modifier = Modifier
-                                        .padding(start = 6.dp, top = 10.dp)
+                                        .clickable {
+                                            pokemonListViewModel.toggleCaptured(pokemon = pokemon)
+                                        }
+                                        .padding(start = 5.dp),
+                                    //contentAlignment = Alignment.Center
+                                ) {
+                                    val imageRes =
+                                        if (pokemon.isCaptured) R.drawable.smallpokeball else R.drawable.smallpokeballempty
+                                    Image(
+                                        painter = painterResource(imageRes),
+                                        contentDescription = stringResource(
+                                            if (pokemon.isCaptured) R.string.captured else R.string.not_captured
+                                        ),
+                                        modifier = Modifier
+                                            .size(height = 25.dp, width = 25.dp)
+                                            .align(
+                                                Alignment.CenterEnd
+                                            )
+                                    )
+                                }
+
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                modifier = Modifier.padding(bottom = 5.dp)
+                            ) {
+                                // Box che contiene il "tipo" del pokemon
+                                Box(
+                                    modifier = Modifier
+                                        .padding(start = 10.dp, top = 10.dp)
                                         .border(
                                             BorderStroke(
                                                 1.dp,
@@ -301,7 +310,7 @@ fun SecondRow(
                                         .padding(start = 4.dp)
                                 ) {
                                     Text(
-                                        text = "   " + stringResource(pokemon.secondType.value) + "   ",
+                                        text = "   " + stringResource(pokemon.type.value) + "   ",
                                         fontSize = 16.sp,
                                         modifier = Modifier.align(Alignment.Center),
                                         color = if (isDominantBlack(color) || isDominantDarkBrown(
@@ -311,28 +320,62 @@ fun SecondRow(
                                         else Color.Black,
                                     )
                                 }
+
+                                // Secondo box per i pokemon che hanno un doppio tipo
+                                pokemon.secondType?.let {
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(start = 5.dp, top = 10.dp)
+                                            .border(
+                                                BorderStroke(
+                                                    1.dp,
+                                                    if (isDominantBlack(color) || isDominantDarkBrown(
+                                                            color
+                                                        )
+                                                    ) Color.LightGray
+                                                    else Color.Black
+                                                ),
+                                                shape = RoundedCornerShape(2.dp),
+                                            )
+                                            .padding(start = 4.dp)
+                                    ) {
+                                        Text(
+                                            text = "   " + stringResource(pokemon.secondType.value) + "   ",
+                                            fontSize = 16.sp,
+                                            modifier = Modifier.align(Alignment.Center),
+                                            color = if (isDominantBlack(color) || isDominantDarkBrown(
+                                                    color
+                                                )
+                                            ) Color.LightGray
+                                            else Color.Black,
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
-                }
-                    Box(modifier = Modifier.fillMaxSize()
-                        //.size(110.dp, 87.dp)
-                        //.fillMaxHeight()
-                        //.align(Alignment.CenterEnd)
-                        .clip(RoundedCornerShape(topStart = 35.dp))
-                        .clip(RoundedCornerShape(bottomStart = 35.dp)),
-                    ){
+                    Spacer(modifier = Modifier.weight(1f))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(start = 5.dp)
+
+                            .clip(RoundedCornerShape(topStart = 35.dp, bottomStart = 35.dp))
+                    ) {
                         Image(
-                            //painter = rememberAsyncImagePainter(pokemon.image),
                             painter = painterResource(id = R.drawable.pokemon),
                             contentDescription = pokemon.name,
-                            modifier = Modifier.fillMaxSize()
-                                //.align(Alignment.Center),
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier.size(90.dp)
+
                         )
+
                     }
+
                 }
             }
-        }
+
+            }
 
     }
 }

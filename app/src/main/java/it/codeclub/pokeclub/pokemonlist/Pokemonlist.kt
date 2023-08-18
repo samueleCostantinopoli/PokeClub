@@ -208,7 +208,7 @@ fun PokedexScreen(
             )
             // Immagine impostazioni
             Image(
-                painter = painterResource(R.drawable.settings),
+                painter = painterResource(R.drawable.colored_settings),
                 contentDescription = stringResource(R.string.settings),
                 modifier = Modifier
                     //TODO .clickable(onClick = /* Vai alla pagina delle impostazioni */)
