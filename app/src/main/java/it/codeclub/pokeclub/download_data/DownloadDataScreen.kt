@@ -29,7 +29,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import it.codeclub.pokeclub.R
 import kotlinx.coroutines.delay
-import okhttp3.internal.wait
 
 @Composable
 fun DownloadDataScreen(
