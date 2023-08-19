@@ -22,7 +22,6 @@
     <string name="captured">Captured</string>
     <string name="not_captured">Not captured</string>
     <string name="pokeClubSchermataPrincipale" translatable="false">PokeClub</string>
-    <string name="ok" translatable="false">ok</string> <!--TODO remove this-->
 
     <!-- Details screen -->
     <string name="stats">Base stats</string>

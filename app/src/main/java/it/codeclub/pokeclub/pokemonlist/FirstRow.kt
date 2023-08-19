@@ -1,4 +1,4 @@
-package it.codeclub.pokeclub.newMainView
+package it.codeclub.pokeclub.pokemonlist
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -20,25 +20,31 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import it.codeclub.pokeclub.R
+import it.codeclub.pokeclub.domain.FilterType
 import it.codeclub.pokeclub.ui.theme.AppGrey
 import timber.log.Timber
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun FirstRow(
-    favourite: MutableState<Int>,
-    smallPokeballClick: MutableState<Int>,
+    navController: NavController,
+    pokemonListViewModel: PokemonListViewModel,
+    favourite: MutableState<Boolean>,
+    smallPokeballClick: MutableState<Boolean>,
     isSearchExpanded: MutableState<Boolean>,
     focusManager: FocusManager,
     keyboardController: SoftwareKeyboardController?,
@@ -87,7 +93,10 @@ fun FirstRow(
             ) {
                 TextField(
                     value = searchText.value,
-                    onValueChange = { searchText.value = it },
+                    onValueChange = {
+                        searchText.value = it
+                        pokemonListViewModel.searchPokemon()
+                    },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                     keyboardActions = KeyboardActions(
                         onSend = {
@@ -123,7 +132,7 @@ fun FirstRow(
                             Icon(
                                 painter = painterResource(R.drawable.send),
                                 contentDescription = "Send",
-                                modifier=Modifier.size(26.dp),
+                                modifier = Modifier.size(26.dp),
                                 tint = Color.Black
                             )
                         }
@@ -188,7 +197,7 @@ fun FirstRow(
                             Icon(
                                 painter = painterResource(R.drawable.send),
                                 contentDescription = "Send",
-                                modifier=Modifier.size(26.dp),
+                                modifier = Modifier.size(26.dp),
                                 tint = Color.Black
                             )
                         }
@@ -215,51 +224,54 @@ fun FirstRow(
                 //setta solo i favoriti o meno
                 // di default e' settato a 0 ( nessun favorito) se viene cliccato una
                 //volta viene settato a 1 e cosi' via
-                favourite.value = 1 - favourite.value
+                favourite.value = !favourite.value
+                pokemonListViewModel.toggleFilter(FilterType.FAVOURITES)
             },
-            modifier = Modifier.padding(top = 17.dp, bottom = 0.dp, start = 15.dp,end=6.dp)
+            modifier = Modifier.padding(top = 17.dp, bottom = 0.dp, start = 15.dp, end = 6.dp)
         ) {
             Icon(
                 painter =
-                if(favourite.value==1){
+                if (favourite.value) {
                     painterResource(id = R.drawable.fillstar)
-                }else{
+                } else {
                     painterResource(id = R.drawable.star)
-                     },
-                contentDescription = "star",
-                //tint = if (favourite.value == 1) Color.Red else Color.Black,
+                },
+                contentDescription = stringResource(id = R.string.favourites_filter),
+                tint = Color.Unspecified,
                 modifier = Modifier.size(40.dp)
             )
         }
         //icon pokeball in front of star
         IconButton(
             onClick = {
-                smallPokeballClick.value = 1 - smallPokeballClick.value
+                smallPokeballClick.value = !smallPokeballClick.value
+                pokemonListViewModel.toggleFilter(FilterType.CAPTURED)
             },
             modifier = Modifier.padding(top = 17.dp, bottom = 0.dp, end = 6.dp)
         ) {
             Icon(
                 painter =
-                    if(smallPokeballClick.value==1){
-                        painterResource(id = R.drawable.smallpokeball)
-                    }else{
-                        painterResource(id = R.drawable.smallpokeballempty)
-                    },
-                contentDescription = "small pokeball",
+                if (smallPokeballClick.value) {
+                    painterResource(id = R.drawable.smallpokeball)
+                } else {
+                    painterResource(id = R.drawable.smallpokeballempty)
+                },
+                contentDescription = stringResource(id = R.string.captured_filter),
                 modifier = Modifier.size(40.dp)
             )
         }
         //icon settings
         IconButton(
             onClick = {
-                //open settings
+                navController.navigate("settings")
             },
             modifier = Modifier.padding(top = 17.dp, bottom = 0.dp, end = 6.dp)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.colored_settings),
-                contentDescription = "settings",
-                modifier = Modifier.size(40.dp)
+                contentDescription = stringResource(id = R.string.settings),
+                modifier = Modifier.size(40.dp),
+                tint = Color.Unspecified
             )
         }
     }

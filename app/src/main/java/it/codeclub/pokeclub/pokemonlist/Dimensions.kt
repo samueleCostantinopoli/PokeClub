@@ -1,4 +1,4 @@
-package it.codeclub.pokeclub.newMainView
+package it.codeclub.pokeclub.pokemonlist
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp

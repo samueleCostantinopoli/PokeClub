@@ -11,7 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import it.codeclub.pokeclub.download_data.DownloadDataScreen
-import it.codeclub.pokeclub.newMainView.MainView
+import it.codeclub.pokeclub.pokemonlist.MainView
 import it.codeclub.pokeclub.pokemondetails.DetailsScreen
 import it.codeclub.pokeclub.settings.SettingsScreen
 import it.codeclub.pokeclub.ui.theme.PokeClubTheme

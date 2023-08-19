@@ -18,5 +18,5 @@ data class PokemonEntity(
     @ColumnInfo(defaultValue = "Not provided")
     val imageUrl: String,
     @ColumnInfo(typeAffinity = ColumnInfo.BLOB, defaultValue = "0")
-    val image: Bitmap? = null
+    var image: Bitmap? = null
 )

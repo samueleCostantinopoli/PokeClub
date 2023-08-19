@@ -1,4 +1,4 @@
-package it.codeclub.pokeclub.newMainView
+package it.codeclub.pokeclub.pokemonlist
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState
@@ -47,9 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import it.codeclub.pokeclub.NewMainView.secondRow
 import it.codeclub.pokeclub.R
-import it.codeclub.pokeclub.pokemonlist.PokemonListViewModel
 import it.codeclub.pokeclub.ui.theme.AppGrey
 import it.codeclub.pokeclub.ui.theme.bug
 import it.codeclub.pokeclub.ui.theme.dark
@@ -93,7 +91,7 @@ fun MainView(
 
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
-    val searchText = remember { mutableStateOf("") }
+    val searchText = remember { pokemonListViewModel.searchQuery }
     val saveSearch = remember { mutableStateOf("") }
 
     //variabile utilizzata per capire se l'utente ha cliccato su ability
@@ -101,12 +99,12 @@ fun MainView(
     val searchAbility = remember { mutableStateOf("") }
     val saveAbility = remember { mutableStateOf("") }
     //variabile utilizzata per capire se l'utente ha cliccato su cerca
-    val isSearchExpanded = remember { mutableStateOf(false) }
+    val isSearchExpanded = remember { pokemonListViewModel.isSearching }
     val favourite = remember {
-        mutableStateOf(0)
+        mutableStateOf(false)
     }
     val smallPokeballClick = remember {
-        mutableStateOf(0)
+        mutableStateOf(false)
     }
 
     //variabili usate per capire se bisogna aprire i box dei diversi filtri
@@ -116,13 +114,13 @@ fun MainView(
     //variabile utilizzata per capire se e' la prima volta che l'utente ha cliccato sul box version
     //in quel caso i selected iniziali devono per forza essere settati tutti a false poiche l'utente
     //non ha ancora cliccato su nessuna versione, perciò i background saranno tutti bianchi
-    val firstTimeVersion= remember {
+    val firstTimeVersion = remember {
         mutableStateOf(0)
     }
 
     //variabile utilizzata dal sensei cantarini, qui andrà il numero di versioni che ci sono
     //sulla api, per ora la metto statica per vedere se funziona correttamente
-    val numeroVersioni=8
+    val numeroVersioni = 8
 
     //lista che contiene le versioni che l'utente vuole filtrare per un pokemon
     //potrebbe contenere ad esempio ( 1,2,3) se l'utente vuole un pokemon che appartiene
@@ -137,27 +135,28 @@ fun MainView(
 
     //variabile che contiene al lista dei tipi, anche questa dovrà essere popolata dal
     //maestro cantarini, per ora aggiungo un paio di stringhe statiche che rappresentano i tipi
-    val  typeList = remember { mutableStateOf(mutableListOf<String>()) }
+    val typeList = remember { mutableStateOf(mutableListOf<String>()) }
 
     //questa lista non sarà presente
-    val pokemonTypes = listOf("BUG",
-    "DARK" ,
-    "DRAGON",
-    "ELECTRIC",
-    "FAIRY" ,
-    "FIGHTING" ,
-    "FIRE",
-    "FLYING",
-    "GHOST" ,
-    "GRASS" ,
-    "GROUND" ,
-    "ICE" ,
-    "NORMAL" ,
-    "POISON",
-    "PSYCHIC",
-    "ROCK",
-    "STEEL",
-    "WATER"
+    val pokemonTypes = listOf(
+        "BUG",
+        "DARK",
+        "DRAGON",
+        "ELECTRIC",
+        "FAIRY",
+        "FIGHTING",
+        "FIRE",
+        "FLYING",
+        "GHOST",
+        "GRASS",
+        "GROUND",
+        "ICE",
+        "NORMAL",
+        "POISON",
+        "PSYCHIC",
+        "ROCK",
+        "STEEL",
+        "WATER"
     )
 
     //variabile utilizzata per capire se un tipo e' stato selezioanto o meno ( duale di selectedItemState)
@@ -165,7 +164,7 @@ fun MainView(
 
     //variabile utilizzata per capire se è la prima volta che si clicca sul box type ( duale
     // di first time version
-    val firstTimeType= remember {
+    val firstTimeType = remember {
         mutableStateOf(0)
     }
 
@@ -178,6 +177,8 @@ fun MainView(
             //val expandedWidth = maxWidth - 16.dp * 2
             //prima row che contiene nome dell'app stella impostazioni e pokeball cattura
             FirstRow(
+                navController,
+                pokemonListViewModel,
                 favourite,
                 smallPokeballClick,
                 isSearchExpanded,
@@ -191,31 +192,23 @@ fun MainView(
             )
 
             //second row ( button version type e ability) piu lazy column che mostra i pokemon
-            secondRow(
+            SecondRow(
                 navController,
                 boxVersion,
                 boxType,
                 pokemonListViewModel,
                 isAbilityClicked,
-                isSearchExpanded
+                isSearchExpanded,
+                favourite,
+                smallPokeballClick
             )
 
             //pokeball finale in basso a sinistra
             //button pokeball che ruota
             Column(modifier = Modifier.align(Alignment.BottomEnd)) {
-                Box{
-                    Column{
-                        if(rotate) {
-                            //Button(
-                            //    onClick = {
-                            //        // Aggiungi l'azione per il primo pulsante verticale
-                            //    },
-                            //
-                            //    shape = RoundedCornerShape(22.dp),
-                            //) {
-                            //    // Testo o contenuto del primo pulsante verticale
-                            //    Text(text = "team ")
-                            //}
+                Box {
+                    Column {
+                        if (rotate) {
                             Button(
                                 onClick = {
                                     //apro la barra di ricerca
@@ -246,7 +239,7 @@ fun MainView(
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(8.dp) )
+                Spacer(modifier = Modifier.height(8.dp))
                 IconButton(
                     onClick = {
                         coroutineScope.launch {
@@ -425,7 +418,7 @@ fun MainView(
                             //per ora eseguo una print sul log per essere certo che tutto quello mostraro
                             //sia conforme con ciò che ha selezionato l'utente
                             Text(
-                                text = stringResource(R.string.ok),
+                                text = stringResource(android.R.string.ok),
                                 fontSize = 24.sp,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
@@ -434,7 +427,9 @@ fun MainView(
                                         //chiudo il box, le variabili version sono state già salvate nella lista
                                         boxVersion.value = false
                                         for (i in 0 until versionList.value.size) {
-                                            Timber.tag("MyTag").d(versionList.value[i])
+                                            Timber
+                                                .tag("MyTag")
+                                                .d(versionList.value[i])
                                         }
                                     }
                                     .border(
@@ -514,10 +509,9 @@ fun MainView(
                                     //adjustColorIntensity( getColorForType(pokemonTypes[index]),0.5f)
                                     //var backgroundColor:Color?=null
 
-
-
-                                    val backgroundColor=if (selectedTypeState[index]) getColorForType(pokemonTypes[index]) else
-                                        Color.White
+                                    val backgroundColor =
+                                        if (selectedTypeState[index]) getColorForType(pokemonTypes[index]) else
+                                            Color.White
                                     // qui c'e' la card che non e' altro composta da un box e al suo interno
                                     // il testo che indica il nuomero di versione
                                     Box(
@@ -530,7 +524,7 @@ fun MainView(
                                                     topEnd = 10.dp
                                                 ),
 
-                                            )
+                                                )
                                             .fillMaxWidth()
                                             .clickable {
                                                 //quando clicco il box voglio salvare la scelta dell' utente
@@ -538,7 +532,7 @@ fun MainView(
                                                 //se il tipo viene selezionato per la ricerca
                                                 if (selectedTypeState[index]) {
                                                     //verifico se ne ha già selezionati 2 di tipi
-                                                        typeList.value.add(pokemonTypes[index])
+                                                    typeList.value.add(pokemonTypes[index])
                                                 }
                                                 //se il tipo viene rimosso ( quindi era stato precedentemente selezionato)
                                                 //lo rimuovo dalla lista dei selezionati
@@ -565,7 +559,7 @@ fun MainView(
                             //per ora eseguo una print sul log per essere certo che tutto quello mostraro
                             //sia conforme con ciò che ha selezionato l'utente
                             Text(
-                                text = stringResource(R.string.ok),
+                                text = stringResource(android.R.string.ok),
                                 fontSize = 24.sp,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
@@ -574,7 +568,9 @@ fun MainView(
                                         //chiudo il box, le variabili version sono state già salvate nella lista
                                         boxType.value = false
                                         for (i in 0 until typeList.value.size) {
-                                            Timber.tag("MyTag").d(typeList.value[i])
+                                            Timber
+                                                .tag("MyTag")
+                                                .d(typeList.value[i])
                                         }
                                     }
                                     .border(

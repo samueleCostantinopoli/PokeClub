@@ -1,104 +1,113 @@
 package it.codeclub.pokeclub.pokemonlist
 
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
+import android.graphics.BitmapFactory
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.palette.graphics.Palette
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.codeclub.pokeclub.db.PokemonRepository
 import it.codeclub.pokeclub.db.entities.PokemonEntity
 import it.codeclub.pokeclub.domain.FilterType
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import java.io.IOException
 import javax.inject.Inject
+
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
     private val pokemonRepository: PokemonRepository
 ) : ViewModel() {
 
-    var pokemonList = mutableStateOf<List<PokemonEntity>>(listOf())
+    private lateinit var pokemonList: List<PokemonEntity>
+    var shownPokemonList = mutableStateOf<List<PokemonEntity>>(listOf())
 
-    private var cachedPokemonList = listOf<PokemonEntity>()
-    private var isSearchStarting = true
-    private var isSearching = mutableStateOf(false)
+    // List of currently applied filters
+    private var filterList = mutableListOf<FilterType>()
+
+    var searchQuery = mutableStateOf("")
+    var isSearching = mutableStateOf(false)
 
     init {
         loadPokemon()
     }
 
-    fun searchPokemon(query: String) {
-        val listToSearch = if (isSearchStarting) {
-            pokemonList.value
-        } else {
-            cachedPokemonList
-        }
-        viewModelScope.launch(Dispatchers.Default) {
-            if (query.isEmpty()) {
-                pokemonList.value = cachedPokemonList
-                isSearching.value = false
-                isSearchStarting = true
-                return@launch
-            }
-
-            val results = listToSearch.filter {
-                it.name.startsWith(query.trim().lowercase()) || it.pokemonId.toString()
-                    .startsWith(query.trim())
-            }
-
-            if (isSearchStarting) {
-                cachedPokemonList = pokemonList.value
-                isSearchStarting = false
-            }
-            pokemonList.value = results
-            isSearching.value = true
-        }
+    /**
+     * Search Pokemon with matching name
+     */
+    fun searchPokemon() {
+        applyFilters()
     }
 
-    fun filterBy(filterType: FilterType) {
-        when (filterType) {
-            FilterType.FAVOURITES -> {
-                viewModelScope.launch {
-                    pokemonRepository.getFavourites().onEach {
-                        pokemonList.value = it
-                    }
+    fun toggleFilter(filterType: FilterType) {
+        if (filterList.contains(filterType))
+            filterList.remove(filterType)
+        else
+            filterList.add(filterType)
+        applyFilters()
+    }
+
+    private fun applyFilters() {
+        var toBeFiltered: List<PokemonEntity> = listOf()
+        when (filterList.size) {
+            0 -> {
+                toBeFiltered = pokemonList
+            }
+
+            1 -> {
+                toBeFiltered = pokemonList.filter {
+                    if (filterList.contains(FilterType.FAVOURITES))
+                        it.isFavourite
+                    else
+                        it.isCaptured
                 }
             }
-            FilterType.CAPTURED -> {
-                viewModelScope.launch {
-                    pokemonRepository.getCaptured().onEach {
-                        pokemonList.value = it
-                    }
-                }
-            }
-            FilterType.NONE -> {
-                viewModelScope.launch {
-                    pokemonRepository.getPokemon().onEach {
-                        pokemonList.value = it
-                    }
+
+            2 -> {
+                toBeFiltered = pokemonList.filter {
+                    it.isFavourite and it.isCaptured
                 }
             }
         }
+
+        if (searchQuery.value.isNotEmpty()) {
+            shownPokemonList.value = toBeFiltered.filter {
+                it.name.startsWith(
+                    searchQuery.value.trim().lowercase()
+                ) || it.pokemonId.toString()
+                    .startsWith(searchQuery.value.trim())
+            }
+        } else
+            shownPokemonList.value = toBeFiltered
     }
 
     private fun loadPokemon() {
         viewModelScope.launch {
             pokemonRepository.getPokemon().collect {
-                pokemonList.value = it
+                pokemonList = it
+                shownPokemonList.value = pokemonList
             }
         }
     }
 
+    private fun removeFilters() {
+        filterList.clear()
+        searchQuery.value = ""
+        isSearching.value = false
+    }
+
     fun toggleFavourite(pokemon: PokemonEntity) {
         pokemon.isFavourite = !pokemon.isFavourite
-        update(pokemon)
+        downloadPokemonImage(pokemon)
+        loadPokemon()
+        removeFilters()
     }
 
     fun toggleCaptured(pokemon: PokemonEntity) {
+        removeFilters()
         pokemon.isCaptured = !pokemon.isCaptured
         update(pokemon)
     }
@@ -109,13 +118,31 @@ class PokemonListViewModel @Inject constructor(
         }
     }
 
-    fun calculateDominantColor(drawable: Drawable, onFinish: (Color) -> Unit) {
-        val bitmap = (drawable as BitmapDrawable).bitmap.copy(Bitmap.Config.ARGB_8888, true)
+    private fun downloadPokemonImage(pokemon: PokemonEntity) {
+        val request = Request.Builder()
+            .url(pokemon.imageUrl)
+            .build()
 
-        Palette.from(bitmap).generate { palette ->
-            palette?.dominantSwatch?.rgb?.let { colorValue ->
-                onFinish(Color(colorValue))
+        val okHttpClient = OkHttpClient.Builder().build()
+        okHttpClient.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                // TODO save error image
+                update(pokemon)
             }
-        }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful)
+                    response.body?.let { responseBody ->
+                        val imageByteArray = responseBody.byteStream().readBytes()
+                        val bmp = BitmapFactory.decodeByteArray(
+                            imageByteArray,
+                            0,
+                            imageByteArray.size
+                        )
+                        pokemon.image = bmp
+                        update(pokemon)
+                    }
+            }
+        })
     }
 }
