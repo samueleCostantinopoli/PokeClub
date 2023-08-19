@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -269,7 +270,11 @@ fun secondRow(
                                         .clickable {
                                             pokemonListViewModel.toggleCaptured(pokemon = pokemon)
                                         }
-                                        .padding(start = 5.dp),
+                                        .padding(start = 5.dp)
+                                        .shadow(
+                                            elevation = if (isDominantBlack(color) || isDominantDarkBrown(color)) 8.dp else 0.dp,
+                                            shape = RoundedCornerShape(50)
+                                        )
                                     //contentAlignment = Alignment.Center
                                 ) {
                                     val imageRes =
@@ -284,7 +289,7 @@ fun secondRow(
                                         modifier = Modifier
                                             .size(height = 25.dp, width = 25.dp)
                                             .align(
-                                                Alignment.CenterEnd
+                                                Alignment.Center
                                             )
                                     )
                                 }
