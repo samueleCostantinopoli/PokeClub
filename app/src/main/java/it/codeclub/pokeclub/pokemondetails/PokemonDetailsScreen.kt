@@ -426,7 +426,7 @@ fun DetailsScreen(
                                     stringResource(R.string.speed)
                                 )
 
-                                val total = statsValues.sum() ?: 0
+                                val total = statsValues.sum()
 
                                 //statistiche base del pokemon: testo + box con i valori delle statistiche
                                 Box(
