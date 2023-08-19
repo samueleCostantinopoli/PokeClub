@@ -29,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import it.codeclub.pokeclub.R
 import kotlinx.coroutines.delay
+import okhttp3.internal.wait
 
 @Composable
 fun DownloadDataScreen(
@@ -79,12 +80,14 @@ fun DownloadDataScreen(
                             stringResource(R.string.abilities) +
                             "(${abilityCounter.value} ${stringResource(id = R.string.of)} ${abilityNumber.value})",
                     color = Color.White,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    modifier = Modifier.align(Alignment.BottomCenter).offset(y=(-110).dp)
                 )
                 Text(
                     text = currentAbility.value!!.name,
                     color = Color.White,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    modifier = Modifier.align(Alignment.BottomCenter).offset(y=(-90).dp)
                 )
             }
 
@@ -94,16 +97,19 @@ fun DownloadDataScreen(
                             stringResource(R.string.pokemon) +
                             "(${pokemonCounter.value} ${stringResource(id = R.string.of)} ${pokemonNumber.value})",
                     color = Color.White,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    modifier = Modifier.align(Alignment.BottomCenter).offset(y=(-110).dp)
                 )
                 Text(
-                    text = currentPokemon.value!!.name,
+                    text = (currentPokemon.value!!.name),
                     color = Color.White,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    modifier = Modifier.align(Alignment.BottomCenter).offset(y=(-90).dp)
                 )
             }
 
             DownloadDataViewModel.DownloadStatus.DONE -> {
+
                 if (!done) {
                     navController.navigate("pokemon_list_screen") {
                         popUpTo(navController.graph.startDestinationId)
@@ -114,15 +120,17 @@ fun DownloadDataScreen(
                 }
             }
         }
-        LinearProgressIndicator(
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .height(12.dp)
-                .offset(x = 40.dp, y = (-143).dp),
-            progress = downloadDataViewModel.downloadProgress.value, // Assicura che il progresso sia compreso tra 0f e 1f
-            color = Color.White,
-            trackColor = Color.Red
-        )
+        if(!done) {
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .height(12.dp)
+                    .offset(x = 40.dp, y = (-143).dp),
+                progress = downloadDataViewModel.downloadProgress.value, // Assicura che il progresso sia compreso tra 0f e 1f
+                color = Color.White,
+                trackColor = Color.Red
+            )
+        }
 
         Image(
             painter = painterResource(id = R.drawable.background),
