@@ -273,7 +273,9 @@ fun secondRow(
                                     //contentAlignment = Alignment.Center
                                 ) {
                                     val imageRes =
-                                        if (pokemon.isCaptured) R.drawable.smallpokeball else R.drawable.smallpokeballempty
+                                        if (pokemon.isCaptured &&(isDominantBlack(color)|| isDominantDarkBrown(color)))R.drawable.white_pokeball else
+                                            if (pokemon.isCaptured) R.drawable.smallpokeball else
+                                                if(isDominantBlack(color)|| isDominantDarkBrown(color))R.drawable.white_empty_pokeball else  R.drawable.smallpokeballempty
                                     Image(
                                         painter = painterResource(imageRes),
                                         contentDescription = stringResource(
@@ -365,7 +367,7 @@ fun secondRow(
                         Image(
                             painter = painterResource(id = R.drawable.pokemon),
                             contentDescription = pokemon.name,
-                            contentScale = ContentScale.FillBounds,
+                             contentScale = ContentScale.FillBounds,
                             modifier = Modifier.size(90.dp)
 
                         )
