@@ -191,6 +191,7 @@ fun SecondRow(
                     },
                     modifier = Modifier
                         .weight(1f)
+                        .padding(end = 6.dp)
                         .height(40.dp)
                         .padding(top = 6.dp),
                     shape = RoundedCornerShape(12.dp),

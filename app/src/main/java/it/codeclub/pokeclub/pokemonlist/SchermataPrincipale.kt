@@ -72,7 +72,6 @@ import it.codeclub.pokeclub.ui.theme.steel
 import it.codeclub.pokeclub.ui.theme.water
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @SuppressLint("MutableCollectionMutableState")
 @OptIn(
@@ -94,7 +93,7 @@ fun MainView(
 
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
-    val searchText = remember { pokemonListViewModel.searchQuery }
+    val searchText = remember { pokemonListViewModel.searchPokemonQuery }
     val saveSearch = remember { mutableStateOf("") }
 
     //variabile utilizzata per capire se l'utente ha cliccato su ability
@@ -102,7 +101,7 @@ fun MainView(
     val searchAbility = remember { mutableStateOf("") }
     val saveAbility = remember { mutableStateOf("") }
     //variabile utilizzata per capire se l'utente ha cliccato su cerca
-    val isSearchExpanded = remember { pokemonListViewModel.isSearching }
+    val isSearchExpanded = remember { pokemonListViewModel.isSearchingPokemon }
     val favourite = remember {
         mutableStateOf(false)
     }

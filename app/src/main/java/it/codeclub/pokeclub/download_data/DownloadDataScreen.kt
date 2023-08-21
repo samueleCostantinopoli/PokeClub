@@ -83,7 +83,7 @@ fun DownloadDataScreen(
                     modifier = Modifier.align(Alignment.BottomCenter).offset(y=(-110).dp)
                 )
                 Text(
-                    text = currentAbility.value!!.name,
+                    text = currentAbility.value!!.name.replaceFirstChar { it.uppercase() },
                     color = Color.White,
                     fontSize = 14.sp,
                     modifier = Modifier.align(Alignment.BottomCenter).offset(y=(-90).dp)
@@ -100,7 +100,7 @@ fun DownloadDataScreen(
                     modifier = Modifier.align(Alignment.BottomCenter).offset(y=(-110).dp)
                 )
                 Text(
-                    text = (currentPokemon.value!!.name),
+                    text = currentPokemon.value!!.name.replaceFirstChar { it.uppercase() },
                     color = Color.White,
                     fontSize = 14.sp,
                     modifier = Modifier.align(Alignment.BottomCenter).offset(y=(-90).dp)

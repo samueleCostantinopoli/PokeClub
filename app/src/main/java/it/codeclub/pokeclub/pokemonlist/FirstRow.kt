@@ -160,7 +160,10 @@ fun FirstRow(
             ) {
                 TextField(
                     value = searchAbility.value,
-                    onValueChange = { searchAbility.value = it },
+                    onValueChange = {
+                        searchAbility.value = it
+                        pokemonListViewModel.searchAbility()
+                                    },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                     keyboardActions = KeyboardActions(
                         onSend = {

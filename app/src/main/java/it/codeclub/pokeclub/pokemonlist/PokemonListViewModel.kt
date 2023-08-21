@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.codeclub.pokeclub.db.PokemonRepository
+import it.codeclub.pokeclub.db.entities.Ability
 import it.codeclub.pokeclub.db.entities.PokemonEntity
 import it.codeclub.pokeclub.domain.FilterType
 import kotlinx.coroutines.launch
@@ -22,18 +23,26 @@ class PokemonListViewModel @Inject constructor(
     private val pokemonRepository: PokemonRepository
 ) : ViewModel() {
 
+    private lateinit var abilitiesList: List<Ability>
     private lateinit var pokemonList: List<PokemonEntity>
     var shownPokemonList = mutableStateOf<List<PokemonEntity>>(listOf())
+    var shownAbilitiesList = mutableStateOf<List<Ability>>(listOf())
+
 
     // List of currently applied filters
     private var filterList = mutableListOf<FilterType>()
 
-    var searchQuery = mutableStateOf("")
-    var isSearching = mutableStateOf(false)
+    var searchPokemonQuery = mutableStateOf("")
+    var isSearchingPokemon = mutableStateOf(false)
+
+    var searchAbilityQuery = mutableStateOf("")
+    var isSearchingAbility = mutableStateOf(false)
 
     init {
         loadPokemon()
+        loadAbilities()
     }
+
 
     /**
      * Search Pokemon with matching name
@@ -73,12 +82,12 @@ class PokemonListViewModel @Inject constructor(
             }
         }
 
-        if (searchQuery.value.isNotEmpty()) {
+        if (searchPokemonQuery.value.isNotEmpty()) {
             shownPokemonList.value = toBeFiltered.filter {
                 it.name.startsWith(
-                    searchQuery.value.trim().lowercase()
+                    searchPokemonQuery.value.trim().lowercase()
                 ) || it.pokemonId.toString()
-                    .startsWith(searchQuery.value.trim())
+                    .startsWith(searchPokemonQuery.value.trim())
             }
         } else
             shownPokemonList.value = toBeFiltered
@@ -93,10 +102,34 @@ class PokemonListViewModel @Inject constructor(
         }
     }
 
+    fun searchAbility() {
+
+        if(searchAbilityQuery.value.isNotEmpty()) {
+            shownAbilitiesList.value = abilitiesList.filter {
+                it.name_en.startsWith(
+                    searchAbilityQuery.value.trim().lowercase()
+                ) || it.name_it.startsWith(
+                    searchAbilityQuery.value.trim().lowercase()
+                ) || it.abilityId.toString().startsWith(
+                    searchAbilityQuery.value.trim()
+                )
+            }
+        }
+    }
+
+    private fun loadAbilities() {
+        viewModelScope.launch {
+            pokemonRepository.getAbilities().collect {
+                abilitiesList = it
+                shownAbilitiesList.value = abilitiesList
+            }
+        }
+    }
+
     private fun removeFilters() {
         filterList.clear()
-        searchQuery.value = ""
-        isSearching.value = false
+        searchPokemonQuery.value = ""
+        isSearchingPokemon.value = false
     }
 
     fun toggleFavourite(pokemon: PokemonEntity) {
