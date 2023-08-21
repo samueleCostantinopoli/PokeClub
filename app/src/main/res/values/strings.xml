@@ -13,7 +13,8 @@
     <string name="captured_filter">Captured filter</string>
     <string name="settings">Settings</string>
     <string name="version">Version</string>
-    <string name="type">Type</string>
+    <string name="type1">Type1</string>
+    <string name="type2">Type2</string>
     <string name="ability">Ability</string>
     <string name="select_version">Select a version</string>
     <string name="select_type">Select type</string>
@@ -21,7 +22,11 @@
     <string name="not_favourite">Not favourite</string>
     <string name="captured">Captured</string>
     <string name="not_captured">Not captured</string>
+    <string name="favourites">favourite filter</string>
     <string name="pokeClubSchermataPrincipale" translatable="false">PokeClub</string>
+    <string name="all_types1">ALL TYPES</string>
+    <string name="all_types2">ALL TYPES</string>
+    <string name="all_version">ALL VERSION</string>
 
     <!-- Details screen -->
     <string name="stats">Base stats</string>
@@ -55,4 +60,5 @@
     <string name="rock">Rock</string>
     <string name="steel">Steel</string>
     <string name="water">Water</string>
+
 </resources>

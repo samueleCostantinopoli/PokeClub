@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -48,6 +49,8 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import it.codeclub.pokeclub.R
+import it.codeclub.pokeclub.db.entities.PokemonType
+import it.codeclub.pokeclub.pokemondetails.getColorForType
 import it.codeclub.pokeclub.ui.theme.AppGrey
 import it.codeclub.pokeclub.ui.theme.bug
 import it.codeclub.pokeclub.ui.theme.dark
@@ -109,7 +112,8 @@ fun MainView(
 
     //variabili usate per capire se bisogna aprire i box dei diversi filtri
     val boxVersion = remember { mutableStateOf(false) }
-    val boxType = remember { mutableStateOf(false) }
+    val boxType1 = remember { mutableStateOf(false) }
+    val boxType2 = remember { mutableStateOf(false) }
 
     //variabile utilizzata per capire se e' la prima volta che l'utente ha cliccato sul box version
     //in quel caso i selected iniziali devono per forza essere settati tutti a false poiche l'utente
@@ -120,7 +124,15 @@ fun MainView(
 
     //variabile utilizzata dal sensei cantarini, qui andrà il numero di versioni che ci sono
     //sulla api, per ora la metto statica per vedere se funziona correttamente
-    val numeroVersioni = 8
+    val numeroVersioni = listOf(
+        "rosso fuoco",
+        "verde foglia",
+        "smeraldo",
+        "oro",
+        "argento",
+        "rubino",
+        "perla"
+    )
 
     //lista che contiene le versioni che l'utente vuole filtrare per un pokemon
     //potrebbe contenere ad esempio ( 1,2,3) se l'utente vuole un pokemon che appartiene
@@ -131,14 +143,27 @@ fun MainView(
     //se l'ha selezionato il backgound dell'elemento sarà di un colore diverso dagli altri
     //in modo da far capire che quell'elemento e' stato scelto
     val selectedItemStates = remember { mutableStateListOf<Boolean>() }
-
+    val versionBackground = Color.Gray.copy(alpha = 0.6f)
 
     //variabile che contiene al lista dei tipi, anche questa dovrà essere popolata dal
     //maestro cantarini, per ora aggiungo un paio di stringhe statiche che rappresentano i tipi
     val typeList = remember { mutableStateOf(mutableListOf<String>()) }
 
+    //val per ricordare cosa l'utente ha selezionato su ogni filtro
+    val type1 = remember { mutableStateOf(String()) }
+    val type2 = remember { mutableStateOf(String()) }
+    val allTypes1 = remember { mutableStateOf(String()) }
+    val allTypes2 = remember { mutableStateOf(String()) }
+    val version = remember { mutableStateOf((String())) }
+    val allVersion = remember { mutableStateOf(String()) }
+
+    // inizialmente sono "null" poichè devono apparire tutti i tipi e nessuna versione in particolare attiva
+    type1.value = null.toString()
+    type2.value = null.toString()
+    version.value = null.toString()
+
     //questa lista non sarà presente
-    val pokemonTypes = listOf(
+    /*val pokemonTypes = listOf(
         "BUG",
         "DARK",
         "DRAGON",
@@ -158,6 +183,10 @@ fun MainView(
         "STEEL",
         "WATER"
     )
+
+     */
+
+
 
     //variabile utilizzata per capire se un tipo e' stato selezioanto o meno ( duale di selectedItemState)
     val selectedTypeState = remember { mutableStateListOf<Boolean>() }
@@ -195,7 +224,14 @@ fun MainView(
             SecondRow(
                 navController,
                 boxVersion,
-                boxType,
+                version,
+                allVersion,
+                boxType1,
+                boxType2,
+                type1,
+                type2,
+                allTypes1,
+                allTypes2,
                 pokemonListViewModel,
                 isAbilityClicked,
                 isSearchExpanded,
@@ -229,6 +265,34 @@ fun MainView(
                                 shape = RoundedCornerShape(22.dp),
                             ) {
                                 Text(text = "cerca")
+                                //Image(
+                                //    painter = painterResource(id = R.drawable.search),
+                                //    contentDescription = "search image",
+                                //    //modifier = Modifier.padding(start = 20.dp)
+                                //    modifier = Modifier.size(20.dp)
+                                //)
+                            }
+                            // bottone nella pokebll per ricerca tramite abilità
+                            Button(
+                                onClick = {
+                                    //verifico se la barra di ricerca del pokemon ( per nome è aperta) nel caso la chiudo
+                                    if (isSearchExpanded.value) {
+                                        isSearchExpanded.value = !isSearchExpanded.value
+                                    }
+                                    // quando clicco deve aprirsi la barra di ricerca per abilità(che si trova in first row)
+                                    isAbilityClicked.value = !isAbilityClicked.value
+                                    //chiudo la pokeball
+                                    coroutineScope.launch {
+                                        rotate = !rotate
+                                        isRotated = !isRotated
+                                    }
+                                },
+                                //modifier = Modifier
+                                //    .width(125.dp)
+                                //    .height(33.dp),
+                                shape = RoundedCornerShape(22.dp),
+                            ) {
+                                Text(text = "abilità")
                                 //Image(
                                 //    painter = painterResource(id = R.drawable.search),
                                 //    contentDescription = "search image",
@@ -328,11 +392,8 @@ fun MainView(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .zIndex(1f)
-                        .padding(start = 16.dp, end = 16.dp, bottom = 0.dp)
-                        .border(
-                            BorderStroke(2.dp, Color.Gray),
-                            shape = RoundedCornerShape(8.dp),
-                        )
+                        .padding(top = 6.dp, start = 16.dp, end = 16.dp, bottom = 0.dp)
+                        .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
                         .background(Color.White),
                 ) {
                     Column(
@@ -340,9 +401,9 @@ fun MainView(
                     ) {
                         Text(
                             text = stringResource(R.string.select_version),
-                            fontSize = 24.sp,
+                            fontSize = 22.sp,
                             modifier = Modifier
-                                .padding(top = 6.dp, bottom = 6.dp),
+                                .padding(top = 8.dp, bottom = 4.dp),
                             color = Color.DarkGray
                         )
                         Column {
@@ -351,249 +412,466 @@ fun MainView(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(200.dp),
-                                contentPadding = PaddingValues(16.dp)
+                                contentPadding = PaddingValues(top = 0.dp, start = 1.dp, end = 1.dp)
                             ) {
                                 //qui andranno il numero di versioni che sono disponibili, 8 per esempio
-                                items(numeroVersioni) { index ->
+                                items(numeroVersioni.size) { index ->
                                     //verifico se il box viene aperto per la prima volta o se e' stato gia aperto
-                                    if (firstTimeVersion.value == 0) {
+                                    //if (firstTimeVersion.value == 0) {
                                         //e' la prima volta che apro il box, l'utente non ha selezionato ancora nulla
                                         //tutti gli item sono su false, li aggiungo alla lista che ne tiene traccia
-                                        for (i in 0 until numeroVersioni) {
+                                      //  for (i in numeroVersioni.indices) {
                                             //imposto a false ogni singolo elemento
-                                            selectedItemStates.add(i, false)
-                                        }
-                                        //fatto ciò, questa vale come prima volta di apertura del box, imposto a 1 first time
-                                        firstTimeVersion.value = 1
-                                        //fino al prossimo avvio dell'app non posso piu rientrare in questo if
+                                        //    selectedItemStates.add(i, false)
+                                          //  }
+                                            //fatto ciò, questa vale come prima volta di apertura del box, imposto a 1 first time
+                                            //firstTimeVersion.value = 1
+                                            //fino al prossimo avvio dell'app non posso piu rientrare in questo if
 
-                                    }
+                                    //}
 
-                                    //se viene selezionato dall'utente l'elemento nella posizione index, il suo
-                                    //background diventerà grigio ( facendo capire che e' stato selezionato) altrimenti
-                                    //sarà bianco
 
+                                            //se viene selezionato dall'utente l'elemento nella posizione index, il suo
+                                            //background diventerà grigio ( facendo capire che e' stato selezionato) altrimenti
+                                            //sarà bianco
+                                            /*
                                     val backgroundColor =
                                         if (selectedItemStates[index]) Color.Gray else Color.White
+                                    */
+                                            // qui c'e' la card che non e' altro composta da un box e al suo interno
+                                            // il testo che indica il nuomero di versione
+                                            Box(
+                                                modifier = Modifier
+                                                    .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                                                    .clip(RoundedCornerShape(12.dp))
+                                                    .fillMaxWidth()
+                                                    .clickable {
+                                                        //quando clicco il box voglio salvare la scelta dell' utente
+                                                        /*
+                                                        selectedItemStates[index] =
+                                                            !selectedItemStates[index]
+                                                        if (selectedItemStates[index]) {
+                                                            versionList.value.add((index + 1).toString())
+                                                        } else {
+                                                            versionList.value.remove((index + 1).toString())
+                                                        }
 
-                                    // qui c'e' la card che non e' altro composta da un box e al suo interno
-                                    // il testo che indica il nuomero di versione
+                                                         */
+                                                        version.value = numeroVersioni[index]
+                                                        boxVersion.value = !boxVersion.value
+                                                        allVersion.value = null.toString()
+                                                    }
+                                                    .background(versionBackground),
+
+                                                ) {
+                                                Text(
+                                                    text = numeroVersioni[index],
+                                                    fontSize = 20.sp,
+                                                    modifier = Modifier
+                                                        .align(Alignment.Center)
+                                                        .padding(top = 6.dp, bottom = 6.dp),
+                                                    color = Color.White
+                                                )
+                                            }
+                                        }
+                                    }
+                                    //text "ok" contenuto in fondo alla column, quando l'utente cliccherà su di esso
+                                    //le versioni che ha selezionato verranno inviate per mostrare i risultati
+                                    //per ora eseguo una print sul log per essere certo che tutto quello mostraro
+                                    //sia conforme con ciò che ha selezionato l'utente
+                            Box(
+                                modifier = Modifier
+                                    .padding(
+                                        top = 8.dp,
+                                        start = 9.dp,
+                                        end = 9.dp,
+                                        bottom = 8.dp
+                                    )
+                                    .border(
+                                        BorderStroke(1.dp, Color.Gray),
+                                        shape = RoundedCornerShape(
+                                            topStart = 12.dp,
+                                            topEnd = 12.dp,
+                                            bottomStart = 12.dp,
+                                            bottomEnd = 12.dp
+                                        ),
+                                    )
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        //chiudo il box, le variabili version sono state già salvate nella lista
+                                        allVersion.value = R.string.all_version.toString()
+                                        version.value = null.toString()
+                                        boxVersion.value = false
+                                        /*
+                                            for (i in 0 until versionList.value.size) {
+                                                Timber
+                                                    .tag("MyTag")
+                                                    .d(versionList.value[i])
+                                            }
+                                            */
+                                    }
+                            )
+                            {
+                                Text(
+                                    text = stringResource(R.string.all_version),
+                                    fontSize = 22.sp,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .padding(
+                                            top = 4.dp,
+                                            bottom = 4.dp,
+                                            start = 20.dp,
+                                            end = 20.dp
+                                        )
+                                        .background(color = AppGrey)
+                                        .width(330.dp),
+                                )
+                            }
+                                }
+                            }
+                        }
+                    }
+
+
+
+                    //BOX TYPE
+                    //il box type si comporta in modo uguale al box version,
+                    if (boxType1.value) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .zIndex(1f)
+                                .padding(top = 6.dp, start = 16.dp, end = 16.dp, bottom = 0.dp)
+                                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
+                                .background(Color.White),
+
+
+                            ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.select_type),
+                                    fontSize = 22.sp,
+                                    modifier = Modifier
+                                        .padding(top = 8.dp, bottom = 4.dp),
+                                    color = Color.DarkGray
+                                )
+                                Column {
+                                    LazyColumn(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(200.dp),
+                                        contentPadding = PaddingValues(
+                                            top = 0.dp,
+                                            start = 1.dp,
+                                            end = 1.dp
+                                        )
+                                    ) {
+                                        //qui andranno il numero di tipi di pokemon presenti
+                                        items(PokemonType.values().size) { index ->
+                                            //verifico se il box viene aperto per la prima volta o se e' stato gia aperto
+                                            //if (firstTimeType.value == 0) {
+                                                //e' la prima volta che apro il box, l'utente non ha selezionato ancora nulla
+                                                //tutti gli item sono su false, li aggiungo alla lista che ne tiene traccia
+                                                //for (i in pokemonTypes.indices) {
+                                                    //imposto a false ogni singolo elemento
+                                                    //selectedTypeState.add(i, false)
+                                                //}
+                                                //fatto ciò, questa vale come prima volta di apertura del box, imposto a 1 first time
+                                                //firstTimeType.value = 1
+                                                //fino al prossimo avvio dell'app non posso piu rientrare in questo if
+
+                                            //}
+
+                                            //se viene selezionato dall'utente l'elemento nella posizione index, il suo
+                                            //background diventerà grigio ( facendo capire che e' stato selezionato) altrimenti
+                                            //sarà bianco
+
+                                            //adjustColorIntensity( getColorForType(pokemonTypes[index]),0.5f)
+                                            //var backgroundColor:Color?=null
+
+                                            val backgroundColor =
+                                                //if (selectedTypeState[index])
+                                                getColorForType(PokemonType.values().get(index).toString())
+                                            //else
+                                            //      Color.White
+                                            // qui c'e' la card che non e' altro composta da un box e al suo interno
+                                            // il testo che indica il nuomero di versione
+                                            Box(
+                                                modifier = Modifier
+                                                    .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                                                    .clip(RoundedCornerShape(12.dp))
+                                                    .fillMaxWidth()
+                                                    .clickable {
+                                                        //quando clicco il box voglio salvare la scelta dell' utente
+                                                        //selectedTypeState[index] = !selectedTypeState[index]
+                                                        //se il tipo viene selezionato per la ricerca
+                                                        //if (selectedTypeState[index]) {
+                                                        //verifico se ne ha già selezionati 2 di tipi
+                                                        // typeList.value.add(pokemonTypes[index])
+                                                        //}
+                                                        //se il tipo viene rimosso ( quindi era stato precedentemente selezionato)
+                                                        //lo rimuovo dalla lista dei selezionati
+                                                        //else {
+                                                        //typeList.value.remove(pokemonTypes[index])
+                                                        //}
+                                                        //chiudo il box, le variabili version sono state già salvate nella lista
+
+                                                        /*for (i in 0 until typeList.value.size) {
+                                                    Timber
+                                                        .tag("MyTag")
+                                                        .d(typeList.value[i])
+                                                } */
+                                                        type1.value = PokemonType.values().get(index).toString()
+                                                        allTypes1.value = null.toString()
+                                                        boxType1.value = false
+
+                                                        //colora e cambia scritta del bottone TIPO1
+
+
+                                                    }
+                                                    .background(backgroundColor),
+
+                                                ) {
+                                                Text(
+                                                    text = PokemonType.values()[index].toString(),
+                                                    fontSize = 20.sp,
+                                                    modifier = Modifier
+                                                        .align(Alignment.Center)
+                                                        .padding(top = 6.dp, bottom = 6.dp),
+                                                    color = Color.White
+                                                )
+                                            }
+                                        }
+                                    }
+                                    //text "ok" contenuto in fondo alla column, quando l'utente cliccherà su di esso
+                                    //le versioni che ha selezionato verranno inviate per mostrare i risultati
+                                    //per ora eseguo una print sul log per essere certo che tutto quello mostraro
+                                    //sia conforme con ciò che ha selezionato l'utente
                                     Box(
                                         modifier = Modifier
-                                            .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                                            .padding(
+                                                top = 8.dp,
+                                                start = 9.dp,
+                                                end = 9.dp,
+                                                bottom = 8.dp
+                                            )
                                             .border(
-                                                BorderStroke(2.dp, Color.Gray),
+                                                BorderStroke(1.dp, Color.Gray),
                                                 shape = RoundedCornerShape(
-                                                    topStart = 10.dp,
-                                                    topEnd = 10.dp
+                                                    topStart = 12.dp,
+                                                    topEnd = 12.dp,
+                                                    bottomStart = 12.dp,
+                                                    bottomEnd = 12.dp
                                                 ),
                                             )
                                             .fillMaxWidth()
                                             .clickable {
-                                                //quando clicco il box voglio salvare la scelta dell' utente
-                                                selectedItemStates[index] =
-                                                    !selectedItemStates[index]
-                                                if (selectedItemStates[index]) {
-                                                    versionList.value.add((index + 1).toString())
-                                                } else {
-                                                    versionList.value.remove((index + 1).toString())
-                                                }
-                                            }
-                                            .background(backgroundColor),
-
-                                        ) {
-                                        Text(
-                                            text = "${index + 1}",
-                                            fontSize = 24.sp,
-                                            modifier = Modifier
-                                                .align(Alignment.Center)
-                                                .padding(top = 6.dp, bottom = 6.dp),
-                                            color = Color.DarkGray
-                                        )
-                                    }
-                                }
-                            }
-                            //text "ok" contenuto in fondo alla column, quando l'utente cliccherà su di esso
-                            //le versioni che ha selezionato verranno inviate per mostrare i risultati
-                            //per ora eseguo una print sul log per essere certo che tutto quello mostraro
-                            //sia conforme con ciò che ha selezionato l'utente
-                            Text(
-                                text = stringResource(android.R.string.ok),
-                                fontSize = 24.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .padding(top = 8.dp, bottom = 8.dp, start = 20.dp, end = 20.dp)
-                                    .clickable {
-                                        //chiudo il box, le variabili version sono state già salvate nella lista
-                                        boxVersion.value = false
-                                        for (i in 0 until versionList.value.size) {
-                                            Timber
-                                                .tag("MyTag")
-                                                .d(versionList.value[i])
-                                        }
-                                    }
-                                    .border(
-                                        //BorderStroke(2.dp, Color.Gray),
-                                        //shape = RoundedCornerShape(8.dp),
-                                        BorderStroke(2.dp, Color.Gray),
-                                        shape = RoundedCornerShape(
-                                            topStart = 10.dp,
-                                            topEnd = 10.dp
-                                        ),
-                                    )
-                                    .background(color = AppGrey)
-                                    //.width(330.dp),
-                                    .fillMaxWidth()
-                            )
-                        }
-                    }
-                }
-            }
-
-
-            //BOX TYPE
-            //il box type si comporta in modo uguale al box version,
-            if (boxType.value) {
-
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .zIndex(1f)
-                        .padding(start = 16.dp, end = 16.dp, bottom = 0.dp)
-                        .border(
-                            BorderStroke(2.dp, Color.Gray),
-                            shape = RoundedCornerShape(8.dp),
-                        )
-                        .background(Color.White),
-
-
-                    ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text(
-                            text = stringResource(R.string.select_type),
-                            fontSize = 24.sp,
-                            modifier = Modifier
-                                .padding(top = 6.dp, bottom = 6.dp),
-                            color = Color.DarkGray
-                        )
-                        Column {
-                            LazyColumn(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp),
-                                contentPadding = PaddingValues(16.dp)
-                            ) {
-                                //qui andranno il numero di tipi di pokemon presenti
-                                items(pokemonTypes.size) { index ->
-                                    //verifico se il box viene aperto per la prima volta o se e' stato gia aperto
-                                    if (firstTimeType.value == 0) {
-                                        //e' la prima volta che apro il box, l'utente non ha selezionato ancora nulla
-                                        //tutti gli item sono su false, li aggiungo alla lista che ne tiene traccia
-                                        for (i in pokemonTypes.indices) {
-                                            //imposto a false ogni singolo elemento
-                                            selectedTypeState.add(i, false)
-                                        }
-                                        //fatto ciò, questa vale come prima volta di apertura del box, imposto a 1 first time
-                                        firstTimeType.value = 1
-                                        //fino al prossimo avvio dell'app non posso piu rientrare in questo if
-
-                                    }
-
-                                    //se viene selezionato dall'utente l'elemento nella posizione index, il suo
-                                    //background diventerà grigio ( facendo capire che e' stato selezionato) altrimenti
-                                    //sarà bianco
-
-                                    //adjustColorIntensity( getColorForType(pokemonTypes[index]),0.5f)
-                                    //var backgroundColor:Color?=null
-
-                                    val backgroundColor =
-                                        if (selectedTypeState[index]) getColorForType(pokemonTypes[index]) else
-                                            Color.White
-                                    // qui c'e' la card che non e' altro composta da un box e al suo interno
-                                    // il testo che indica il nuomero di versione
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(top = 8.dp, start = 8.dp, end = 8.dp)
-                                            .border(
-                                                BorderStroke(2.dp, Color.Gray),
-                                                shape = RoundedCornerShape(
-                                                    topStart = 10.dp,
-                                                    topEnd = 10.dp
-                                                ),
-
-                                                )
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                //quando clicco il box voglio salvare la scelta dell' utente
-                                                selectedTypeState[index] = !selectedTypeState[index]
-                                                //se il tipo viene selezionato per la ricerca
-                                                if (selectedTypeState[index]) {
-                                                    //verifico se ne ha già selezionati 2 di tipi
-                                                    typeList.value.add(pokemonTypes[index])
-                                                }
-                                                //se il tipo viene rimosso ( quindi era stato precedentemente selezionato)
-                                                //lo rimuovo dalla lista dei selezionati
-                                                else {
-                                                    typeList.value.remove(pokemonTypes[index])
-                                                }
-                                            }
-                                            .background(backgroundColor),
-
-                                        ) {
-                                        Text(
-                                            text = pokemonTypes[index],
-                                            fontSize = 24.sp,
-                                            modifier = Modifier
-                                                .align(Alignment.Center)
-                                                .padding(top = 6.dp, bottom = 6.dp),
-                                            color = Color.DarkGray
-                                        )
-                                    }
-                                }
-                            }
-                            //text "ok" contenuto in fondo alla column, quando l'utente cliccherà su di esso
-                            //le versioni che ha selezionato verranno inviate per mostrare i risultati
-                            //per ora eseguo una print sul log per essere certo che tutto quello mostraro
-                            //sia conforme con ciò che ha selezionato l'utente
-                            Text(
-                                text = stringResource(android.R.string.ok),
-                                fontSize = 24.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .padding(top = 8.dp, bottom = 8.dp, start = 20.dp, end = 20.dp)
-                                    .clickable {
-                                        //chiudo il box, le variabili version sono state già salvate nella lista
-                                        boxType.value = false
-                                        for (i in 0 until typeList.value.size) {
+                                                //chiudo il box, le variabili version sono state già salvate nella lista
+                                                allTypes1.value = R.string.all_types1.toString()
+                                                type1.value = null.toString()
+                                                boxType1.value = false
+                                                /*for (i in 0 until typeList.value.size) {
                                             Timber
                                                 .tag("MyTag")
                                                 .d(typeList.value[i])
+                                        }*/
+                                            }
+                                    )
+                                    {
+                                        Text(
+                                            text = stringResource(R.string.all_types1),
+                                            fontSize = 22.sp,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier
+                                                .padding(
+                                                    top = 4.dp,
+                                                    bottom = 4.dp,
+                                                    start = 20.dp,
+                                                    end = 20.dp
+                                                )
+                                                .background(color = AppGrey)
+                                                .width(330.dp),
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // tendine per la selezione del secondo tipo
+                    if (boxType2.value) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .zIndex(1f)
+                                .padding(top = 6.dp, start = 16.dp, end = 16.dp, bottom = 0.dp)
+                                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
+                                .background(Color.White),
+
+
+                            ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.select_type),
+                                    fontSize = 22.sp,
+                                    modifier = Modifier
+                                        .padding(top = 8.dp, bottom = 4.dp),
+                                    color = Color.DarkGray
+                                )
+                                Column {
+                                    LazyColumn(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(200.dp),
+                                        contentPadding = PaddingValues(
+                                            top = 0.dp,
+                                            start = 1.dp,
+                                            end = 1.dp
+                                        )
+                                    ) {
+                                        //qui andranno il numero di tipi di pokemon presenti
+                                        items(PokemonType.values().size) { index ->
+                                            //verifico se il box viene aperto per la prima volta o se e' stato gia aperto
+                                            //if (firstTimeType.value == 0) {
+                                                //e' la prima volta che apro il box, l'utente non ha selezionato ancora nulla
+                                                //tutti gli item sono su false, li aggiungo alla lista che ne tiene traccia
+                                                //for (i in pokemonTypes.indices) {
+                                                    //imposto a false ogni singolo elemento
+                                                    //selectedTypeState.add(i, false)
+                                                //}
+                                                //fatto ciò, questa vale come prima volta di apertura del box, imposto a 1 first time
+                                                //firstTimeType.value = 1
+                                                //fino al prossimo avvio dell'app non posso piu rientrare in questo if
+
+                                            //}
+
+                                            //se viene selezionato dall'utente l'elemento nella posizione index, il suo
+                                            //background diventerà grigio ( facendo capire che e' stato selezionato) altrimenti
+                                            //sarà bianco
+
+                                            //adjustColorIntensity( getColorForType(pokemonTypes[index]),0.5f)
+                                            //var backgroundColor:Color?=null
+
+                                            val backgroundColor =
+                                                //if (selectedTypeState[index])
+                                                getColorForType(PokemonType.values()[index].toString())
+                                            //else
+                                            //      Color.White
+                                            // qui c'e' la card che non e' altro composta da un box e al suo interno
+                                            // il testo che indica il nuomero di versione
+                                            Box(
+                                                modifier = Modifier
+                                                    .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                                                    .clip(RoundedCornerShape(12.dp))
+                                                    .fillMaxWidth()
+                                                    .clickable {
+                                                        //quando clicco il box voglio salvare la scelta dell' utente
+                                                        //selectedTypeState[index] = !selectedTypeState[index]
+                                                        //se il tipo viene selezionato per la ricerca
+                                                        //if (selectedTypeState[index]) {
+                                                        //verifico se ne ha già selezionati 2 di tipi
+                                                        //  typeList.value.add(pokemonTypes[index])
+                                                        //}
+                                                        //se il tipo viene rimosso ( quindi era stato precedentemente selezionato)
+                                                        //lo rimuovo dalla lista dei selezionati
+                                                        //else {
+                                                        //  typeList.value.remove(pokemonTypes[index])
+                                                        //}
+
+                                                        /*for (i in 0 until typeList.value.size) {
+                                                    Timber
+                                                        .tag("MyTag")
+                                                        .d(typeList.value[i])
+                                                }*/
+                                                        type2.value = PokemonType.values()[index].toString()
+                                                        allTypes2.value = null.toString()
+                                                        boxType2.value = false
+
+                                                        //colora e cambia scritta del bottone TIPO1
+
+                                                    }
+                                                    .background(backgroundColor),
+
+                                                ) {
+                                                Text(
+                                                    text = PokemonType.values()[index].toString(),
+                                                    fontSize = 20.sp,
+                                                    modifier = Modifier
+                                                        .align(Alignment.Center)
+                                                        .padding(top = 6.dp, bottom = 6.dp),
+                                                    color = Color.White
+                                                )
+                                            }
                                         }
                                     }
-                                    .border(
-                                        BorderStroke(2.dp, Color.Gray),
-                                        shape = RoundedCornerShape(
-                                            topStart = 10.dp,
-                                            topEnd = 10.dp
-                                        ),
+                                    //text "ok" contenuto in fondo alla column, quando l'utente cliccherà su di esso
+                                    //le versioni che ha selezionato verranno inviate per mostrare i risultati
+                                    //per ora eseguo una print sul log per essere certo che tutto quello mostraro
+                                    //sia conforme con ciò che ha selezionato l'utente
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(
+                                                top = 8.dp,
+                                                start = 9.dp,
+                                                end = 9.dp,
+                                                bottom = 8.dp
+                                            )
+                                            .border(
+                                                BorderStroke(1.dp, Color.Gray),
+                                                shape = RoundedCornerShape(
+                                                    topStart = 12.dp,
+                                                    topEnd = 12.dp,
+                                                    bottomStart = 12.dp,
+                                                    bottomEnd = 12.dp
+                                                ),
+                                            )
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                //chiudo il box, le variabili version sono state già salvate nella lista
+                                                boxType2.value = false
+                                                type2.value = null.toString()
+                                                allTypes2.value = R.string.all_types2.toString()
+                                                /*for (i in 0 until typeList.value.size) {
+                                            Timber
+                                                .tag("MyTag")
+                                                .d(typeList.value[i])
+                                        }*/
+                                            }
                                     )
-                                    .background(color = AppGrey)
-                                    .width(330.dp),
-                            )
+                                    {
+                                        Text(
+                                            text = stringResource(R.string.all_types2),
+                                            fontSize = 22.sp,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier
+                                                .padding(
+                                                    top = 4.dp,
+                                                    bottom = 4.dp,
+                                                    start = 20.dp,
+                                                    end = 20.dp
+                                                )
+                                                .background(color = AppGrey)
+                                                .width(330.dp),
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-    }
-}
+
 
 //funzione che restituisce il colore dominate, riceve il tipo ( che l'utente clicca
 //nel filtro tipo), e in base a quale tipo ja cliccato ad esso e' associato un colore
 fun getColorForType(typeName: String): Color {
+    val backgroundButton = Color.Gray.copy(alpha = 0.45f)
     return when (typeName) {
         "BUG" -> bug
         "DARK" -> dark
@@ -613,9 +891,10 @@ fun getColorForType(typeName: String): Color {
         "ROCK" -> rock
         "STEEL" -> steel
         "WATER" -> water
-        else -> Color.Black
+        else -> backgroundButton
     }
 }
+
 
 // Funzione per modificare l'intensità di un colore
 fun adjustColorIntensity(color: Color, factor: Float): Color {
@@ -626,3 +905,4 @@ fun adjustColorIntensity(color: Color, factor: Float): Color {
 
     return Color(red.coerceIn(0f, 1f), green.coerceIn(0f, 1f), blue.coerceIn(0f, 1f), alpha)
 }
+
