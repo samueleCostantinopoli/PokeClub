@@ -1,6 +1,6 @@
 package it.codeclub.pokeclub.remote.data
 
-data class ResultX(
+data class GenerationXX(
     val name: String,
     val url: String
 )

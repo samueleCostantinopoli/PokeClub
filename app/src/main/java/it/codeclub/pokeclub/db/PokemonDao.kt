@@ -11,6 +11,8 @@ import it.codeclub.pokeclub.db.entities.PokemonAbilityCrossRef
 import it.codeclub.pokeclub.db.entities.PokemonAndDetails
 import it.codeclub.pokeclub.db.entities.PokemonDetails
 import it.codeclub.pokeclub.db.entities.PokemonEntity
+import it.codeclub.pokeclub.db.entities.PokemonVersionGroupsCrossRef
+import it.codeclub.pokeclub.db.entities.VersionGroupEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -53,5 +55,11 @@ interface PokemonDao {
 
     @Upsert
     suspend fun insert(pokemonAbilityCrossRef: PokemonAbilityCrossRef)
+
+    @Upsert
+    suspend fun insert(versionGroupEntity: VersionGroupEntity)
+
+    @Upsert
+    suspend fun insert(pokemonVersionGroupsCrossRef: PokemonVersionGroupsCrossRef)
 
 }

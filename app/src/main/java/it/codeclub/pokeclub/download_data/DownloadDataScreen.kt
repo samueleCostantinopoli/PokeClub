@@ -38,6 +38,9 @@ fun DownloadDataScreen(
     val abilityCounter = remember { downloadDataViewModel.abilityCounter }
     val abilityNumber = remember { downloadDataViewModel.abilityNumber }
     val currentAbility = remember { downloadDataViewModel.currentAbility }
+    val versionsCounter = remember { downloadDataViewModel.versionGroupsCounter }
+    val versionsNumber = remember { downloadDataViewModel.versionGroupsNumber }
+    val currentVersionGroup = remember { downloadDataViewModel.currentVersionGroup }
     val pokemonCounter = remember { downloadDataViewModel.pokemonCounter }
     val pokemonNumber = remember { downloadDataViewModel.pokemonNumber }
     val currentPokemon = remember { downloadDataViewModel.currentPokemon }
@@ -77,49 +80,89 @@ fun DownloadDataScreen(
                 Text(
                     text = "${stringResource(id = R.string.downloading)} " +
                             stringResource(R.string.abilities) +
-                            "(${abilityCounter.value} ${stringResource(id = R.string.of)} ${abilityNumber.value})",
+                            " (${abilityCounter.value} ${stringResource(id = R.string.of)} ${abilityNumber.value})",
                     color = Color.White,
                     fontSize = 14.sp,
-                    modifier = Modifier.align(Alignment.BottomCenter).offset(y=(-110).dp)
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .offset(y = (-110).dp)
                 )
                 Text(
                     text = currentAbility.value!!.name.replaceFirstChar { it.uppercase() },
                     color = Color.White,
                     fontSize = 14.sp,
-                    modifier = Modifier.align(Alignment.BottomCenter).offset(y=(-90).dp)
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .offset(y = (-110).dp)
                 )
+                currentVersionGroup.value?.let {
+                    Text(
+                        text = currentVersionGroup.value!!,
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .offset(y = (-90).dp)
+                    )
+                }
+            }
+
+            DownloadDataViewModel.DownloadStatus.VERSION_GROUPS_DOWNLOAD -> {
+                Text(
+                    text = "${stringResource(id = R.string.downloading)} " +
+                            stringResource(R.string.versions) +
+                            " (${versionsCounter.value} ${stringResource(id = R.string.of)} ${versionsNumber.value})",
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .offset(y = (-110).dp)
+                )
+                currentVersionGroup.value?.let {
+                    Text(
+                        text = currentVersionGroup.value!!.replaceFirstChar { it.uppercase() },
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .offset(y = (-90).dp)
+                    )
+                }
             }
 
             DownloadDataViewModel.DownloadStatus.POKEMON_DOWNLOAD -> {
                 Text(
                     text = "${stringResource(id = R.string.downloading)} " +
                             stringResource(R.string.pokemon) +
-                            "(${pokemonCounter.value} ${stringResource(id = R.string.of)} ${pokemonNumber.value})",
+                            " (${pokemonCounter.value} ${stringResource(id = R.string.of)} ${pokemonNumber.value})",
                     color = Color.White,
                     fontSize = 14.sp,
-                    modifier = Modifier.align(Alignment.BottomCenter).offset(y=(-110).dp)
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .offset(y = (-110).dp)
                 )
-                Text(
-                    text = currentPokemon.value!!.name.replaceFirstChar { it.uppercase() },
-                    color = Color.White,
-                    fontSize = 14.sp,
-                    modifier = Modifier.align(Alignment.BottomCenter).offset(y=(-90).dp)
-                )
+                currentPokemon.value?.let {
+                    Text(
+                        text = currentPokemon.value!!.name.replaceFirstChar { it.uppercase() },
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .offset(y = (-90).dp)
+                    )
+                }
             }
 
             DownloadDataViewModel.DownloadStatus.DONE -> {
-
-                if (!done) {
-                    navController.navigate("pokemon_list_screen") {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
-                    navController.graph.setStartDestination("pokemon_list_screen")
-                    done = true
+                done = true
+                navController.navigate("pokemon_list_screen") {
+                    popUpTo(navController.graph.startDestinationId)
+                    launchSingleTop = true
                 }
+                navController.graph.setStartDestination("pokemon_list_screen")
             }
         }
-        if(!done) {
+        if (!done) {
             LinearProgressIndicator(
                 modifier = Modifier
                     .fillMaxWidth(0.8f)

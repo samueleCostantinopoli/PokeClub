@@ -358,7 +358,6 @@ fun SecondRow(
                                             Color.Unspecified
                                         else
                                             darkenedColor
-                                            //Color(UIUtils.adjustForBackground(pokemon.dominantColor))
                                     )
                                 }
                             }

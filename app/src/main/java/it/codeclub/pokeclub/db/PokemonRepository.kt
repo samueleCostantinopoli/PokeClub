@@ -6,14 +6,13 @@ import it.codeclub.pokeclub.db.entities.PokemonAbilityCrossRef
 import it.codeclub.pokeclub.db.entities.PokemonAndDetails
 import it.codeclub.pokeclub.db.entities.PokemonDetails
 import it.codeclub.pokeclub.db.entities.PokemonEntity
+import it.codeclub.pokeclub.db.entities.PokemonVersionGroupsCrossRef
+import it.codeclub.pokeclub.db.entities.VersionGroupEntity
 import kotlinx.coroutines.flow.Flow
 
 interface PokemonRepository {
 
     suspend fun getPokemon(): Flow<List<PokemonEntity>>
-    suspend fun getFavourites(): Flow<List<PokemonEntity>>
-    suspend fun getCaptured(): Flow<List<PokemonEntity>>
-
     suspend fun getAbilities(): Flow<List<Ability>>
     suspend fun getPokemonWithAbility(abilityId: Long): Flow<AbilityWithPokemon>
     suspend fun getPokemonDetails(name: String): Flow<PokemonAndDetails>
@@ -22,4 +21,6 @@ interface PokemonRepository {
     suspend fun insertNewPokemonDetails(pokemonDetails: PokemonDetails): Long
     suspend fun insertNewAbility(ability: Ability)
     suspend fun insertPokemonAbilityCrossRef(pokemonAbilityCrossRef: PokemonAbilityCrossRef)
+    suspend fun insertVersionGroupEntity(versionGroupEntity: VersionGroupEntity)
+    suspend fun insertPokemonVersionGroupsCrossRef(pokemonVersionGroupsCrossRef: PokemonVersionGroupsCrossRef)
 }

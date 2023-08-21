@@ -45,6 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import it.codeclub.pokeclub.R
 import it.codeclub.pokeclub.db.entities.Ability
+import it.codeclub.pokeclub.db.entities.PokemonType
 import it.codeclub.pokeclub.ui.theme.*
 import it.codeclub.pokeclub.utils.Resource
 import java.util.Locale

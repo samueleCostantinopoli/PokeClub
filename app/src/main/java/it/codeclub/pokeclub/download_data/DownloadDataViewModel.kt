@@ -13,12 +13,16 @@ import it.codeclub.pokeclub.db.entities.PokemonAbilityCrossRef
 import it.codeclub.pokeclub.db.entities.PokemonDetails
 import it.codeclub.pokeclub.db.entities.PokemonEntity
 import it.codeclub.pokeclub.db.entities.PokemonType
+import it.codeclub.pokeclub.db.entities.PokemonVersionGroupsCrossRef
+import it.codeclub.pokeclub.db.entities.VersionGroupEntity
 import it.codeclub.pokeclub.local.SharedPrefsRepository
 import it.codeclub.pokeclub.remote.PokeAPI
 import it.codeclub.pokeclub.remote.data.AbilityDetails
 import it.codeclub.pokeclub.remote.data.AbilityList
 import it.codeclub.pokeclub.remote.data.Pokemon
 import it.codeclub.pokeclub.remote.data.PokemonList
+import it.codeclub.pokeclub.remote.data.VersionGroup
+import it.codeclub.pokeclub.remote.data.VersionGroups
 import it.codeclub.pokeclub.utils.Constants.LIMIT
 import kotlinx.coroutines.launch
 import okhttp3.Call
@@ -26,7 +30,6 @@ import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
@@ -40,24 +43,33 @@ class DownloadDataViewModel @Inject constructor(
     var currentStatus = mutableStateOf(DownloadStatus.INIT_DOWNLOAD)
 
     var downloadProgress = mutableStateOf(0.0f)
+
+    // Abilities attributes
     var abilityNumber = mutableStateOf(0)
     var abilityCounter = mutableStateOf(0)
     private var abilityOffset = sharedPrefsRepository.getAbilityOffset()
-    private val ability: AbilityDetails? = null
-    var currentAbility = mutableStateOf(ability)
+    var currentAbility = mutableStateOf<AbilityDetails?>(null)
 
+    // Version groups attributes
+    // TODO reference these on compose
+    var versionGroupsNumber = mutableStateOf(0)
+    var versionGroupsCounter = mutableStateOf(0)
+    private var versionGroupsOffset: Int = sharedPrefsRepository.getVersionGroupsOffset()
+    var currentVersionGroup = mutableStateOf<String?>(null)
+
+    // Pokemon attributes
     var pokemonNumber = mutableStateOf(0)
     var pokemonCounter = mutableStateOf(0)
     private var pokemonOffset: Int = sharedPrefsRepository.getPokemonOffset()
-    private val pokemon: Pokemon? = null
-    var currentPokemon = mutableStateOf(pokemon)
+    var currentPokemon = mutableStateOf<Pokemon?>(null)
 
     private val okHttpClient = OkHttpClient.Builder().build()
 
     init {
         viewModelScope.launch {
             if (sharedPrefsRepository.getFirstStartIndicator()) {
-                getAbilities()
+                //getAbilities()
+                getVersionGroups()
                 getPokemon()
                 sharedPrefsRepository.updateFirstStartIndicator()
             }
@@ -78,13 +90,27 @@ class DownloadDataViewModel @Inject constructor(
         } while (abilityList.next != null)
     }
 
+    private suspend fun getVersionGroups() {
+        var versionGroups: VersionGroups
+        do {
+            versionGroups = pokeApi.getVersionGroups(LIMIT, versionGroupsOffset)
+            if (versionGroupsNumber.value == 0)
+                versionGroupsNumber.value = versionGroups.count
+            storeVersionGroup(versionGroups)
+            currentStatus.value = DownloadStatus.VERSION_GROUPS_DOWNLOAD
+            versionGroupsOffset += LIMIT
+            downloadProgress.value =
+                versionGroupsOffset.toFloat() / versionGroupsNumber.value.toFloat()
+        } while (versionGroups.next != null);
+    }
+
     private suspend fun getPokemon() {
         var pokemonList: PokemonList
         do {
             pokemonList = pokeApi.getPokemonList(LIMIT, pokemonOffset)
             if (pokemonNumber.value == 0)
                 pokemonNumber.value = pokemonList.count
-            storePokemon(pokemonList)
+            getPokemonData(pokemonList)
             currentStatus.value = DownloadStatus.POKEMON_DOWNLOAD
             pokemonOffset += LIMIT
 
@@ -126,13 +152,25 @@ class DownloadDataViewModel @Inject constructor(
         }
     }
 
-    private suspend fun storePokemon(pokemonList: PokemonList) {
+    private suspend fun storeVersionGroup(versionGroups: VersionGroups) {
+        versionGroups.results.forEach {
+            currentVersionGroup.value = it.name
+
+            val versionGroupEntity = VersionGroupEntity (
+                it.name
+            )
+            pokemonRepository.insertVersionGroupEntity(versionGroupEntity)
+            versionGroupsCounter.value++
+        }
+    }
+
+    private suspend fun getPokemonData(pokemonList: PokemonList) {
         pokemonList.results.forEach {
 
             val pokemon = pokeApi.getPokemonInfo(it.name)
 
             currentPokemon.value = pokemon
-            // Takes PokemonEntity values and saves them
+
             val pokemonEntity = PokemonEntity(
                 pokemonId = pokemon.id,
                 name = pokemon.name,
@@ -150,7 +188,7 @@ class DownloadDataViewModel @Inject constructor(
                 okHttpClient.newCall(request).enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
                         // Saves entity with white as default dominant color
-                        savePokemonEntity(pokemonEntity)
+                        storePokemonEntity(pokemonEntity)
                     }
 
                     override fun onResponse(call: Call, response: Response) {
@@ -164,11 +202,24 @@ class DownloadDataViewModel @Inject constructor(
                                 )
                                 calcDominantColor(bmp) { color ->
                                     pokemonEntity.dominantColor = color.toInt()
-                                    savePokemonEntity(pokemonEntity)
+                                    storePokemonEntity(pokemonEntity)
                                 }
                             }
                     }
                 })
+            }
+
+            // Saves PokemonVersionGroupsCrossRef
+            pokemon.moves.forEach { move ->
+                move.version_group_details.forEach { versionGroupDetail ->
+                    val pokemonVersionGroupsCrossRef = PokemonVersionGroupsCrossRef(
+                        pokemon.id,
+                        versionGroupDetail.version_group.name
+                    )
+                    pokemonRepository.insertPokemonVersionGroupsCrossRef(
+                        pokemonVersionGroupsCrossRef
+                    )
+                }
             }
 
             // Takes PokemonDetails values and saves them
@@ -216,11 +267,11 @@ class DownloadDataViewModel @Inject constructor(
         }
     }
 
-    private fun savePokemonEntity(pokemonEntity: PokemonEntity) = viewModelScope.launch {
+    private fun storePokemonEntity(pokemonEntity: PokemonEntity) = viewModelScope.launch {
         pokemonRepository.insertNewPokemonEntity(pokemonEntity)
     }
 
-    fun calcDominantColor(bitmap: Bitmap, onFinish: (UInt) -> Unit) {
+    private fun calcDominantColor(bitmap: Bitmap, onFinish: (UInt) -> Unit) {
         val bmp = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
         Palette.from(bmp).generate { palette ->
@@ -233,6 +284,7 @@ class DownloadDataViewModel @Inject constructor(
     enum class DownloadStatus {
         INIT_DOWNLOAD,
         ABILITY_DOWNLOAD,
+        VERSION_GROUPS_DOWNLOAD,
         POKEMON_DOWNLOAD,
         DONE
     }

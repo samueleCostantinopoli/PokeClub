@@ -4,10 +4,10 @@ import it.codeclub.pokeclub.remote.data.AbilityDetails
 import it.codeclub.pokeclub.remote.data.AbilityList
 import it.codeclub.pokeclub.remote.data.Pokemon
 import it.codeclub.pokeclub.remote.data.PokemonList
+import it.codeclub.pokeclub.remote.data.VersionGroups
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-import retrofit2.http.Streaming
 
 interface PokeAPI {
 
@@ -22,10 +22,16 @@ interface PokeAPI {
         @Path("name") name: String
     ): Pokemon
 
+    @GET("version-group")
+    suspend fun getVersionGroups(
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int
+    ): VersionGroups
+
     @GET("ability")
     suspend fun getAbilityList(
         @Query("limit") limit: Int,
-        @Query("offset") offset: Int,
+        @Query("offset") offset: Int
     ): AbilityList
 
     @GET("ability/{name}")
