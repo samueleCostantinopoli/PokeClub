@@ -26,6 +26,7 @@ import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
@@ -35,7 +36,7 @@ class DownloadDataViewModel @Inject constructor(
     private val pokemonRepository: PokemonRepository,
     private val sharedPrefsRepository: SharedPrefsRepository
 ) : ViewModel() {
-    
+
     var currentStatus = mutableStateOf(DownloadStatus.INIT_DOWNLOAD)
 
     var downloadProgress = mutableStateOf(0.0f)
@@ -56,7 +57,7 @@ class DownloadDataViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             if (sharedPrefsRepository.getFirstStartIndicator()) {
-                getAbilities()
+                //getAbilities()
                 getPokemon()
                 sharedPrefsRepository.updateFirstStartIndicator()
             }
@@ -131,19 +132,19 @@ class DownloadDataViewModel @Inject constructor(
             val pokemon = pokeApi.getPokemonInfo(it.name)
 
             currentPokemon.value = pokemon
-
+            // Takes PokemonEntity values and saves them
             val pokemonEntity = PokemonEntity(
                 pokemonId = pokemon.id,
                 name = pokemon.name,
                 type = PokemonType.valueOf(pokemon.types[0].type.name.uppercase()),
                 secondType = if (pokemon.types.size == 2) PokemonType.valueOf(pokemon.types[1].type.name.uppercase()) else null,
                 dominantColor = 0xffffff,
-                imageUrl = pokemon.sprites.front_default ?: "Not provided"
+                imageUrl = pokemon.sprites.other.`official-artwork`.front_default ?: "Not provided"
             )
 
-            if (pokemon.sprites.front_default != null) {
+            if (pokemon.sprites.other.`official-artwork`.front_default != null) {
                 val request = Request.Builder()
-                    .url(pokemon.sprites.front_default)
+                    .url(pokemon.sprites.other.`official-artwork`.front_default)
                     .build()
 
                 okHttpClient.newCall(request).enqueue(object : Callback {
@@ -170,6 +171,7 @@ class DownloadDataViewModel @Inject constructor(
                 })
             }
 
+            // Takes PokemonDetails values and saves them
             var lp = 0
             var attack = 0
             var defense = 0

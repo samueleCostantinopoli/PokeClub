@@ -33,7 +33,8 @@ enum class PokemonType(val value: Int) {
                 2131492963 -> realValue = 2131492965
             }
 
-            return PokemonType.values().first { it.value == realValue }
+            val type = PokemonType.values().find { it.value == realValue }
+            return type ?: NULL
         }
     }
 }

@@ -7,6 +7,7 @@ import it.codeclub.pokeclub.remote.data.PokemonList
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Streaming
 
 interface PokeAPI {
 
