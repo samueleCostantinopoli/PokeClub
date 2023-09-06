@@ -68,7 +68,7 @@ class DownloadDataViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             if (sharedPrefsRepository.getFirstStartIndicator()) {
-                //getAbilities()
+                getAbilities()
                 getVersionGroups()
                 getPokemon()
                 sharedPrefsRepository.updateFirstStartIndicator()

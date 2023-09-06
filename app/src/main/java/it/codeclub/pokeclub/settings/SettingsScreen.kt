@@ -21,11 +21,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.codeclub.pokeclub.R
+import it.codeclub.pokeclub.utils.UIUtils.getLanguage
 
 @Composable
 fun SettingsScreen() {
@@ -33,6 +36,12 @@ fun SettingsScreen() {
     val isDarkModeEnabled = remember { mutableStateOf(false) }
     // Variabile remember per gestire la scelta della lingua
     val language = remember { mutableStateOf("Italiano") }
+    val currentLanguage = getLanguage()
+    if (currentLanguage == "it" || currentLanguage == "en") {
+        language.value = currentLanguage
+    } else {
+        language.value = "English"
+    }
 
     Column(
         Modifier

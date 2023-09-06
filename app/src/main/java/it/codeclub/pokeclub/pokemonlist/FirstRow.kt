@@ -5,40 +5,61 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import it.codeclub.pokeclub.R
 import it.codeclub.pokeclub.domain.FilterType
 import it.codeclub.pokeclub.ui.theme.AppGrey
+import it.codeclub.pokeclub.utils.UIUtils.getLanguage
 import timber.log.Timber
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FirstRow(
     navController: NavController,
@@ -48,12 +69,17 @@ fun FirstRow(
     isSearchExpanded: MutableState<Boolean>,
     focusManager: FocusManager,
     keyboardController: SoftwareKeyboardController?,
-    saveSearch: MutableState<String>,
-    searchText: MutableState<String>,
+    saveSearchPokemon: MutableState<String>,
+    searchTextPokemon: MutableState<String>,
     isAbilityClicked: MutableState<Boolean>,
     searchAbility: MutableState<String>,
     saveAbility: MutableState<String>
 ) {
+    var isDropdownExpanded by remember { mutableStateOf(false) }
+    var language = getLanguage()
+    var isFirstIteration = remember { mutableStateOf(true) }
+    val focusRequester = remember { FocusRequester() }
+
     Row(
         modifier = Modifier
             .padding(0.dp)
@@ -92,9 +118,9 @@ fun FirstRow(
                 )
             ) {
                 TextField(
-                    value = searchText.value,
+                    value = searchTextPokemon.value,
                     onValueChange = {
-                        searchText.value = it
+                        searchTextPokemon.value = it
                         pokemonListViewModel.searchPokemon()
                     },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
@@ -108,9 +134,9 @@ fun FirstRow(
                             //codice che permette di far sparire la barra di ricerca quando clicco invio
                             //isSearchExpanded.value = !isSearchExpanded.value
                             //salvo la ricerca di dell'utente nella variabile che verrà usata per la query
-                            saveSearch.value = searchText.value
+                            saveSearchPokemon.value = searchTextPokemon.value
                             //verifica che ilk testo sia effettivamente preso
-                            Timber.tag("MyTag").d(saveSearch.value)
+                            Timber.tag("MyTag").d(saveSearchPokemon.value)
                         }
                     ),
                     //questo permette di continuare a scorrere orizzontalmente mentre si scrive sul
@@ -159,65 +185,98 @@ fun FirstRow(
                     AppGrey
                 )
             ) {
-                TextField(
-                    value = searchAbility.value,
-                    onValueChange = {
-                        searchAbility.value = it
-                        pokemonListViewModel.searchAbility()
-                                    },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                    keyboardActions = KeyboardActions(
-                        onSend = {
-                            //tutto questo codice viene eseguito dopo aver cliccato invio
-                            // questa parte di codice permette di
-                            //far sparire la tastiera e di rendere invisibile la barra di ricerca
-                            keyboardController?.hide()
-                            focusManager.clearFocus()
-                            //codice che permette di far sparire la barra di ricerca quando clicco invio
-                            //isSearchExpanded.value = !isSearchExpanded.value
-                            //salvo la ricerca di dell'utente nella variabile che verrà usata per la query
-                            saveAbility.value = searchAbility.value
-                            //verifica che ilk testo sia effettivamente preso
-                            Timber.tag("MyTag").d(saveAbility.value)
-                        }
-                    ),
-                    //questo permette di continuare a scorrere orizzontalmente mentre si scrive sul
-                    //text field e si va oltre lo spazio necessario(in pratica il testo scorre in
-                    // modo orizzontale mentre si scrive oltre la dimensione del text field)
-                    singleLine = true,
-                    maxLines = 1,
-                    //icona invio fa scomparire la barra di ricerca
-                    trailingIcon = {
-                        // Aggiungiamo un'icona per inviare la ricerca quando cliccata
-                        IconButton(
-                            onClick = {
-                                // Tutto questo codice viene eseguito dopo aver cliccato sull'icona
+                ExposedDropdownMenuBox(
+                    expanded = isDropdownExpanded,
+                    onExpandedChange = {isDropdownExpanded = !isDropdownExpanded})
+                {
+                    TextField(
+                        value = searchAbility.value,
+                        onValueChange = {
+                            searchAbility.value = it
+                            pokemonListViewModel.searchAbility()
+                        },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                        keyboardActions = KeyboardActions(
+                            onSend = {
+                                //tutto questo codice viene eseguito dopo aver cliccato invio
+                                // questa parte di codice permette di
+                                //far sparire la tastiera e di rendere invisibile la barra di ricerca
                                 keyboardController?.hide()
-                                isAbilityClicked.value = false
-
+                                focusManager.clearFocus()
+                                //codice che permette di far sparire la barra di ricerca quando clicco invio
+                                //isSearchExpanded.value = !isSearchExpanded.value
+                                //salvo la ricerca di dell'utente nella variabile che verrà usata per la query
+                                saveAbility.value = searchAbility.value
+                                //verifica che ilk testo sia effettivamente preso
+                                Timber.tag("MyTag").d(saveAbility.value)
                             }
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.send),
-                                contentDescription = "Send",
-                                modifier = Modifier.size(26.dp),
-                                tint = Color.Black
+                        ),
+                        //questo permette di continuare a scorrere orizzontalmente mentre si scrive sul
+                        //text field e si va oltre lo spazio necessario(in pratica il testo scorre in
+                        // modo orizzontale mentre si scrive oltre la dimensione del text field)
+                        singleLine = true,
+                        maxLines = 1,
+                        //icona invio fa scomparire la barra di ricerca
+                        trailingIcon = {
+                            // Aggiungiamo un'icona per inviare la ricerca quando cliccata
+                            IconButton(
+                                onClick = {
+                                    // Tutto questo codice viene eseguito dopo aver cliccato sull'icona
+                                    keyboardController?.hide()
+                                    isAbilityClicked.value = false
+                                }
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.send),
+                                    contentDescription = "Send",
+                                    modifier = Modifier.size(26.dp),
+                                    tint = Color.Black
+                                )
+                            }
+                        },
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp, start = 6.dp, end = 0.dp)
+                            .background(Color.White, shape = CircleShape)
+                            .menuAnchor(),
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent,
+                        ),
+                        textStyle = TextStyle(fontSize = 20.sp),
+                        placeholder = { Text("ex: Erbaiuto", fontSize = 16.sp) }
+                    )
+
+
+                    ExposedDropdownMenu(expanded = isDropdownExpanded,
+                        onDismissRequest = { isDropdownExpanded = false }
+                    ) {
+                        val abilitiesToSearch = pokemonListViewModel.shownAbilitiesList
+                        abilitiesToSearch.value.forEach { ability ->
+                            DropdownMenuItem(
+                                text = {
+                                    if (language == "it") {
+                                        Text(ability.name_it)
+                                    } else {
+                                        Text(ability.name_en)
+                                    }
+                                },
+                                onClick = {
+                                    if (language == "it") {
+                                        searchAbility.value = ability.name_it
+                                    } else {
+                                        searchAbility.value = ability.name_en
+                                    }
+                                    isDropdownExpanded = false
+                                    keyboardController?.hide()
+                                    isAbilityClicked.value = false
+                                }
                             )
                         }
-                    },
-                    shape = CircleShape,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp, start = 6.dp, end = 0.dp)
-                        .background(Color.White, shape = CircleShape),
-                    colors = TextFieldDefaults.colors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                    ),
-                    textStyle = TextStyle(fontSize = 20.sp),
-                    placeholder = { Text("ex: Erbaiuto", fontSize = 16.sp) }
-                )
+                    }
+                }
             }
         }
 

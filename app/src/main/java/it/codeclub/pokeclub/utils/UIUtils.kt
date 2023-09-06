@@ -1,8 +1,10 @@
 package it.codeclub.pokeclub.utils
 
 import androidx.annotation.ColorInt
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.graphics.ColorUtils
 
 object UIUtils {
@@ -52,6 +54,12 @@ object UIUtils {
             )
         }
         return color
+    }
+
+    @Composable
+    fun getLanguage(): String {
+        val currentLocale = LocalConfiguration.current.locales[0]
+        return currentLocale.language
     }
 
 }

@@ -86,7 +86,7 @@ class PokemonListViewModel @Inject constructor(
             shownPokemonList.value = toBeFiltered.filter {
                 it.name.startsWith(
                     searchPokemonQuery.value.trim().lowercase()
-                ) || it.pokemonId.toString()
+                ) or it.pokemonId.toString()
                     .startsWith(searchPokemonQuery.value.trim())
             }
         } else
@@ -108,12 +108,14 @@ class PokemonListViewModel @Inject constructor(
             shownAbilitiesList.value = abilitiesList.filter {
                 it.name_en.startsWith(
                     searchAbilityQuery.value.trim().lowercase()
-                ) || it.name_it.startsWith(
+                ) or it.name_it.lowercase().startsWith(
                     searchAbilityQuery.value.trim().lowercase()
-                ) || it.abilityId.toString().startsWith(
+                ) or it.abilityId.toString().startsWith(
                     searchAbilityQuery.value.trim()
                 )
             }
+        } else {
+            shownAbilitiesList.value = abilitiesList
         }
     }
 

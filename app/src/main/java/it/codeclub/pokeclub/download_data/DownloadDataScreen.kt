@@ -93,18 +93,18 @@ fun DownloadDataScreen(
                     fontSize = 14.sp,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .offset(y = (-110).dp)
+                        .offset(y = (-90).dp)
                 )
-                currentVersionGroup.value?.let {
+                /*currentVersionGroup.value?.let {
                     Text(
                         text = currentVersionGroup.value!!,
                         color = Color.White,
                         fontSize = 14.sp,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
-                            .offset(y = (-90).dp)
+                            .offset(y = (-70).dp)
                     )
-                }
+                }*/
             }
 
             DownloadDataViewModel.DownloadStatus.VERSION_GROUPS_DOWNLOAD -> {

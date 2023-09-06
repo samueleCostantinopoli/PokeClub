@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.codeclub.pokeclub.db.PokemonRepository
 import it.codeclub.pokeclub.db.entities.PokemonAndDetails
+import it.codeclub.pokeclub.db.entities.PokemonEntity
 import it.codeclub.pokeclub.utils.Resource
 import kotlinx.coroutines.launch
 import javax.inject.Inject

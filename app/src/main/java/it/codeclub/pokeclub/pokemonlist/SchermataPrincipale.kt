@@ -93,13 +93,13 @@ fun MainView(
 
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
-    val searchText = remember { pokemonListViewModel.searchPokemonQuery }
-    val saveSearch = remember { mutableStateOf("") }
+    val searchTextPokemon = remember { pokemonListViewModel.searchPokemonQuery }
+    val saveSearchPokemon = remember { mutableStateOf("") }
 
     //variabile utilizzata per capire se l'utente ha cliccato su ability
     val isAbilityClicked = remember { mutableStateOf(false) }
-    val searchAbility = remember { mutableStateOf("") }
-    val saveAbility = remember { mutableStateOf("") }
+    val searchTextAbility = remember { pokemonListViewModel.searchAbilityQuery }
+    val saveSearchAbility = remember { mutableStateOf("") }
     //variabile utilizzata per capire se l'utente ha cliccato su cerca
     val isSearchExpanded = remember { pokemonListViewModel.isSearchingPokemon }
     val favourite = remember {
@@ -212,11 +212,11 @@ fun MainView(
                 isSearchExpanded,
                 focusManager,
                 keyboardController,
-                saveSearch,
-                searchText,
+                saveSearchPokemon,
+                searchTextPokemon,
                 isAbilityClicked,
-                searchAbility,
-                saveAbility
+                searchTextAbility,
+                saveSearchAbility
             )
 
             //second row ( button version type e ability) piu lazy column che mostra i pokemon
@@ -258,9 +258,6 @@ fun MainView(
                                         isRotated = !isRotated
                                     }
                                 },
-                                //modifier = Modifier
-                                //    .width(125.dp)
-                                //    .height(33.dp),
                                 shape = RoundedCornerShape(22.dp),
                             ) {
                                 Text(text = "cerca")
@@ -286,9 +283,6 @@ fun MainView(
                                         isRotated = !isRotated
                                     }
                                 },
-                                //modifier = Modifier
-                                //    .width(125.dp)
-                                //    .height(33.dp),
                                 shape = RoundedCornerShape(22.dp),
                             ) {
                                 Text(text = "abilità")
@@ -313,7 +307,7 @@ fun MainView(
                     },
                     modifier = Modifier
                         .padding(end = 28.dp, bottom = 10.dp)
-                        .size(86.dp)
+                        .size(76.dp)
                         .graphicsLayer(rotationZ = rotationState.value)
                         // .clickable { }
                         //.align(Alignment.BottomEnd)
@@ -623,7 +617,10 @@ fun MainView(
                                                         .tag("MyTag")
                                                         .d(typeList.value[i])
                                                 } */
-                                                        type1.value = PokemonType.values().get(index).toString()
+                                                        type1.value = PokemonType
+                                                            .values()
+                                                            .get(index)
+                                                            .toString()
                                                         allTypes1.value = null.toString()
                                                         boxType1.value = false
 
@@ -787,7 +784,8 @@ fun MainView(
                                                         .tag("MyTag")
                                                         .d(typeList.value[i])
                                                 }*/
-                                                        type2.value = PokemonType.values()[index].toString()
+                                                        type2.value =
+                                                            PokemonType.values()[index].toString()
                                                         allTypes2.value = null.toString()
                                                         boxType2.value = false
 

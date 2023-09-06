@@ -210,7 +210,7 @@ fun DetailsScreen(
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Text(
-                                                text = pokemonDetails.pokemon.type.name,
+                                                text = stringResource(id = pokemonDetails.pokemon.type.value),
                                                 color = Color.White
                                             )
                                         }
@@ -232,7 +232,7 @@ fun DetailsScreen(
                                                     contentAlignment = Alignment.Center
                                                 ) {
                                                     Text(
-                                                        text = type.name,
+                                                        text = stringResource(id = type.value),
                                                         color = Color.White
                                                     )
                                                 }
@@ -259,9 +259,9 @@ fun DetailsScreen(
                                                             .padding(4.dp),
                                                         contentAlignment = Alignment.Center
                                                     ) {
-                                                        pokemonDetails.pokemon.type.let { it1 ->
+                                                        pokemonDetails.pokemon.type.let { type ->
                                                             Text(
-                                                                text = it1.name,
+                                                                text = stringResource(id = type.value),
                                                                 color = Color.White
                                                             )
                                                         }
