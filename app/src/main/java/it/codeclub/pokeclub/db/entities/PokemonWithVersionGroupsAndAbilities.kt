@@ -4,7 +4,10 @@ import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
 
-data class PokemonWithVersionGroups(
+/**
+ * This entity is used within the main or list view
+ */
+data class PokemonWithVersionGroupsAndAbilities(
 
     @Embedded val pokemonEntity: PokemonEntity,
     @Relation(
@@ -12,5 +15,12 @@ data class PokemonWithVersionGroups(
         entityColumn = "versionGroupName",
         associateBy = Junction(PokemonVersionGroupsCrossRef::class)
     )
-    val versionGroups: List<VersionGroupEntity>
+    val versionGroups: List<VersionGroupEntity>,
+
+    @Relation(
+        parentColumn = "pokemonId",
+        entityColumn = "abilityId",
+        associateBy = Junction(PokemonAbilityCrossRef::class)
+    )
+    val abilities: List<Ability>
 )

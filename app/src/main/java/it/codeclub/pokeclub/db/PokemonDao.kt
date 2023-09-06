@@ -12,6 +12,7 @@ import it.codeclub.pokeclub.db.entities.PokemonAndDetails
 import it.codeclub.pokeclub.db.entities.PokemonDetails
 import it.codeclub.pokeclub.db.entities.PokemonEntity
 import it.codeclub.pokeclub.db.entities.PokemonVersionGroupsCrossRef
+import it.codeclub.pokeclub.db.entities.PokemonWithVersionGroupsAndAbilities
 import it.codeclub.pokeclub.db.entities.VersionGroupEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -19,7 +20,7 @@ import kotlinx.coroutines.flow.Flow
 interface PokemonDao {
 
     @Query("SELECT * FROM PokemonEntity")
-    fun getPokemonList(): Flow<List<PokemonEntity>>
+    fun getPokemonList(): Flow<List<PokemonWithVersionGroupsAndAbilities>>
 
     @Query("SELECT * FROM PokemonEntity WHERE isFavourite = 1")
     fun getFavourites(): Flow<List<PokemonEntity>>

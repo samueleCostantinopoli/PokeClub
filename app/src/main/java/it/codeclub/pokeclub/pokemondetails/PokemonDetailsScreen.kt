@@ -69,33 +69,49 @@ fun DetailsScreen(
         }
 
         is Resource.Error -> {
-            // TODO show error message
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.download_error),
+                    contentDescription = stringResource(
+                        id = R.string.error
+                    ),
+                    modifier = Modifier.padding(bottom = 6.dp)
+                )
+                Text(text = stringResource(id = R.string.error))
+            }
         }
 
         is Resource.Success -> {
-            //val remember per ricordare il valore dei filtri
-            var isFavourite by remember { mutableStateOf(pokemonInfo.value.data?.pokemon?.isFavourite!!) }
-            //in base al valore inziale della var isFavourite la schermata viene settata con la stella vuota o piena
-            val favouriteImage = if (isFavourite) R.drawable.fillstar else R.drawable.star
-            var isCaptured by remember { mutableStateOf(pokemonInfo.value.data?.pokemon?.isCaptured!!) }
-            //in base al valore inziale della var isCaptured la schermata viene settata con la pokeball vuota o piena
-            val capturedImage =
-                if (isCaptured) R.drawable.smallpokeball else R.drawable.smallpokeballempty
-
             pokemonInfo.value.data!!.let { pokemonDetails ->
+
+                //val remember per ricordare il valore dei filtri
+                var isFavourite by remember { mutableStateOf(pokemonDetails.pokemon.pokemonEntity.isFavourite) }
+                //in base al valore inziale della var isFavourite la schermata viene settata con la stella vuota o piena
+                val favouriteImage = if (isFavourite) R.drawable.fillstar else R.drawable.star
+                var isCaptured by remember { mutableStateOf(pokemonDetails.pokemon.pokemonEntity.isCaptured) }
+                //in base al valore inziale della var isCaptured la schermata viene settata con la pokeball vuota o piena
+                val capturedImage =
+                    if (isCaptured) R.drawable.smallpokeball else R.drawable.smallpokeballempty
+
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    val type1Color = getColorForType(pokemonDetails.pokemon.type.name)
+                    val type1Color = getColorForType(pokemonDetails.pokemon.pokemonEntity.type)
                     val lighterTypeColor = type1Color.copy(alpha = 0.5f)
 
-                    val backgroundColorTop = if (pokemonDetails.pokemon.secondType != null) {
-                        val type2Color = getColorForType(pokemonDetails.pokemon.secondType.name)
-                        Brush.verticalGradient(listOf(type1Color, type2Color))
-                    } else {
-                        Brush.verticalGradient(listOf(lighterTypeColor, type1Color))
-                    }
+                    val backgroundColorTop =
+                        if (pokemonDetails.pokemon.pokemonEntity.secondType != null) {
+                            val type2Color =
+                                getColorForType(pokemonDetails.pokemon.pokemonEntity.secondType)
+                            Brush.verticalGradient(listOf(type1Color, type2Color))
+                        } else {
+                            Brush.verticalGradient(listOf(lighterTypeColor, type1Color))
+                        }
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -132,6 +148,7 @@ fun DetailsScreen(
                                                 .padding(top = 3.dp)
                                                 .clickable {
                                                     isFavourite = !isFavourite
+                                                    pokemonDetailsViewModel.toggleFavourite()
                                                 }
                                         )
                                         Image(
@@ -141,7 +158,10 @@ fun DetailsScreen(
                                                 .size(28.dp)
                                                 .padding(end = 1.dp)
                                                 .padding(top = 3.dp)
-                                                .clickable { isCaptured = !isCaptured }
+                                                .clickable {
+                                                    isCaptured = !isCaptured
+                                                    pokemonDetailsViewModel.toggleCaptured()
+                                                }
                                         )
                                     }
                                     // seconda riga con immagine pokemon
@@ -152,16 +172,25 @@ fun DetailsScreen(
                                         val imageModifier = Modifier
                                             .size(100.dp)
                                             .background(Color.Transparent)
-                                        if (pokemonDetails.pokemon.isFavourite) {
-                                            Image(
-                                                bitmap = pokemonDetails.pokemon.image!!.asImageBitmap(),
-                                                contentDescription = pokemonDetails.pokemon.name,
-                                                modifier = imageModifier
-                                            )
+                                        if (pokemonDetails.pokemon.pokemonEntity.isFavourite) {
+                                            if (pokemonDetails.pokemon.pokemonEntity.image == null) {
+                                                Image(
+                                                    painter = painterResource(id = R.drawable.download_error),
+                                                    contentDescription = stringResource(
+                                                        id = R.string.error
+                                                    )
+                                                )
+                                            } else {
+                                                Image(
+                                                    bitmap = pokemonDetails.pokemon.pokemonEntity.image!!.asImageBitmap(),
+                                                    contentDescription = pokemonDetails.pokemon.pokemonEntity.name,
+                                                    modifier = imageModifier
+                                                )
+                                            }
                                         } else
                                             AsyncImage(
-                                                model = pokemonDetails.pokemon.imageUrl,
-                                                contentDescription = pokemonDetails.pokemon.name,
+                                                model = pokemonDetails.pokemon.pokemonEntity.imageUrl,
+                                                contentDescription = pokemonDetails.pokemon.pokemonEntity.name,
                                                 contentScale = ContentScale.Fit,
                                                 modifier = imageModifier
                                             )
@@ -175,7 +204,7 @@ fun DetailsScreen(
                                     ) {
                                         Text(
                                             text = "#${
-                                                pokemonDetails.pokemon.pokemonId.toString()
+                                                pokemonDetails.pokemon.pokemonEntity.pokemonId.toString()
                                                     .padStart(3, '0')
                                             }",
                                             color = Color(0xff505050),
@@ -205,18 +234,18 @@ fun DetailsScreen(
                                                 .padding(end = 4.dp)
                                                 .height(32.dp)
                                                 .clip(RoundedCornerShape(8.dp))
-                                                .background(getColorForType(pokemonDetails.pokemon.type.name))
+                                                .background(getColorForType(pokemonDetails.pokemon.pokemonEntity.type))
                                                 .padding(4.dp),
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Text(
-                                                text = stringResource(id = pokemonDetails.pokemon.type.value),
+                                                text = stringResource(id = pokemonDetails.pokemon.pokemonEntity.type.value),
                                                 color = Color.White
                                             )
                                         }
                                         //terza riga con tipo del pokemon
-                                        if (pokemonDetails.pokemon.secondType != null) {
-                                            pokemonDetails.pokemon.secondType.let { type ->
+                                        if (pokemonDetails.pokemon.pokemonEntity.secondType != null) {
+                                            pokemonDetails.pokemon.pokemonEntity.secondType.let { type ->
                                                 Box(
                                                     modifier = Modifier
                                                         .weight(1f)
@@ -225,7 +254,7 @@ fun DetailsScreen(
                                                         .clip(RoundedCornerShape(8.dp))
                                                         .background(
                                                             getColorForType(
-                                                                pokemonDetails.pokemon.secondType.name
+                                                                type
                                                             )
                                                         )
                                                         .padding(4.dp),
@@ -239,7 +268,7 @@ fun DetailsScreen(
                                             }
                                         } else {
                                             // caso in cui il pokemon ha un solo tipo
-                                            pokemonDetails.pokemon.type.let {
+                                            pokemonDetails.pokemon.pokemonEntity.type.let {
                                                 Row(
                                                     modifier = Modifier
                                                         .fillMaxWidth()
@@ -253,13 +282,13 @@ fun DetailsScreen(
                                                             .clip(RoundedCornerShape(8.dp))
                                                             .background(
                                                                 getColorForType(
-                                                                    pokemonDetails.pokemon.type.name
+                                                                    it
                                                                 )
                                                             )
                                                             .padding(4.dp),
                                                         contentAlignment = Alignment.Center
                                                     ) {
-                                                        pokemonDetails.pokemon.type.let { type ->
+                                                        pokemonDetails.pokemon.pokemonEntity.type.let { type ->
                                                             Text(
                                                                 text = stringResource(id = type.value),
                                                                 color = Color.White
@@ -387,9 +416,9 @@ fun DetailsScreen(
                                 ) {
                                     Column {
                                         //generezione dinamiche delle abilità del pokemon
-                                        pokemonInfo.value.data!!.abilities.forEachIndexed { index, ability ->
+                                        pokemonDetails.pokemon.abilities.forEachIndexed { index, ability ->
                                             AbilityRow(ability = ability)
-                                            if (index < pokemonInfo.value.data!!.abilities.size - 1) {
+                                            if (index < pokemonDetails.pokemon.abilities.size - 1) {
                                                 Spacer(modifier = Modifier.height(8.dp))
                                             }
                                         }
@@ -503,27 +532,27 @@ fun DetailsScreen(
 }
 
 //funzione che mappa i colori in base al tipo
-fun getColorForType(typeName: String): Color {
-    return when (typeName) {
-        "BUG" -> bug
-        "DARK" -> dark
-        "DRAGON" -> dragon
-        "ELECTRIC" -> electric
-        "FAIRY" -> fairy
-        "FIGHTING" -> fighting
-        "FIRE" -> fire
-        "FLYING" -> flying
-        "GHOST" -> ghost
-        "GRASS" -> grass
-        "GROUND" -> ground
-        "ICE" -> ice
-        "NORMAL" -> normal
-        "POISON" -> poison
-        "PSYCHIC" -> psychic
-        "ROCK" -> rock
-        "STEEL" -> steel
-        "WATER" -> water
-        else -> Color.Black
+fun getColorForType(type: PokemonType): Color {
+    return when (type) {
+        PokemonType.BUG -> bug
+        PokemonType.DARK -> dark
+        PokemonType.DRAGON -> dragon
+        PokemonType.ELECTRIC -> electric
+        PokemonType.FAIRY -> fairy
+        PokemonType.FIGHTING -> fighting
+        PokemonType.FIRE -> fire
+        PokemonType.FLYING -> flying
+        PokemonType.GHOST -> ghost
+        PokemonType.GRASS -> grass
+        PokemonType.GROUND -> ground
+        PokemonType.ICE -> ice
+        PokemonType.NORMAL -> normal
+        PokemonType.POISON -> poison
+        PokemonType.PSYCHIC -> psychic
+        PokemonType.ROCK -> rock
+        PokemonType.STEEL -> steel
+        PokemonType.WATER -> water
+        PokemonType.NULL -> Color.Black
     }
 }
 
@@ -560,8 +589,8 @@ fun AbilityRow(ability: Ability) {
             ) {
                 Text(
                     text = when (Locale.getDefault().language.lowercase()) {
-                        "it" -> ability.name_it
-                        else -> ability.name_en
+                        "it" -> ability.nameIt
+                        else -> ability.nameEn
                     },
                     color = Color.Black
                 )
@@ -576,8 +605,8 @@ fun AbilityRow(ability: Ability) {
                             showDialog.value = true
                             dialogText.value =
                                 when (Locale.getDefault().language.lowercase()) {
-                                    "it" -> ability.effect_it
-                                    else -> ability.effect_en
+                                    "it" -> ability.effectIt
+                                    else -> ability.effectEn
                                 }
                         }
                 )

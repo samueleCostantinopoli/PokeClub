@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import it.codeclub.pokeclub.db.PokemonRepository
 import it.codeclub.pokeclub.db.entities.Ability
 import it.codeclub.pokeclub.db.entities.PokemonEntity
+import it.codeclub.pokeclub.db.entities.PokemonWithVersionGroupsAndAbilities
 import it.codeclub.pokeclub.domain.FilterType
 import kotlinx.coroutines.launch
 import okhttp3.Call
@@ -24,8 +25,8 @@ class PokemonListViewModel @Inject constructor(
 ) : ViewModel() {
 
     private lateinit var abilitiesList: List<Ability>
-    private lateinit var pokemonList: List<PokemonEntity>
-    var shownPokemonList = mutableStateOf<List<PokemonEntity>>(listOf())
+    private lateinit var pokemonList: List<PokemonWithVersionGroupsAndAbilities>
+    var shownPokemonList = mutableStateOf<List<PokemonWithVersionGroupsAndAbilities>>(listOf())
     var shownAbilitiesList = mutableStateOf<List<Ability>>(listOf())
 
 
@@ -43,7 +44,6 @@ class PokemonListViewModel @Inject constructor(
         loadAbilities()
     }
 
-
     /**
      * Search Pokemon with matching name
      */
@@ -60,7 +60,7 @@ class PokemonListViewModel @Inject constructor(
     }
 
     private fun applyFilters() {
-        var toBeFiltered: List<PokemonEntity> = listOf()
+        var toBeFiltered: List<PokemonWithVersionGroupsAndAbilities> = listOf()
         when (filterList.size) {
             0 -> {
                 toBeFiltered = pokemonList
@@ -69,24 +69,24 @@ class PokemonListViewModel @Inject constructor(
             1 -> {
                 toBeFiltered = pokemonList.filter {
                     if (filterList.contains(FilterType.FAVOURITES))
-                        it.isFavourite
+                        it.pokemonEntity.isFavourite
                     else
-                        it.isCaptured
+                        it.pokemonEntity.isCaptured
                 }
             }
 
             2 -> {
                 toBeFiltered = pokemonList.filter {
-                    it.isFavourite and it.isCaptured
+                    it.pokemonEntity.isFavourite and it.pokemonEntity.isCaptured
                 }
             }
         }
 
         if (searchPokemonQuery.value.isNotEmpty()) {
             shownPokemonList.value = toBeFiltered.filter {
-                it.name.startsWith(
+                it.pokemonEntity.name.startsWith(
                     searchPokemonQuery.value.trim().lowercase()
-                ) or it.pokemonId.toString()
+                ) or it.pokemonEntity.pokemonId.toString()
                     .startsWith(searchPokemonQuery.value.trim())
             }
         } else
@@ -103,12 +103,11 @@ class PokemonListViewModel @Inject constructor(
     }
 
     fun searchAbility() {
-
-        if(searchAbilityQuery.value.isNotEmpty()) {
+        if (searchAbilityQuery.value.isNotEmpty()) {
             shownAbilitiesList.value = abilitiesList.filter {
-                it.name_en.startsWith(
+                it.nameEn.startsWith(
                     searchAbilityQuery.value.trim().lowercase()
-                ) or it.name_it.lowercase().startsWith(
+                ) or it.nameIt.lowercase().startsWith(
                     searchAbilityQuery.value.trim().lowercase()
                 ) or it.abilityId.toString().startsWith(
                     searchAbilityQuery.value.trim()
@@ -138,7 +137,6 @@ class PokemonListViewModel @Inject constructor(
         pokemon.isFavourite = !pokemon.isFavourite
         downloadPokemonImage(pokemon)
         loadPokemon()
-        removeFilters()
     }
 
     fun toggleCaptured(pokemon: PokemonEntity) {
@@ -161,7 +159,7 @@ class PokemonListViewModel @Inject constructor(
         val okHttpClient = OkHttpClient.Builder().build()
         okHttpClient.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                // TODO save error image
+                pokemon.image = null
                 update(pokemon)
             }
 

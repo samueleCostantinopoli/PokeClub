@@ -21,7 +21,6 @@ import it.codeclub.pokeclub.remote.data.AbilityDetails
 import it.codeclub.pokeclub.remote.data.AbilityList
 import it.codeclub.pokeclub.remote.data.Pokemon
 import it.codeclub.pokeclub.remote.data.PokemonList
-import it.codeclub.pokeclub.remote.data.VersionGroup
 import it.codeclub.pokeclub.remote.data.VersionGroups
 import it.codeclub.pokeclub.utils.Constants.LIMIT
 import kotlinx.coroutines.launch
@@ -142,10 +141,10 @@ class DownloadDataViewModel @Inject constructor(
 
             val abilityEntity = Ability(
                 abilityId = ability.id.toLong(),
-                name_it = nameIt,
-                name_en = ability.name,
-                effect_en = effectEn,
-                effect_it = effectIt
+                nameIt = nameIt,
+                nameEn = ability.name,
+                effectEn = effectEn,
+                effectIt = effectIt
             )
             pokemonRepository.insertNewAbility(abilityEntity)
             abilityCounter.value++

@@ -8,6 +8,7 @@ import it.codeclub.pokeclub.db.entities.PokemonAndDetails
 import it.codeclub.pokeclub.db.entities.PokemonDetails
 import it.codeclub.pokeclub.db.entities.PokemonEntity
 import it.codeclub.pokeclub.db.entities.PokemonVersionGroupsCrossRef
+import it.codeclub.pokeclub.db.entities.PokemonWithVersionGroupsAndAbilities
 import it.codeclub.pokeclub.db.entities.VersionGroupEntity
 import it.codeclub.pokeclub.exeptions.RepositoryException
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +19,7 @@ class PokemonRepositoryDbImpl @Inject constructor(
     private val pokemonDao: PokemonDao
 ) : PokemonRepository {
 
-    override suspend fun getPokemon(): Flow<List<PokemonEntity>> = pokemonDao.getPokemonList()
+    override suspend fun getPokemon(): Flow<List<PokemonWithVersionGroupsAndAbilities>> = pokemonDao.getPokemonList()
     override suspend fun getAbilities(): Flow<List<Ability>> = pokemonDao.getAbilities()
     override suspend fun getPokemonWithAbility(abilityId: Long): Flow<AbilityWithPokemon> =
         pokemonDao.getPokemonWithAbility(abilityId)

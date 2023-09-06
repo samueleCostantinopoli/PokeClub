@@ -83,7 +83,7 @@ fun SecondRow(
             green = Color.DarkGray.green + 0.1f, // Aumenta il canale verde
             blue = Color.DarkGray.blue + 0.1f   // Aumenta il canale blu
         )
-            Row(
+        Row(
             modifier = Modifier
                 .padding(top = Dimensions.distanzaDallaPrimaRiga)
                 .fillMaxWidth()
@@ -110,22 +110,23 @@ fun SecondRow(
                     .height(40.dp)
                     .padding(top = 6.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = if(version.value != "null") {
+                colors = if (version.value != "null") {
                     ButtonDefaults.buttonColors(
-                    containerColor = Color.DarkGray,
-                    contentColor = Color.White
+                        containerColor = Color.DarkGray,
+                        contentColor = Color.White
                     )
-                }
-                else {
+                } else {
                     ButtonDefaults.buttonColors(
                         containerColor = backgroundButton,
                         contentColor = textButton
                     )
                 }
             ) {
-                Text(text = if(version.value  != "null")
-                    version.value
-                else stringResource(R.string.version))
+                Text(
+                    text = if (version.value != "null")
+                        version.value
+                    else stringResource(R.string.version)
+                )
             }
 
             // Linea verticale divisoria per i bottoni dei filtri
@@ -154,19 +155,24 @@ fun SecondRow(
                     .height(40.dp)
                     .padding(top = 6.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = if (type1.value != "null"){
+                colors = if (type1.value != "null") {
                     ButtonDefaults.buttonColors(
                         containerColor = getColorForType(type1.value),
-                        contentColor = Color.White)
-                }else {ButtonDefaults.buttonColors(
-                    containerColor = backgroundButton,
-                    contentColor = textButton
-                )}
+                        contentColor = Color.White
+                    )
+                } else {
+                    ButtonDefaults.buttonColors(
+                        containerColor = backgroundButton,
+                        contentColor = textButton
+                    )
+                }
             ) {
-                Text(text = if(type1.value != "null")
-                    type1.value
-                            else
-                    stringResource(R.string.type1))
+                Text(
+                    text = if (type1.value != "null")
+                        type1.value
+                    else
+                        stringResource(R.string.type1)
+                )
             }
             // Linea verticale divisoria per i bottoni dei filtri
             Divider(
@@ -178,37 +184,42 @@ fun SecondRow(
                     .padding(top = 6.dp)
             )
             // Terzo bottone per il filtro secondo tipo
-                Button(
-                    onClick = {
-                        boxType2.value = !boxType2.value
-                        //se il box version e' aperto lo chiudo, non voglio 2 box aperti contemporaneamente
-                        if (boxVersion.value) {
-                            boxVersion.value = !boxVersion.value
-                        }
-                        if (boxType1.value) {
-                            boxType1.value = !boxType1.value
-                        }
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 6.dp)
-                        .height(40.dp)
-                        .padding(top = 6.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = if (type2.value != "null"){
-                        ButtonDefaults.buttonColors(
-                            containerColor = getColorForType(type2.value), // Colore del bottone più scuro
-                            contentColor = Color.White)
-                    }else {ButtonDefaults.buttonColors(
+            Button(
+                onClick = {
+                    boxType2.value = !boxType2.value
+                    //se il box version e' aperto lo chiudo, non voglio 2 box aperti contemporaneamente
+                    if (boxVersion.value) {
+                        boxVersion.value = !boxVersion.value
+                    }
+                    if (boxType1.value) {
+                        boxType1.value = !boxType1.value
+                    }
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 6.dp)
+                    .height(40.dp)
+                    .padding(top = 6.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = if (type2.value != "null") {
+                    ButtonDefaults.buttonColors(
+                        containerColor = getColorForType(type2.value), // Colore del bottone più scuro
+                        contentColor = Color.White
+                    )
+                } else {
+                    ButtonDefaults.buttonColors(
                         containerColor = backgroundButton, // Colore del bottone più scuro
                         contentColor = textButton
-                    )}
-                ) {
-                    Text(text = if(type2.value != "null")
+                    )
+                }
+            ) {
+                Text(
+                    text = if (type2.value != "null")
                         type2.value
                     else
-                        stringResource(R.string.type2))
-                }
+                        stringResource(R.string.type2)
+                )
+            }
         }
         Divider(
             color = colorLine,
@@ -223,7 +234,7 @@ fun SecondRow(
         ) {
             items(pokemonList) { pokemon ->
                 // Box principale per gli elementi della Lazy Column
-                val domCol = Color(pokemon.dominantColor)
+                val domCol = Color(pokemon.pokemonEntity.dominantColor)
                 val lighterDominantColor = domCol.copy(alpha = 0.3f)
                 val color = domCol.copy(alpha = 0.7f)
                 val darkenedColor = Color(
@@ -241,7 +252,7 @@ fun SecondRow(
                         .height(83.dp)
                         .clickable {
                             //quando si clicca il box bisogna navigare nella schermata dettaglio
-                            navController.navigate("pokemon_detail_screen/${pokemon.name}")
+                            navController.navigate("pokemon_detail_screen/${pokemon.pokemonEntity.name}")
                         },
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -268,7 +279,9 @@ fun SecondRow(
                             ) {
                                 // Numero del pokemon nel pokedex
                                 Text(
-                                    text = "#${pokemon.pokemonId.toString().padStart(3, '0')}",
+                                    text = "#${
+                                        pokemon.pokemonEntity.pokemonId.toString().padStart(3, '0')
+                                    }",
                                     fontSize = 19.sp,
                                     fontStyle = FontStyle.Italic,
                                     //come colore inserisco il colore dominante con intensità più alta
@@ -277,7 +290,7 @@ fun SecondRow(
                                     modifier = Modifier.padding(start = 6.dp, end = 6.dp)
                                 )
                                 Text(
-                                    text = pokemon.name.capitalize(Locale.current),
+                                    text = pokemon.pokemonEntity.name.capitalize(Locale.current),
                                     fontSize = 18.sp,
                                     //color = Color(UIUtils.adjustForBackground(pokemon.dominantColor)),
                                     color = darkenedColor,
@@ -300,29 +313,24 @@ fun SecondRow(
                                 ) {
                                     Icon(
                                         painter = painterResource(
-                                            if (pokemon.isFavourite) R.drawable.fillstar else R.drawable.star
+                                            if (pokemon.pokemonEntity.isFavourite) R.drawable.fillstar else R.drawable.star
                                         ),
                                         contentDescription = stringResource(
-                                            if (pokemon.isFavourite) R.string.favourite else R.string.not_favourite
+                                            if (pokemon.pokemonEntity.isFavourite) R.string.favourite else R.string.not_favourite
                                         ),
                                         modifier = Modifier
                                             .clickable {
                                                 favouritesFilter.value = false
                                                 capturedFilter.value = false
                                                 pokemonListViewModel.toggleFavourite(
-                                                    pokemon = pokemon
+                                                    pokemon = pokemon.pokemonEntity
                                                 )
                                             }
                                             .size(height = 30.dp, width = 30.dp)
                                             .align(
                                                 Alignment.CenterEnd
                                             ),
-                                        tint = if (pokemon.isFavourite)
-                                            Color.Unspecified
-                                        else
-                                            darkenedColor
-                                            //Color(UIUtils.adjustForBackground(pokemon.dominantColor))
-
+                                        tint = darkenedColor
                                     )
                                 }
 
@@ -332,7 +340,7 @@ fun SecondRow(
                                         .clickable {
                                             favouritesFilter.value = false
                                             capturedFilter.value = false
-                                            pokemonListViewModel.toggleCaptured(pokemon = pokemon)
+                                            pokemonListViewModel.toggleCaptured(pokemon = pokemon.pokemonEntity)
                                         }
                                         .padding(start = 5.dp)
                                         .shadow(
@@ -345,73 +353,72 @@ fun SecondRow(
                                     //contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
-                                        painter = painterResource(if (pokemon.isCaptured) R.drawable.smallpokeball else R.drawable.smallpokeballempty),
+                                        painter = painterResource(if (pokemon.pokemonEntity.isCaptured) R.drawable.smallpokeball else R.drawable.smallpokeballempty),
                                         contentDescription = stringResource(
-                                            if (pokemon.isCaptured) R.string.captured else R.string.not_captured
+                                            if (pokemon.pokemonEntity.isCaptured) R.string.captured else R.string.not_captured
                                         ),
                                         modifier = Modifier
                                             .size(height = 25.dp, width = 25.dp)
                                             .align(
                                                 Alignment.CenterEnd
                                             ),
-                                        tint = if (pokemon.isCaptured)
-                                            Color.Unspecified
-                                        else
-                                            darkenedColor
+                                        tint = darkenedColor
                                     )
                                 }
                             }
                         }
-                        Spacer(modifier = Modifier
-                            .height(4.dp)
-                            .background(color))
+                        Spacer(
+                            modifier = Modifier
+                                .height(4.dp)
+                                .background(color)
+                        )
 
                         // Pokemon type(s)
                         Row(
                             modifier = Modifier.padding(bottom = 6.dp)
-                                //.background(color)
+                            //.background(color)
                         ) {
                             // Box che contiene il "tipo" del pokemon
                             // caso in cui il pokemon ha due tipi
-                            if(pokemon.secondType != null){
-                            Box(
-                                modifier = Modifier
-                                    .weight(3.32f)
-                                    .padding(start = 12.dp, top = 8.dp)
-                                    .border(
-                                        BorderStroke(
-                                            1.dp,
-                                            /*if (isDominantBlack(color) || isDominantDarkBrown(
-                                                    color
-                                                )
-                                            ) Color.LightGray
-                                            else Color.Black
+                            if (pokemon.pokemonEntity.secondType != null) {
+                                Box(
+                                    modifier = Modifier
+                                        .weight(3.32f)
+                                        .padding(start = 12.dp, top = 8.dp)
+                                        .border(
+                                            BorderStroke(
+                                                1.dp,
+                                                /*if (isDominantBlack(color) || isDominantDarkBrown(
+                                                        color
+                                                    )
+                                                ) Color.LightGray
+                                                else Color.Black
 
-                                             */
-                                            darkenedColor
-                                        ),
-                                        shape = RoundedCornerShape(8.dp),
-                                    )
-                                    .padding(start = 4.dp)
-                            ) {
-                                Text(
-                                    text = "   " + stringResource(pokemon.type.value) + "   ",
-                                    fontSize = 16.sp,
-                                    modifier = Modifier.align(Alignment.Center),
-                                    /*
-                                    color = if (isDominantBlack(color) || isDominantDarkBrown(
-                                            color
+                                                 */
+                                                darkenedColor
+                                            ),
+                                            shape = RoundedCornerShape(8.dp),
                                         )
-                                    ) Color.LightGray
-                                    else Color.Black,
+                                        .padding(start = 4.dp)
+                                ) {
+                                    Text(
+                                        text = "   " + stringResource(pokemon.pokemonEntity.type.value) + "   ",
+                                        fontSize = 16.sp,
+                                        modifier = Modifier.align(Alignment.Center),
+                                        /*
+                                        color = if (isDominantBlack(color) || isDominantDarkBrown(
+                                                color
+                                            )
+                                        ) Color.LightGray
+                                        else Color.Black,
 
-                                     */
-                                color = darkenedColor
-                                )
-                            }
+                                         */
+                                        color = darkenedColor
+                                    )
+                                }
 
-                            // Secondo box per i pokemon che hanno un doppio tipo
-                            //pokemon.secondType?.let {
+                                // Secondo box per i pokemon che hanno un doppio tipo
+                                //pokemon.secondType?.let {
                                 Box(
                                     modifier = Modifier
                                         .weight(3.32f)
@@ -434,7 +441,7 @@ fun SecondRow(
                                         .padding(start = 4.dp)
                                 ) {
                                     Text(
-                                        text = "   " + stringResource(pokemon.secondType.value) + "   ",
+                                        text = "   " + stringResource(pokemon.pokemonEntity.secondType.value) + "   ",
                                         fontSize = 16.sp,
                                         modifier = Modifier.align(Alignment.Center),
                                         /*
@@ -448,7 +455,7 @@ fun SecondRow(
                                         color = darkenedColor
                                     )
                                 }
-                            }else{
+                            } else {
                                 // se il pomeon ha un solo tipo, il box del tipo deve prendere tutta la riga
                                 Box(
                                     modifier = Modifier
@@ -457,14 +464,6 @@ fun SecondRow(
                                         .border(
                                             BorderStroke(
                                                 1.dp,
-                                                /*
-                                                if (isDominantBlack(color) || isDominantDarkBrown(
-                                                        color
-                                                    )
-                                                ) Color.LightGray
-                                                else Color.Black
-
-                                                 */
                                                 darkenedColor
                                             ),
                                             shape = RoundedCornerShape(8.dp),
@@ -472,7 +471,7 @@ fun SecondRow(
                                         .padding(start = 4.dp)
                                 ) {
                                     Text(
-                                        text = "   " + stringResource(pokemon.type.value) + "   ",
+                                        text = "   " + stringResource(pokemon.pokemonEntity.type.value) + "   ",
                                         fontSize = 16.sp,
                                         modifier = Modifier.align(Alignment.Center),
                                         /*
@@ -502,16 +501,25 @@ fun SecondRow(
                                 bottomStart = 0.dp
                             )
                         )
-                    if (pokemon.isFavourite) {
-                        Image(
-                            bitmap = pokemon.image!!.asImageBitmap(),
-                            contentDescription = pokemon.name,
-                            modifier = imageModifier.size(83.dp)
-                        )
+                    if (pokemon.pokemonEntity.isFavourite) {
+                        if (pokemon.pokemonEntity.image == null) {
+                            Image(
+                                painter = painterResource(id = R.drawable.download_error),
+                                contentDescription = stringResource(
+                                    id = R.string.error
+                                )
+                            )
+                        } else {
+                            Image(
+                                bitmap = pokemon.pokemonEntity.image!!.asImageBitmap(),
+                                contentDescription = pokemon.pokemonEntity.name,
+                                modifier = imageModifier.size(83.dp)
+                            )
+                        }
                     } else
                         AsyncImage(
-                            model = pokemon.imageUrl,
-                            contentDescription = pokemon.name,
+                            model = pokemon.pokemonEntity.imageUrl,
+                            contentDescription = pokemon.pokemonEntity.name,
                             contentScale = ContentScale.Fit,
                             modifier = imageModifier
                         )
