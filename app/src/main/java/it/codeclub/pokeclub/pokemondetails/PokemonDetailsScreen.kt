@@ -91,11 +91,11 @@ fun DetailsScreen(
                 //val remember per ricordare il valore dei filtri
                 var isFavourite by remember { mutableStateOf(pokemonDetails.pokemon.pokemonEntity.isFavourite) }
                 //in base al valore inziale della var isFavourite la schermata viene settata con la stella vuota o piena
-                val favouriteImage = if (isFavourite) R.drawable.fillstar else R.drawable.star
+                val favouriteImage = if (isFavourite) R.drawable.fillstarfirstrow else R.drawable.starfirstrow
                 var isCaptured by remember { mutableStateOf(pokemonDetails.pokemon.pokemonEntity.isCaptured) }
                 //in base al valore inziale della var isCaptured la schermata viene settata con la pokeball vuota o piena
                 val capturedImage =
-                    if (isCaptured) R.drawable.smallpokeball else R.drawable.smallpokeballempty
+                    if (isCaptured) R.drawable.smallpokeballfirstrow else R.drawable.smallpokeballemptyfirstrow
 
                 Column(
                     modifier = Modifier
@@ -198,7 +198,8 @@ fun DetailsScreen(
                                     //seconda riga con id e nome del pokemon
                                     Row(
                                         modifier = Modifier
-                                            .fillMaxWidth(),
+                                            .fillMaxWidth()
+                                            .padding(top = 8.dp, bottom = 8.dp),
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.Center
                                     ) {

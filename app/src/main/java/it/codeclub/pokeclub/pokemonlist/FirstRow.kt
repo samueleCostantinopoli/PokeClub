@@ -278,9 +278,9 @@ fun FirstRow(
             Icon(
                 painter =
                 if (favourite.value) {
-                    painterResource(id = R.drawable.fillstar)
+                    painterResource(id = R.drawable.fillstarfirstrow)
                 } else {
-                    painterResource(id = R.drawable.star)
+                    painterResource(id = R.drawable.starfirstrow)
                 },
                 contentDescription = stringResource(id = R.string.favourites_filter),
                 tint = Color.Unspecified,
@@ -298,9 +298,9 @@ fun FirstRow(
             Icon(
                 painter =
                 if (smallPokeballClick.value) {
-                    painterResource(id = R.drawable.smallpokeball)
+                    painterResource(id = R.drawable.smallpokeballfirstrow)
                 } else {
-                    painterResource(id = R.drawable.smallpokeballempty)
+                    painterResource(id = R.drawable.smallpokeballemptyfirstrow)
                 },
                 contentDescription = stringResource(id = R.string.captured_filter),
                 modifier = Modifier.size(40.dp),
