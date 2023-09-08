@@ -7,9 +7,9 @@ import it.codeclub.pokeclub.db.entities.PokemonAbilityCrossRef
 import it.codeclub.pokeclub.db.entities.PokemonAndDetails
 import it.codeclub.pokeclub.db.entities.PokemonDetails
 import it.codeclub.pokeclub.db.entities.PokemonEntity
-import it.codeclub.pokeclub.db.entities.PokemonVersionGroupsCrossRef
-import it.codeclub.pokeclub.db.entities.PokemonWithVersionGroupsAndAbilities
-import it.codeclub.pokeclub.db.entities.VersionGroupEntity
+import it.codeclub.pokeclub.db.entities.PokemonVersionCrossRef
+import it.codeclub.pokeclub.db.entities.PokemonWithVersionAndAbilities
+import it.codeclub.pokeclub.db.entities.VersionEntity
 import it.codeclub.pokeclub.exceptions.RepositoryException
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -19,9 +19,9 @@ class PokemonRepositoryDbImpl @Inject constructor(
     private val pokemonDao: PokemonDao
 ) : PokemonRepository {
 
-    override suspend fun getPokemon(): Flow<List<PokemonWithVersionGroupsAndAbilities>> = pokemonDao.getPokemonList()
+    override suspend fun getPokemon(): Flow<List<PokemonWithVersionAndAbilities>> = pokemonDao.getPokemonList()
     override suspend fun getAbilities(): Flow<List<Ability>> = pokemonDao.getAbilities()
-    override suspend fun getVersionGroups(): Flow<List<VersionGroupEntity>> = pokemonDao.getVersionGroups()
+    override suspend fun getVersionGroups(): Flow<List<VersionEntity>> = pokemonDao.getVersionGroups()
 
     override suspend fun getPokemonWithAbility(abilityId: Long): Flow<AbilityWithPokemon> =
         pokemonDao.getPokemonWithAbility(abilityId)
@@ -45,9 +45,9 @@ class PokemonRepositoryDbImpl @Inject constructor(
     override suspend fun insertPokemonAbilityCrossRef(pokemonAbilityCrossRef: PokemonAbilityCrossRef) =
         pokemonDao.insert(pokemonAbilityCrossRef)
 
-    override suspend fun insertVersionGroupEntity(versionGroupEntity: VersionGroupEntity) =
-        pokemonDao.insert(versionGroupEntity)
+    override suspend fun insertVersionGroupEntity(versionEntity: VersionEntity) =
+        pokemonDao.insert(versionEntity)
 
-    override suspend fun insertPokemonVersionGroupsCrossRef(pokemonVersionGroupsCrossRef: PokemonVersionGroupsCrossRef) =
-        pokemonDao.insert(pokemonVersionGroupsCrossRef)
+    override suspend fun insertPokemonVersionGroupsCrossRef(pokemonVersionCrossRef: PokemonVersionCrossRef) =
+        pokemonDao.insert(pokemonVersionCrossRef)
 }

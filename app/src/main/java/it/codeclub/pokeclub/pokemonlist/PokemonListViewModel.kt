@@ -9,8 +9,8 @@ import it.codeclub.pokeclub.db.PokemonRepository
 import it.codeclub.pokeclub.db.entities.Ability
 import it.codeclub.pokeclub.db.entities.PokemonEntity
 import it.codeclub.pokeclub.db.entities.PokemonType
-import it.codeclub.pokeclub.db.entities.PokemonWithVersionGroupsAndAbilities
-import it.codeclub.pokeclub.db.entities.VersionGroupEntity
+import it.codeclub.pokeclub.db.entities.PokemonWithVersionAndAbilities
+import it.codeclub.pokeclub.db.entities.VersionEntity
 import it.codeclub.pokeclub.domain.FilterType
 import kotlinx.coroutines.launch
 import okhttp3.Call
@@ -26,8 +26,8 @@ class PokemonListViewModel @Inject constructor(
     private val pokemonRepository: PokemonRepository
 ) : ViewModel() {
 
-    private lateinit var pokemonList: List<PokemonWithVersionGroupsAndAbilities>
-    var shownPokemonList = mutableStateOf<List<PokemonWithVersionGroupsAndAbilities>>(listOf())
+    private lateinit var pokemonList: List<PokemonWithVersionAndAbilities>
+    var shownPokemonList = mutableStateOf<List<PokemonWithVersionAndAbilities>>(listOf())
 
     private lateinit var abilitiesList: List<Ability>
     var shownAbilitiesList = mutableStateOf<List<Ability>>(listOf())
@@ -41,8 +41,8 @@ class PokemonListViewModel @Inject constructor(
     var searchAbilityQuery = mutableStateOf("")
     var abilityFilter = mutableStateOf<Ability?>(null)
 
-    val versionGroupsList = mutableListOf<VersionGroupEntity>()
-    var versionGroup = mutableStateOf<VersionGroupEntity?>(null)
+    val versionGroupsList = mutableListOf<VersionEntity>()
+    var versionGroup = mutableStateOf<VersionEntity?>(null)
 
     val firstType = mutableStateOf<PokemonType?>(null)
     val secondType = mutableStateOf<PokemonType?>(null)
@@ -76,7 +76,7 @@ class PokemonListViewModel @Inject constructor(
      */
     private fun applyFilters() {
         // Init show pokemon as an empty list
-        var toBeFiltered: List<PokemonWithVersionGroupsAndAbilities> = listOf()
+        var toBeFiltered: List<PokemonWithVersionAndAbilities> = listOf()
         // Check if favourite and captured filters are active. Fill initial list.
         when (filterList.size) {
             0 -> {

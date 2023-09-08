@@ -7,15 +7,15 @@ import androidx.room.Relation
 /**
  * This entity is used within the main or list view
  */
-data class PokemonWithVersionGroupsAndAbilities(
+data class PokemonWithVersionAndAbilities(
 
     @Embedded val pokemonEntity: PokemonEntity,
     @Relation(
         parentColumn = "pokemonId",
         entityColumn = "versionGroupName",
-        associateBy = Junction(PokemonVersionGroupsCrossRef::class)
+        associateBy = Junction(PokemonVersionCrossRef::class)
     )
-    val versionGroups: List<VersionGroupEntity>,
+    val versionGroups: List<VersionEntity>,
 
     @Relation(
         parentColumn = "pokemonId",

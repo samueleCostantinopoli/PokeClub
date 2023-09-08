@@ -7,8 +7,8 @@ import it.codeclub.pokeclub.db.entities.Ability
 import it.codeclub.pokeclub.db.entities.PokemonAbilityCrossRef
 import it.codeclub.pokeclub.db.entities.PokemonDetails
 import it.codeclub.pokeclub.db.entities.PokemonEntity
-import it.codeclub.pokeclub.db.entities.PokemonVersionGroupsCrossRef
-import it.codeclub.pokeclub.db.entities.VersionGroupEntity
+import it.codeclub.pokeclub.db.entities.PokemonVersionCrossRef
+import it.codeclub.pokeclub.db.entities.VersionEntity
 
 @Database(
     entities = [
@@ -16,8 +16,8 @@ import it.codeclub.pokeclub.db.entities.VersionGroupEntity
         PokemonDetails::class,
         Ability::class,
         PokemonAbilityCrossRef::class,
-        VersionGroupEntity::class,
-        PokemonVersionGroupsCrossRef::class
+        VersionEntity::class,
+        PokemonVersionCrossRef::class
     ],
     version = 1,
     exportSchema = false

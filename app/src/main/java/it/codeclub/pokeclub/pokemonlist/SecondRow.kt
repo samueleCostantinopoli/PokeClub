@@ -48,7 +48,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import it.codeclub.pokeclub.R
 import it.codeclub.pokeclub.db.entities.PokemonType
-import it.codeclub.pokeclub.db.entities.VersionGroupEntity
+import it.codeclub.pokeclub.db.entities.VersionEntity
 import it.codeclub.pokeclub.ui.theme.AppGrey
 
 @SuppressLint("SuspiciousIndentation")
@@ -56,7 +56,7 @@ import it.codeclub.pokeclub.ui.theme.AppGrey
 fun SecondRow(
     navController: NavController,
     boxVersion: MutableState<Boolean>,
-    version: MutableState<VersionGroupEntity?>,
+    version: MutableState<VersionEntity?>,
     boxType1: MutableState<Boolean>,
     boxType2: MutableState<Boolean>,
     type1: MutableState<PokemonType?>,

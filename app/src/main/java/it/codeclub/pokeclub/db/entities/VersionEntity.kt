@@ -4,6 +4,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class VersionGroupEntity (
+data class VersionEntity (
     @PrimaryKey val versionGroupName: String
 )

@@ -13,8 +13,8 @@ import it.codeclub.pokeclub.db.entities.PokemonAbilityCrossRef
 import it.codeclub.pokeclub.db.entities.PokemonDetails
 import it.codeclub.pokeclub.db.entities.PokemonEntity
 import it.codeclub.pokeclub.db.entities.PokemonType
-import it.codeclub.pokeclub.db.entities.PokemonVersionGroupsCrossRef
-import it.codeclub.pokeclub.db.entities.VersionGroupEntity
+import it.codeclub.pokeclub.db.entities.PokemonVersionCrossRef
+import it.codeclub.pokeclub.db.entities.VersionEntity
 import it.codeclub.pokeclub.local.SharedPrefsRepository
 import it.codeclub.pokeclub.remote.PokeAPI
 import it.codeclub.pokeclub.remote.data.AbilityDetails
@@ -157,10 +157,10 @@ class DownloadDataViewModel @Inject constructor(
         versionGroups.results.forEach {
             currentVersionGroup.value = it.name
 
-            val versionGroupEntity = VersionGroupEntity(
+            val versionEntity = VersionEntity(
                 it.name
             )
-            pokemonRepository.insertVersionGroupEntity(versionGroupEntity)
+            pokemonRepository.insertVersionGroupEntity(versionEntity)
             versionGroupsCounter.value++
         }
     }
@@ -212,12 +212,12 @@ class DownloadDataViewModel @Inject constructor(
 
             // Saves PokemonVersionGroupsCrossRef
             pokemon.game_indices.forEach { gameIndex ->
-                val pokemonVersionGroupsCrossRef = PokemonVersionGroupsCrossRef(
+                val pokemonVersionCrossRef = PokemonVersionCrossRef(
                     pokemon.id,
                     gameIndex.version.name
                 )
                 pokemonRepository.insertPokemonVersionGroupsCrossRef(
-                    pokemonVersionGroupsCrossRef
+                    pokemonVersionCrossRef
                 )
             }
 

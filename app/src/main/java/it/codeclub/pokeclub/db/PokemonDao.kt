@@ -11,16 +11,16 @@ import it.codeclub.pokeclub.db.entities.PokemonAbilityCrossRef
 import it.codeclub.pokeclub.db.entities.PokemonAndDetails
 import it.codeclub.pokeclub.db.entities.PokemonDetails
 import it.codeclub.pokeclub.db.entities.PokemonEntity
-import it.codeclub.pokeclub.db.entities.PokemonVersionGroupsCrossRef
-import it.codeclub.pokeclub.db.entities.PokemonWithVersionGroupsAndAbilities
-import it.codeclub.pokeclub.db.entities.VersionGroupEntity
+import it.codeclub.pokeclub.db.entities.PokemonVersionCrossRef
+import it.codeclub.pokeclub.db.entities.PokemonWithVersionAndAbilities
+import it.codeclub.pokeclub.db.entities.VersionEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PokemonDao {
 
     @Query("SELECT * FROM PokemonEntity")
-    fun getPokemonList(): Flow<List<PokemonWithVersionGroupsAndAbilities>>
+    fun getPokemonList(): Flow<List<PokemonWithVersionAndAbilities>>
 
     @Query("SELECT * FROM PokemonEntity WHERE isFavourite = 1")
     fun getFavourites(): Flow<List<PokemonEntity>>
@@ -31,8 +31,8 @@ interface PokemonDao {
     @Query("SELECT * FROM Ability")
     fun getAbilities(): Flow<List<Ability>>
 
-    @Query("SELECT * FROM VersionGroupEntity")
-    fun getVersionGroups(): Flow<List<VersionGroupEntity>>
+    @Query("SELECT * FROM VersionEntity")
+    fun getVersionGroups(): Flow<List<VersionEntity>>
 
     @Transaction
     @Query("SELECT * FROM Ability WHERE abilityId = :abilityId")
@@ -61,9 +61,9 @@ interface PokemonDao {
     suspend fun insert(pokemonAbilityCrossRef: PokemonAbilityCrossRef)
 
     @Upsert
-    suspend fun insert(versionGroupEntity: VersionGroupEntity)
+    suspend fun insert(versionEntity: VersionEntity)
 
     @Upsert
-    suspend fun insert(pokemonVersionGroupsCrossRef: PokemonVersionGroupsCrossRef)
+    suspend fun insert(pokemonVersionCrossRef: PokemonVersionCrossRef)
 
 }
