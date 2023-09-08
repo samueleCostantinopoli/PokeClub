@@ -116,6 +116,28 @@ class PokemonListViewModel @Inject constructor(
                 it.abilities.contains(ability)
             }
         }
+
+        //Version filter
+        versionGroup.value?.let { versionGroupEntity ->
+            shownPokemonList.value = shownPokemonList.value.filter {
+                it.versionGroups.contains(versionGroupEntity)
+            }
+        }
+
+        //First type filter
+        firstType.value?.let { pokemonType ->
+            shownPokemonList.value = shownPokemonList.value.filter {
+                it.pokemonEntity.type == pokemonType
+            }
+        }
+
+        //Second type filter
+        secondType.value?.let { pokemonType ->
+            shownPokemonList.value = shownPokemonList.value.filter {
+                it.pokemonEntity.secondType == pokemonType
+            }
+        }
+
     }
 
     /**

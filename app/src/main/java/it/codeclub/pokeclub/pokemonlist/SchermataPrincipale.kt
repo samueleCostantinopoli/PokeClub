@@ -313,6 +313,7 @@ fun MainView(
                                             .clickable {
                                                 version.value = versionGroupsList[index]
                                                 boxVersion.value = !boxVersion.value
+                                                pokemonListViewModel.searchPokemon()
                                             }
                                             .background(versionBackground),
 
@@ -453,6 +454,7 @@ fun MainView(
                                             .clickable {
                                                 type1.value = PokemonType.values()[index]
                                                 boxType1.value = false
+                                                pokemonListViewModel.searchPokemon()
                                             }
                                             .background(backgroundColor),
 
