@@ -494,9 +494,9 @@ fun MainView(
                                     .fillMaxWidth()
                                     .clickable {
                                         //chiudo il box, le variabili version sono state già salvate nella lista
-                                        //allTypes1.value = R.string.all_types1.toString()
                                         type1.value = null
                                         boxType1.value = false
+                                        pokemonListViewModel.searchPokemon()
                                     }
                             )
                             {
@@ -566,8 +566,8 @@ fun MainView(
                                             .fillMaxWidth()
                                             .clickable {
                                                 type2.value = PokemonType.values()[index]
-                                                //allTypes2.value = null.toString()
                                                 boxType2.value = false
+                                                pokemonListViewModel.searchPokemon()
                                             }
                                             .background(backgroundColor),
 
@@ -609,7 +609,7 @@ fun MainView(
                                         //chiudo il box, le variabili version sono state già salvate nella lista
                                         boxType2.value = false
                                         type2.value = null
-                                        //allTypes2.value = R.string.all_types2.toString()
+                                        pokemonListViewModel.searchPokemon()
                                     }
                             )
                             {

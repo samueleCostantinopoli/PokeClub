@@ -50,7 +50,6 @@ class DownloadDataViewModel @Inject constructor(
     var currentAbility = mutableStateOf<AbilityDetails?>(null)
 
     // Version groups attributes
-    // TODO reference these on compose
     var versionGroupsNumber = mutableStateOf(0)
     var versionGroupsCounter = mutableStateOf(0)
     private var versionGroupsOffset: Int = sharedPrefsRepository.getVersionGroupsOffset()
@@ -78,12 +77,12 @@ class DownloadDataViewModel @Inject constructor(
 
     private suspend fun getAbilities() {
         var abilityList: AbilityList
+        currentStatus.value = DownloadStatus.ABILITY_DOWNLOAD
         do {
             abilityList = pokeApi.getAbilityList(LIMIT, abilityOffset)
             if (abilityNumber.value == 0)
                 abilityNumber.value = abilityList.count
             storeAbilities(abilityList)
-            currentStatus.value = DownloadStatus.ABILITY_DOWNLOAD
             abilityOffset += LIMIT
             downloadProgress.value = abilityOffset.toFloat() / abilityNumber.value.toFloat()
         } while (abilityList.next != null)
@@ -92,12 +91,12 @@ class DownloadDataViewModel @Inject constructor(
 
     private suspend fun getVersionGroups() {
         var versionGroups: VersionGroups
+        currentStatus.value = DownloadStatus.VERSION_GROUPS_DOWNLOAD
         do {
             versionGroups = pokeApi.getVersionGroups(LIMIT, versionGroupsOffset)
             if (versionGroupsNumber.value == 0)
                 versionGroupsNumber.value = versionGroups.count
             storeVersionGroup(versionGroups)
-            currentStatus.value = DownloadStatus.VERSION_GROUPS_DOWNLOAD
             versionGroupsOffset += LIMIT
             downloadProgress.value =
                 versionGroupsOffset.toFloat() / versionGroupsNumber.value.toFloat()
@@ -107,12 +106,12 @@ class DownloadDataViewModel @Inject constructor(
 
     private suspend fun getPokemon() {
         var pokemonList: PokemonList
+        currentStatus.value = DownloadStatus.POKEMON_DOWNLOAD
         do {
             pokemonList = pokeApi.getPokemonList(LIMIT, pokemonOffset)
             if (pokemonNumber.value == 0)
                 pokemonNumber.value = pokemonList.count
             getPokemonData(pokemonList)
-            currentStatus.value = DownloadStatus.POKEMON_DOWNLOAD
             pokemonOffset += LIMIT
 
             downloadProgress.value = pokemonOffset.toFloat() / pokemonNumber.value.toFloat()
@@ -212,16 +211,14 @@ class DownloadDataViewModel @Inject constructor(
             }
 
             // Saves PokemonVersionGroupsCrossRef
-            pokemon.moves.forEach { move ->
-                move.version_group_details.forEach { versionGroupDetail ->
-                    val pokemonVersionGroupsCrossRef = PokemonVersionGroupsCrossRef(
-                        pokemon.id,
-                        versionGroupDetail.version_group.name
-                    )
-                    pokemonRepository.insertPokemonVersionGroupsCrossRef(
-                        pokemonVersionGroupsCrossRef
-                    )
-                }
+            pokemon.game_indices.forEach { gameIndex ->
+                val pokemonVersionGroupsCrossRef = PokemonVersionGroupsCrossRef(
+                    pokemon.id,
+                    gameIndex.version.name
+                )
+                pokemonRepository.insertPokemonVersionGroupsCrossRef(
+                    pokemonVersionGroupsCrossRef
+                )
             }
 
             // Takes PokemonDetails values and saves them

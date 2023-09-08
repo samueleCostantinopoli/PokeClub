@@ -8,6 +8,7 @@
     <string name="abilities">abilities</string>
     <string name="versions">game versions</string>
     <string name="pokemon" translatable="false">pokemon</string>
+    <string name="init_download">Starting download</string>
 
     <!-- List screen -->
     <string name="favourites_filter">Favourites filter</string>

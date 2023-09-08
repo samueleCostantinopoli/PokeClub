@@ -73,45 +73,44 @@ fun DownloadDataScreen(
 
         when (downloadStatus.value) {
             DownloadDataViewModel.DownloadStatus.INIT_DOWNLOAD -> {
-
-            }
-
-            DownloadDataViewModel.DownloadStatus.ABILITY_DOWNLOAD -> {
                 Text(
-                    text = "${stringResource(id = R.string.downloading)} " +
-                            stringResource(R.string.abilities) +
-                            " (${abilityCounter.value} ${stringResource(id = R.string.of)} ${abilityNumber.value})",
+                    text = stringResource(id = R.string.init_download),
                     color = Color.White,
                     fontSize = 14.sp,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .offset(y = (-110).dp)
                 )
+            }
+
+            DownloadDataViewModel.DownloadStatus.ABILITY_DOWNLOAD -> {
                 Text(
-                    text = currentAbility.value!!.name.replaceFirstChar { it.uppercase() },
+                    text = "${stringResource(id = R.string.downloading)} " +
+                            stringResource(R.string.abilities) + if (abilityCounter.value != 0)
+                            " (${abilityCounter.value} ${stringResource(id = R.string.of)} ${abilityNumber.value})" else "",
                     color = Color.White,
                     fontSize = 14.sp,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .offset(y = (-90).dp)
+                        .offset(y = (-110).dp)
                 )
-                /*currentVersionGroup.value?.let {
+                currentAbility.value?.let {
                     Text(
-                        text = currentVersionGroup.value!!,
+                        text = currentAbility.value!!.name.replaceFirstChar { it.uppercase() },
                         color = Color.White,
                         fontSize = 14.sp,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
-                            .offset(y = (-70).dp)
+                            .offset(y = (-90).dp)
                     )
-                }*/
+                }
             }
 
             DownloadDataViewModel.DownloadStatus.VERSION_GROUPS_DOWNLOAD -> {
                 Text(
                     text = "${stringResource(id = R.string.downloading)} " +
-                            stringResource(R.string.versions) +
-                            " (${versionsCounter.value} ${stringResource(id = R.string.of)} ${versionsNumber.value})",
+                            stringResource(R.string.versions) + if (versionsCounter.value != 0)
+                            " (${versionsCounter.value} ${stringResource(id = R.string.of)} ${versionsNumber.value})" else "",
                     color = Color.White,
                     fontSize = 14.sp,
                     modifier = Modifier
@@ -133,8 +132,8 @@ fun DownloadDataScreen(
             DownloadDataViewModel.DownloadStatus.POKEMON_DOWNLOAD -> {
                 Text(
                     text = "${stringResource(id = R.string.downloading)} " +
-                            stringResource(R.string.pokemon) +
-                            " (${pokemonCounter.value} ${stringResource(id = R.string.of)} ${pokemonNumber.value})",
+                            stringResource(R.string.pokemon) + if (pokemonCounter.value != 0)
+                        " (${pokemonCounter.value} ${stringResource(id = R.string.of)} ${pokemonNumber.value})" else "",
                     color = Color.White,
                     fontSize = 14.sp,
                     modifier = Modifier
