@@ -62,6 +62,9 @@ fun FirstRow(
     saveAbility: MutableState<String>
 ) {
     var isDropdownExpanded by remember { mutableStateOf(false) }
+    var abilityFilter by remember {
+        pokemonListViewModel.abilityFilter
+    }
     val language = getLanguage()
 
     Row(
@@ -212,7 +215,7 @@ fun FirstRow(
                             ) {
                                 Icon(
                                     painter = painterResource(R.drawable.send),
-                                    contentDescription = "Send",
+                                    contentDescription = stringResource(R.string.search),
                                     modifier = Modifier.size(26.dp),
                                     tint = Color.Black
                                 )
@@ -248,6 +251,8 @@ fun FirstRow(
                                     }
                                 },
                                 onClick = {
+                                    abilityFilter = ability
+                                    // Shows ability name in the current language
                                     if (language == "it") {
                                         searchAbility.value = ability.nameIt
                                     } else {
@@ -256,6 +261,7 @@ fun FirstRow(
                                     isDropdownExpanded = false
                                     keyboardController?.hide()
                                     isAbilityClicked.value = false
+                                    pokemonListViewModel.searchPokemon()
                                 }
                             )
                         }

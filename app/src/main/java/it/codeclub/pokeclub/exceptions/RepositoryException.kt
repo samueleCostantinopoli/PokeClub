@@ -1,3 +1,3 @@
-package it.codeclub.pokeclub.exeptions
+package it.codeclub.pokeclub.exceptions
 
 class RepositoryException(override val message: String?) : Exception(message)

@@ -27,8 +27,8 @@
     <string name="captured_filter">Filtro catturati</string>
     <string name="settings">Impostazioni</string>
     <string name="version">Versione</string>
-    <string name="type1">Tipo1</string>
-    <string name="type2">Tipo2</string>
+    <string name="first_type">Primo tipo</string>
+    <string name="second_type">Secondo tipo</string>
     <string name="ability">Abilità</string>
     <string name="select_version">Seleziona una versione</string>
     <string name="favourite">Preferito</string>
@@ -48,7 +48,7 @@
     <string name="description">Descrizione</string>
     <string name="total">Totale</string>
     <string name="favourites">Filtro preferiti</string>
-    <string name="all_types1">TUTTI I TIPI</string>
-    <string name="all_types2">TUTTI I TIPI</string>
-    <string name="all_version">TUTTE LE VERSIONI</string>
+    <string name="all_version">Tutte le versioni</string>
+    <string name="all_types">Tutti i tipi</string>
+    <string name="search">Cerca</string>
 </resources>

@@ -31,6 +31,9 @@ interface PokemonDao {
     @Query("SELECT * FROM Ability")
     fun getAbilities(): Flow<List<Ability>>
 
+    @Query("SELECT * FROM VersionGroupEntity")
+    fun getVersionGroups(): Flow<List<VersionGroupEntity>>
+
     @Transaction
     @Query("SELECT * FROM Ability WHERE abilityId = :abilityId")
     fun getPokemonWithAbility(abilityId: Long): Flow<AbilityWithPokemon>

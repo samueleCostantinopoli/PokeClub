@@ -8,7 +8,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import it.codeclub.pokeclub.db.PokemonRepository
 import it.codeclub.pokeclub.db.entities.Ability
 import it.codeclub.pokeclub.db.entities.PokemonEntity
+import it.codeclub.pokeclub.db.entities.PokemonType
 import it.codeclub.pokeclub.db.entities.PokemonWithVersionGroupsAndAbilities
+import it.codeclub.pokeclub.db.entities.VersionGroupEntity
 import it.codeclub.pokeclub.domain.FilterType
 import kotlinx.coroutines.launch
 import okhttp3.Call
@@ -24,11 +26,11 @@ class PokemonListViewModel @Inject constructor(
     private val pokemonRepository: PokemonRepository
 ) : ViewModel() {
 
-    private lateinit var abilitiesList: List<Ability>
     private lateinit var pokemonList: List<PokemonWithVersionGroupsAndAbilities>
     var shownPokemonList = mutableStateOf<List<PokemonWithVersionGroupsAndAbilities>>(listOf())
-    var shownAbilitiesList = mutableStateOf<List<Ability>>(listOf())
 
+    private lateinit var abilitiesList: List<Ability>
+    var shownAbilitiesList = mutableStateOf<List<Ability>>(listOf())
 
     // List of currently applied filters
     private var filterList = mutableListOf<FilterType>()
@@ -37,10 +39,17 @@ class PokemonListViewModel @Inject constructor(
     var isSearchingPokemon = mutableStateOf(false)
 
     var searchAbilityQuery = mutableStateOf("")
-    var isSearchingAbility = mutableStateOf(false)
+    var abilityFilter = mutableStateOf<Ability?>(null)
+
+    val versionGroupsList = mutableListOf<VersionGroupEntity>()
+    var versionGroup = mutableStateOf<VersionGroupEntity?>(null)
+
+    val firstType = mutableStateOf<PokemonType?>(null)
+    val secondType = mutableStateOf<PokemonType?>(null)
 
     init {
         loadPokemon()
+        loadVersionGroups()
         loadAbilities()
     }
 
@@ -51,6 +60,9 @@ class PokemonListViewModel @Inject constructor(
         applyFilters()
     }
 
+    /**
+     * Toggles favourite and captured filters
+     */
     fun toggleFilter(filterType: FilterType) {
         if (filterList.contains(filterType))
             filterList.remove(filterType)
@@ -59,8 +71,13 @@ class PokemonListViewModel @Inject constructor(
         applyFilters()
     }
 
+    /**
+     * Applies all active filters to the list
+     */
     private fun applyFilters() {
+        // Init show pokemon as an empty list
         var toBeFiltered: List<PokemonWithVersionGroupsAndAbilities> = listOf()
+        // Check if favourite and captured filters are active. Fill initial list.
         when (filterList.size) {
             0 -> {
                 toBeFiltered = pokemonList
@@ -82,6 +99,7 @@ class PokemonListViewModel @Inject constructor(
             }
         }
 
+        // Name filter
         if (searchPokemonQuery.value.isNotEmpty()) {
             shownPokemonList.value = toBeFiltered.filter {
                 it.pokemonEntity.name.startsWith(
@@ -91,8 +109,18 @@ class PokemonListViewModel @Inject constructor(
             }
         } else
             shownPokemonList.value = toBeFiltered
+
+        // Ability filter
+        abilityFilter.value?.let { ability ->
+            shownPokemonList.value = shownPokemonList.value.filter {
+                it.abilities.contains(ability)
+            }
+        }
     }
 
+    /**
+     * Loads all pokemon from repository
+     */
     private fun loadPokemon() {
         viewModelScope.launch {
             pokemonRepository.getPokemon().collect {
@@ -102,6 +130,9 @@ class PokemonListViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Executes ability filtering by name
+     */
     fun searchAbility() {
         if (searchAbilityQuery.value.isNotEmpty()) {
             shownAbilitiesList.value = abilitiesList.filter {
@@ -115,9 +146,14 @@ class PokemonListViewModel @Inject constructor(
             }
         } else {
             shownAbilitiesList.value = abilitiesList
+            abilityFilter.value = null
+            applyFilters()
         }
     }
 
+    /**
+     * Loads all abilities from repository
+     */
     private fun loadAbilities() {
         viewModelScope.launch {
             pokemonRepository.getAbilities().collect {
@@ -127,30 +163,56 @@ class PokemonListViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Loads all version groups from repository
+     */
+    private fun loadVersionGroups() {
+        viewModelScope.launch {
+            pokemonRepository.getVersionGroups().collect {
+                versionGroupsList.addAll(it)
+            }
+        }
+    }
+
+    /**
+     * Removes all filters
+     */
     private fun removeFilters() {
         filterList.clear()
         searchPokemonQuery.value = ""
         isSearchingPokemon.value = false
     }
 
+    /**
+     * Toggles a pokemon favourite status
+     */
     fun toggleFavourite(pokemon: PokemonEntity) {
         pokemon.isFavourite = !pokemon.isFavourite
         downloadPokemonImage(pokemon)
         loadPokemon()
     }
 
+    /**
+     * Toggles a pokemon captured status
+     */
     fun toggleCaptured(pokemon: PokemonEntity) {
         removeFilters()
         pokemon.isCaptured = !pokemon.isCaptured
         update(pokemon)
     }
 
+    /**
+     * Updates a pokemon data
+     */
     private fun update(pokemon: PokemonEntity) {
         viewModelScope.launch {
             pokemonRepository.update(pokemon)
         }
     }
 
+    /**
+     * Download a pokemon image, which is then saves into the repository
+     */
     private fun downloadPokemonImage(pokemon: PokemonEntity) {
         val request = Request.Builder()
             .url(pokemon.imageUrl)

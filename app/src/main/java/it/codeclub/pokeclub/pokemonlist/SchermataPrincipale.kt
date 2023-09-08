@@ -42,6 +42,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -85,7 +87,8 @@ fun MainView(
     var isRotated by remember { mutableStateOf(false) }
     val rotationState = animateFloatAsState(
         targetValue = if (isRotated) 360f else 0f,
-        animationSpec = tween(durationMillis = 1000) // Durata dell'animazione in millisecondi
+        animationSpec = tween(durationMillis = 1000), // Durata dell'animazione in millisecondi
+        label = "Rotation"
     )
     var rotate by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
@@ -120,70 +123,19 @@ fun MainView(
         mutableStateOf(0)
     }
 
-    //variabile utilizzata dal sensei cantarini, qui andrà il numero di versioni che ci sono
-    //sulla api, per ora la metto statica per vedere se funziona correttamente
-    val numeroVersioni = listOf(
-        "rosso fuoco",
-        "verde foglia",
-        "smeraldo",
-        "oro",
-        "argento",
-        "rubino",
-        "perla"
-    )
-
-    //lista che contiene le versioni che l'utente vuole filtrare per un pokemon
-    //potrebbe contenere ad esempio ( 1,2,3) se l'utente vuole un pokemon che appartiene
-    //alle prime 3 versioni
-    val versionList = remember { mutableStateOf(mutableListOf<String>()) }
-
     //variabile utilizzata per capire se l'utente ha selezionato un elemento nel box value
     //se l'ha selezionato il backgound dell'elemento sarà di un colore diverso dagli altri
     //in modo da far capire che quell'elemento e' stato scelto
     val selectedItemStates = remember { mutableStateListOf<Boolean>() }
     val versionBackground = Color.Gray.copy(alpha = 0.6f)
 
-    //variabile che contiene al lista dei tipi, anche questa dovrà essere popolata dal
-    //maestro cantarini, per ora aggiungo un paio di stringhe statiche che rappresentano i tipi
-    val typeList = remember { mutableStateOf(mutableListOf<String>()) }
-
     //val per ricordare cosa l'utente ha selezionato su ogni filtro
-    val type1 = remember { mutableStateOf(String()) }
-    val type2 = remember { mutableStateOf(String()) }
-    val allTypes1 = remember { mutableStateOf(String()) }
-    val allTypes2 = remember { mutableStateOf(String()) }
-    val version = remember { mutableStateOf((String())) }
-    val allVersion = remember { mutableStateOf(String()) }
-
-    // inizialmente sono "null" poichè devono apparire tutti i tipi e nessuna versione in particolare attiva
-    type1.value = null.toString()
-    type2.value = null.toString()
-    version.value = null.toString()
-
-    //questa lista non sarà presente
-    /*val pokemonTypes = listOf(
-        "BUG",
-        "DARK",
-        "DRAGON",
-        "ELECTRIC",
-        "FAIRY",
-        "FIGHTING",
-        "FIRE",
-        "FLYING",
-        "GHOST",
-        "GRASS",
-        "GROUND",
-        "ICE",
-        "NORMAL",
-        "POISON",
-        "PSYCHIC",
-        "ROCK",
-        "STEEL",
-        "WATER"
-    )
-
-     */
-
+    val type1 = remember { pokemonListViewModel.firstType }
+    val type2 = remember { pokemonListViewModel.secondType }
+    val version = remember { pokemonListViewModel.versionGroup }
+    val versionGroupsList = remember {
+        pokemonListViewModel.versionGroupsList
+    }
 
     //variabile utilizzata per capire se un tipo e' stato selezioanto o meno ( duale di selectedItemState)
     val selectedTypeState = remember { mutableStateListOf<Boolean>() }
@@ -191,7 +143,7 @@ fun MainView(
     //variabile utilizzata per capire se è la prima volta che si clicca sul box type ( duale
     // di first time version
     val firstTimeType = remember {
-        mutableStateOf(0)
+        mutableStateOf(false)
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -222,13 +174,10 @@ fun MainView(
                 navController,
                 boxVersion,
                 version,
-                allVersion,
                 boxType1,
                 boxType2,
                 type1,
                 type2,
-                allTypes1,
-                allTypes2,
                 pokemonListViewModel,
                 isAbilityClicked,
                 isSearchExpanded,
@@ -321,59 +270,6 @@ fun MainView(
                 }
             }
 
-            //gestione rotazione pokeball in fondo lo schermo
-            /*if (rotate) {
-                Column(
-                    /*modifier = Modifier
-                        .padding(35.dp)
-                        .offset(y = 599.dp)
-                        .offset(x = 239.dp)*/
-                modifier=Modifier.align(Alignment.BottomEnd)
-                ) {
-                    Button(
-                        onClick = {
-                            // Aggiungi l'azione per il primo pulsante verticale
-                        },
-                        modifier = Modifier
-                            .width(125.dp)
-                            .height(33.dp),
-                        shape = RoundedCornerShape(12.dp),
-                    ) {
-                        // Testo o contenuto del primo pulsante verticale
-                        Text(text = "team")
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Button(
-                        onClick = {
-                            //apro la barra di ricerca
-                            isSearchExpanded.value = !isSearchExpanded.value
-                            // se la barra di ricerca per abilità e' aperta la chiudo
-                            if (isAbilityClicked.value) {
-                                isAbilityClicked.value = !isAbilityClicked.value
-                            }
-                            //chiudo la pokeball
-                            coroutineScope.launch {
-                                rotate = !rotate
-                                isRotated = !isRotated
-                            }
-                        },
-                        modifier = Modifier
-                            .width(125.dp)
-                            .height(33.dp),
-                        shape = RoundedCornerShape(12.dp),
-                    ) {
-                        Text(text = "cerca")
-                        Image(
-                            painter = painterResource(id = R.drawable.search),
-                            contentDescription = "search image",
-                            modifier = Modifier.padding(start = 20.dp)
-                        )
-                    }
-                }
-            }*/
-
             //se l'utente clicca sul button version ( if box version.value verrà eseguito),
             //viene aperto un box in basso che gli fa scegliere
             //le versioni
@@ -406,29 +302,7 @@ fun MainView(
                                 contentPadding = PaddingValues(top = 0.dp, start = 1.dp, end = 1.dp)
                             ) {
                                 //qui andranno il numero di versioni che sono disponibili, 8 per esempio
-                                items(numeroVersioni.size) { index ->
-                                    //verifico se il box viene aperto per la prima volta o se e' stato gia aperto
-                                    //if (firstTimeVersion.value == 0) {
-                                    //e' la prima volta che apro il box, l'utente non ha selezionato ancora nulla
-                                    //tutti gli item sono su false, li aggiungo alla lista che ne tiene traccia
-                                    //  for (i in numeroVersioni.indices) {
-                                    //imposto a false ogni singolo elemento
-                                    //    selectedItemStates.add(i, false)
-                                    //  }
-                                    //fatto ciò, questa vale come prima volta di apertura del box, imposto a 1 first time
-                                    //firstTimeVersion.value = 1
-                                    //fino al prossimo avvio dell'app non posso piu rientrare in questo if
-
-                                    //}
-
-
-                                    //se viene selezionato dall'utente l'elemento nella posizione index, il suo
-                                    //background diventerà grigio ( facendo capire che e' stato selezionato) altrimenti
-                                    //sarà bianco
-                                    /*
-                            val backgroundColor =
-                                if (selectedItemStates[index]) Color.Gray else Color.White
-                            */
+                                items(versionGroupsList.size) { index ->
                                     // qui c'e' la card che non e' altro composta da un box e al suo interno
                                     // il testo che indica il nuomero di versione
                                     Box(
@@ -437,26 +311,16 @@ fun MainView(
                                             .clip(RoundedCornerShape(12.dp))
                                             .fillMaxWidth()
                                             .clickable {
-                                                //quando clicco il box voglio salvare la scelta dell' utente
-                                                /*
-                                                selectedItemStates[index] =
-                                                    !selectedItemStates[index]
-                                                if (selectedItemStates[index]) {
-                                                    versionList.value.add((index + 1).toString())
-                                                } else {
-                                                    versionList.value.remove((index + 1).toString())
-                                                }
-
-                                                 */
-                                                version.value = numeroVersioni[index]
+                                                version.value = versionGroupsList[index]
                                                 boxVersion.value = !boxVersion.value
-                                                allVersion.value = null.toString()
                                             }
                                             .background(versionBackground),
 
                                         ) {
                                         Text(
-                                            text = numeroVersioni[index],
+                                            text = versionGroupsList[index].versionGroupName.capitalize(
+                                                Locale.current
+                                            ),
                                             fontSize = 20.sp,
                                             modifier = Modifier
                                                 .align(Alignment.Center)
@@ -490,16 +354,8 @@ fun MainView(
                                     .fillMaxWidth()
                                     .clickable {
                                         //chiudo il box, le variabili version sono state già salvate nella lista
-                                        allVersion.value = R.string.all_version.toString()
-                                        version.value = null.toString()
+                                        version.value = null
                                         boxVersion.value = false
-                                        /*
-                                            for (i in 0 until versionList.value.size) {
-                                                Timber
-                                                    .tag("MyTag")
-                                                    .d(versionList.value[i])
-                                            }
-                                            */
                                     }
                             )
                             {
@@ -584,7 +440,7 @@ fun MainView(
 
                                     val backgroundColor =
                                         //if (selectedTypeState[index])
-                                        getColorForType(PokemonType.values().get(index).toString())
+                                        getColorForType(PokemonType.values()[index])
                                     //else
                                     //      Color.White
                                     // qui c'e' la card che non e' altro composta da un box e al suo interno
@@ -595,41 +451,14 @@ fun MainView(
                                             .clip(RoundedCornerShape(12.dp))
                                             .fillMaxWidth()
                                             .clickable {
-                                                //quando clicco il box voglio salvare la scelta dell' utente
-                                                //selectedTypeState[index] = !selectedTypeState[index]
-                                                //se il tipo viene selezionato per la ricerca
-                                                //if (selectedTypeState[index]) {
-                                                //verifico se ne ha già selezionati 2 di tipi
-                                                // typeList.value.add(pokemonTypes[index])
-                                                //}
-                                                //se il tipo viene rimosso ( quindi era stato precedentemente selezionato)
-                                                //lo rimuovo dalla lista dei selezionati
-                                                //else {
-                                                //typeList.value.remove(pokemonTypes[index])
-                                                //}
-                                                //chiudo il box, le variabili version sono state già salvate nella lista
-
-                                                /*for (i in 0 until typeList.value.size) {
-                                            Timber
-                                                .tag("MyTag")
-                                                .d(typeList.value[i])
-                                        } */
-                                                type1.value = PokemonType
-                                                    .values()
-                                                    .get(index)
-                                                    .toString()
-                                                allTypes1.value = null.toString()
+                                                type1.value = PokemonType.values()[index]
                                                 boxType1.value = false
-
-                                                //colora e cambia scritta del bottone TIPO1
-
-
                                             }
                                             .background(backgroundColor),
 
                                         ) {
                                         Text(
-                                            text = PokemonType.values()[index].toString(),
+                                            text = stringResource(id = PokemonType.values()[index].value),
                                             fontSize = 20.sp,
                                             modifier = Modifier
                                                 .align(Alignment.Center)
@@ -663,19 +492,14 @@ fun MainView(
                                     .fillMaxWidth()
                                     .clickable {
                                         //chiudo il box, le variabili version sono state già salvate nella lista
-                                        allTypes1.value = R.string.all_types1.toString()
-                                        type1.value = null.toString()
+                                        //allTypes1.value = R.string.all_types1.toString()
+                                        type1.value = null
                                         boxType1.value = false
-                                        /*for (i in 0 until typeList.value.size) {
-                                    Timber
-                                        .tag("MyTag")
-                                        .d(typeList.value[i])
-                                }*/
                                     }
                             )
                             {
                                 Text(
-                                    text = stringResource(R.string.all_types1),
+                                    text = stringResource(R.string.all_types),
                                     fontSize = 22.sp,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier
@@ -729,32 +553,8 @@ fun MainView(
                             ) {
                                 //qui andranno il numero di tipi di pokemon presenti
                                 items(PokemonType.values().size) { index ->
-                                    //verifico se il box viene aperto per la prima volta o se e' stato gia aperto
-                                    //if (firstTimeType.value == 0) {
-                                    //e' la prima volta che apro il box, l'utente non ha selezionato ancora nulla
-                                    //tutti gli item sono su false, li aggiungo alla lista che ne tiene traccia
-                                    //for (i in pokemonTypes.indices) {
-                                    //imposto a false ogni singolo elemento
-                                    //selectedTypeState.add(i, false)
-                                    //}
-                                    //fatto ciò, questa vale come prima volta di apertura del box, imposto a 1 first time
-                                    //firstTimeType.value = 1
-                                    //fino al prossimo avvio dell'app non posso piu rientrare in questo if
-
-                                    //}
-
-                                    //se viene selezionato dall'utente l'elemento nella posizione index, il suo
-                                    //background diventerà grigio ( facendo capire che e' stato selezionato) altrimenti
-                                    //sarà bianco
-
-                                    //adjustColorIntensity( getColorForType(pokemonTypes[index]),0.5f)
-                                    //var backgroundColor:Color?=null
-
                                     val backgroundColor =
-                                        //if (selectedTypeState[index])
-                                        getColorForType(PokemonType.values()[index].toString())
-                                    //else
-                                    //      Color.White
+                                        getColorForType(PokemonType.values()[index])
                                     // qui c'e' la card che non e' altro composta da un box e al suo interno
                                     // il testo che indica il nuomero di versione
                                     Box(
@@ -763,37 +563,15 @@ fun MainView(
                                             .clip(RoundedCornerShape(12.dp))
                                             .fillMaxWidth()
                                             .clickable {
-                                                //quando clicco il box voglio salvare la scelta dell' utente
-                                                //selectedTypeState[index] = !selectedTypeState[index]
-                                                //se il tipo viene selezionato per la ricerca
-                                                //if (selectedTypeState[index]) {
-                                                //verifico se ne ha già selezionati 2 di tipi
-                                                //  typeList.value.add(pokemonTypes[index])
-                                                //}
-                                                //se il tipo viene rimosso ( quindi era stato precedentemente selezionato)
-                                                //lo rimuovo dalla lista dei selezionati
-                                                //else {
-                                                //  typeList.value.remove(pokemonTypes[index])
-                                                //}
-
-                                                /*for (i in 0 until typeList.value.size) {
-                                            Timber
-                                                .tag("MyTag")
-                                                .d(typeList.value[i])
-                                        }*/
-                                                type2.value =
-                                                    PokemonType.values()[index].toString()
-                                                allTypes2.value = null.toString()
+                                                type2.value = PokemonType.values()[index]
+                                                //allTypes2.value = null.toString()
                                                 boxType2.value = false
-
-                                                //colora e cambia scritta del bottone TIPO1
-
                                             }
                                             .background(backgroundColor),
 
                                         ) {
                                         Text(
-                                            text = PokemonType.values()[index].toString(),
+                                            text = stringResource(id = PokemonType.values()[index].value),
                                             fontSize = 20.sp,
                                             modifier = Modifier
                                                 .align(Alignment.Center)
@@ -828,18 +606,13 @@ fun MainView(
                                     .clickable {
                                         //chiudo il box, le variabili version sono state già salvate nella lista
                                         boxType2.value = false
-                                        type2.value = null.toString()
-                                        allTypes2.value = R.string.all_types2.toString()
-                                        /*for (i in 0 until typeList.value.size) {
-                                    Timber
-                                        .tag("MyTag")
-                                        .d(typeList.value[i])
-                                }*/
+                                        type2.value = null
+                                        //allTypes2.value = R.string.all_types2.toString()
                                     }
                             )
                             {
                                 Text(
-                                    text = stringResource(R.string.all_types2),
+                                    text = stringResource(R.string.all_types),
                                     fontSize = 22.sp,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier
@@ -864,27 +637,27 @@ fun MainView(
 
 //funzione che restituisce il colore dominate, riceve il tipo ( che l'utente clicca
 //nel filtro tipo), e in base a quale tipo ja cliccato ad esso e' associato un colore
-fun getColorForType(typeName: String): Color {
+fun getColorForType(type: PokemonType): Color {
     val backgroundButton = Color.Gray.copy(alpha = 0.45f)
-    return when (typeName) {
-        "BUG" -> bug
-        "DARK" -> dark
-        "DRAGON" -> dragon
-        "ELECTRIC" -> electric
-        "FAIRY" -> fairy
-        "FIGHTING" -> fighting
-        "FIRE" -> fire
-        "FLYING" -> flying
-        "GHOST" -> ghost
-        "GRASS" -> grass
-        "GROUND" -> ground
-        "ICE" -> ice
-        "NORMAL" -> normal
-        "POISON" -> poison
-        "PSYCHIC" -> psychic
-        "ROCK" -> rock
-        "STEEL" -> steel
-        "WATER" -> water
+    return when (type) {
+        PokemonType.BUG -> bug
+        PokemonType.DRAGON -> dragon
+        PokemonType.DARK -> dark
+        PokemonType.ELECTRIC -> electric
+        PokemonType.FAIRY -> fairy
+        PokemonType.FIGHTING -> fighting
+        PokemonType.FIRE -> fire
+        PokemonType.FLYING -> flying
+        PokemonType.GHOST -> ghost
+        PokemonType.GRASS -> grass
+        PokemonType.GROUND -> ground
+        PokemonType.ICE -> ice
+        PokemonType.NORMAL -> normal
+        PokemonType.POISON -> poison
+        PokemonType.PSYCHIC -> psychic
+        PokemonType.ROCK -> rock
+        PokemonType.STEEL -> steel
+        PokemonType.WATER -> water
         else -> backgroundButton
     }
 }

@@ -47,6 +47,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import it.codeclub.pokeclub.R
+import it.codeclub.pokeclub.db.entities.PokemonType
+import it.codeclub.pokeclub.db.entities.VersionGroupEntity
 import it.codeclub.pokeclub.ui.theme.AppGrey
 
 @SuppressLint("SuspiciousIndentation")
@@ -54,14 +56,11 @@ import it.codeclub.pokeclub.ui.theme.AppGrey
 fun SecondRow(
     navController: NavController,
     boxVersion: MutableState<Boolean>,
-    version: MutableState<String>,
-    allVersion: MutableState<String>,
+    version: MutableState<VersionGroupEntity?>,
     boxType1: MutableState<Boolean>,
     boxType2: MutableState<Boolean>,
-    type1: MutableState<String>,
-    type2: MutableState<String>,
-    allTypes1: MutableState<String>,
-    allTypes2: MutableState<String>,
+    type1: MutableState<PokemonType?>,
+    type2: MutableState<PokemonType?>,
     pokemonListViewModel: PokemonListViewModel,
     isAbilityClicked: MutableState<Boolean>,
     isSearchExpanded: MutableState<Boolean>,
@@ -110,7 +109,7 @@ fun SecondRow(
                     .height(40.dp)
                     .padding(top = 6.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = if (version.value != "null") {
+                colors = if (version.value != null) {
                     ButtonDefaults.buttonColors(
                         containerColor = Color.DarkGray,
                         contentColor = Color.White
@@ -123,8 +122,8 @@ fun SecondRow(
                 }
             ) {
                 Text(
-                    text = if (version.value != "null")
-                        version.value
+                    text = if (version.value != null)
+                        version.value!!.versionGroupName.capitalize(Locale.current)
                     else stringResource(R.string.version)
                 )
             }
@@ -155,9 +154,9 @@ fun SecondRow(
                     .height(40.dp)
                     .padding(top = 6.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = if (type1.value != "null") {
+                colors = if (type1.value != null) {
                     ButtonDefaults.buttonColors(
-                        containerColor = getColorForType(type1.value),
+                        containerColor = getColorForType(type1.value!!),
                         contentColor = Color.White
                     )
                 } else {
@@ -168,10 +167,10 @@ fun SecondRow(
                 }
             ) {
                 Text(
-                    text = if (type1.value != "null")
-                        type1.value
+                    text = if (type1.value != null)
+                        stringResource(id = type1.value!!.value)
                     else
-                        stringResource(R.string.type1)
+                        stringResource(R.string.first_type)
                 )
             }
             // Linea verticale divisoria per i bottoni dei filtri
@@ -201,9 +200,9 @@ fun SecondRow(
                     .height(40.dp)
                     .padding(top = 6.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = if (type2.value != "null") {
+                colors = if (type2.value != null) {
                     ButtonDefaults.buttonColors(
-                        containerColor = getColorForType(type2.value), // Colore del bottone più scuro
+                        containerColor = getColorForType(type2.value!!), // Colore del bottone più scuro
                         contentColor = Color.White
                     )
                 } else {
@@ -214,10 +213,10 @@ fun SecondRow(
                 }
             ) {
                 Text(
-                    text = if (type2.value != "null")
-                        type2.value
+                    text = if (type2.value != null)
+                        stringResource(type2.value!!.value)
                     else
-                        stringResource(R.string.type2)
+                        stringResource(R.string.second_type)
                 )
             }
         }
