@@ -21,17 +21,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import it.codeclub.pokeclub.R
 import it.codeclub.pokeclub.utils.UIUtils.getLanguage
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    navController: NavController
+) {
     // Variabile remember per gestire la modalità scura
     val isDarkModeEnabled = remember { mutableStateOf(false) }
     // Variabile remember per gestire la scelta della lingua
@@ -61,7 +63,7 @@ fun SettingsScreen() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(R.drawable.back),
-                    contentDescription = "Back",
+                    contentDescription = stringResource(id = R.string.back),
                     modifier = Modifier
                         .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
 
@@ -69,7 +71,7 @@ fun SettingsScreen() {
                         .clickable { /* Azione da eseguire al clic */ }
                 )
                 Text(
-                    text = "Impostazioni",
+                    text = stringResource(id = R.string.settings),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = 8.dp, end = 16.dp)
@@ -90,20 +92,19 @@ fun SettingsScreen() {
                 .padding(horizontal = 16.dp, vertical = 0.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .background(Color.White)
-                .clickable{/* azione da eseguire che consente di cambiare lingua */}
         ) {
             Column(
                 modifier = Modifier
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Lingua",
+                    text = stringResource(id = R.string.language),
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
                 Text(
-                    text = "Italiano",
+                    text = stringResource(id = R.string.app_language),
                     color = Color(0xFF545454),
                     fontSize = 14.sp
                 )
@@ -141,6 +142,30 @@ fun SettingsScreen() {
                     checked = isDarkModeEnabled.value,
                     onCheckedChange = { isDarkModeEnabled.value = it },
                     modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+        }
+
+        // Box per la voce "Aggiorna dati"
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 0.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color.White)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .clickable {
+                        navController.navigate("download_data_screen")
+                    }
+            ) {
+                Text(
+                    text = stringResource(id = R.string.update),
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
                 )
             }
         }

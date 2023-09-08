@@ -51,4 +51,8 @@
     <string name="all_version">Tutte le versioni</string>
     <string name="all_types">Tutti i tipi</string>
     <string name="search">Cerca</string>
+    <string name="back">Indietro</string>
+    <string name="language">Language</string>
+    <string name="app_language">Italiano</string>
+    <string name="update">Aggiorna dati</string>
 </resources>

@@ -87,6 +87,7 @@ class DownloadDataViewModel @Inject constructor(
             abilityOffset += LIMIT
             downloadProgress.value = abilityOffset.toFloat() / abilityNumber.value.toFloat()
         } while (abilityList.next != null)
+        sharedPrefsRepository.updateAbilityOffset(abilityCounter.value)
     }
 
     private suspend fun getVersionGroups() {
@@ -100,7 +101,8 @@ class DownloadDataViewModel @Inject constructor(
             versionGroupsOffset += LIMIT
             downloadProgress.value =
                 versionGroupsOffset.toFloat() / versionGroupsNumber.value.toFloat()
-        } while (versionGroups.next != null);
+        } while (versionGroups.next != null)
+        sharedPrefsRepository.updateVersionGroupsOffset(versionGroupsCounter.value)
     }
 
     private suspend fun getPokemon() {
@@ -115,6 +117,7 @@ class DownloadDataViewModel @Inject constructor(
 
             downloadProgress.value = pokemonOffset.toFloat() / pokemonNumber.value.toFloat()
         } while (pokemonList.next != null)
+        sharedPrefsRepository.updatePokemonOffset(pokemonCounter.value)
     }
 
     private suspend fun storeAbilities(abilityList: AbilityList) {
@@ -155,7 +158,7 @@ class DownloadDataViewModel @Inject constructor(
         versionGroups.results.forEach {
             currentVersionGroup.value = it.name
 
-            val versionGroupEntity = VersionGroupEntity (
+            val versionGroupEntity = VersionGroupEntity(
                 it.name
             )
             pokemonRepository.insertVersionGroupEntity(versionGroupEntity)

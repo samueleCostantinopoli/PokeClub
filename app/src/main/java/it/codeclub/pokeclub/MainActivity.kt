@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
                         DetailsScreen(pokemonName!!)
                     }
                     composable("settings") {
-                        SettingsScreen()
+                        SettingsScreen(navController)
                     }
                 }
             }

@@ -42,6 +42,12 @@
     <string name="speed">Speed</string>
     <string name="total">Total</string>
 
+    <!-- Settings screen -->
+    <string name="back">Back</string>
+    <string name="language">Language</string>
+    <string name="app_language">English</string>
+    <string name="update">Update data</string>
+
     <!-- Pokemon types -->
     <string name="bug">Bug</string>
     <string name="dark">Dark</string>
