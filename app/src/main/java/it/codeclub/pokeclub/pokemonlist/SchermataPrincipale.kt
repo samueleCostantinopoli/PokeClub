@@ -1,8 +1,12 @@
 package it.codeclub.pokeclub.pokemonlist
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -83,13 +87,13 @@ fun MainView(
     navController: NavController,
     pokemonListViewModel: PokemonListViewModel = hiltViewModel()
 ) {
-
     var isRotated by remember { mutableStateOf(false) }
     val rotationState = animateFloatAsState(
         targetValue = if (isRotated) 360f else 0f,
         animationSpec = tween(durationMillis = 1000), // Durata dell'animazione in millisecondi
         label = "Rotation"
     )
+    var isColumnVisible by remember { mutableStateOf(false) }
     var rotate by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
@@ -188,6 +192,11 @@ fun MainView(
             //pokeball finale in basso a sinistra
             //button pokeball che ruota
             Column(modifier = Modifier.align(Alignment.BottomEnd)) {
+                AnimatedVisibility(
+                    visible = isColumnVisible,
+                    enter = slideInVertically(initialOffsetY = { it/2 }),
+                    exit = slideOutVertically( targetOffsetY  = { it })
+                ) {
                 Box {
                     Column {
                         if (rotate) {
@@ -243,6 +252,7 @@ fun MainView(
                         }
                     }
                 }
+            }
                 Spacer(modifier = Modifier.height(8.dp))
                 IconButton(
                     onClick = {
@@ -250,6 +260,7 @@ fun MainView(
                             isRotated = !isRotated
                             delay(900) // Attendiamo un secondo
                             rotate = !rotate
+                            isColumnVisible=!isColumnVisible
                         }
                     },
                     modifier = Modifier
