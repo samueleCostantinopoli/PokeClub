@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import it.codeclub.pokeclub.R
-import kotlinx.coroutines.delay
 
 @Composable
 fun DownloadDataScreen(
@@ -48,13 +45,6 @@ fun DownloadDataScreen(
 
     var done = false
 
-    val progress = remember { mutableStateOf(0.0f) }
-    LaunchedEffect(Unit) {
-        for (i in 0..100) {
-            progress.value = i / 100f
-            delay(15)
-        }
-    }
     val colorMatrix = ColorMatrix(
         floatArrayOf(
             0.33f, 0.33f, 0.33f, 0f, 0f,

@@ -27,8 +27,8 @@
     <string name="captured_filter">Filtro catturati</string>
     <string name="settings">Impostazioni</string>
     <string name="version">Versione</string>
-    <string name="first_type">Primo tipo</string>
-    <string name="second_type">Secondo tipo</string>
+    <string name="first_type">1° tipo</string>
+    <string name="second_type">2° tipo</string>
     <string name="ability">Abilità</string>
     <string name="select_version">Seleziona una versione</string>
     <string name="favourite">Preferito</string>

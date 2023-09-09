@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -152,7 +153,7 @@ fun SecondRow(
                 modifier = Modifier
                     .weight(1f)
                     .height(40.dp)
-                    .padding(top = 6.dp),
+                    .padding(top = 6.dp, end = 6.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = if (type1.value != null) {
                     ButtonDefaults.buttonColors(
@@ -181,6 +182,7 @@ fun SecondRow(
                     .height(38.dp)
                     .width(2.dp)
                     .padding(top = 6.dp)
+                    .offset(x=(-5).dp)
             )
             // Terzo bottone per il filtro secondo tipo
             Button(
@@ -196,9 +198,10 @@ fun SecondRow(
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 6.dp)
+                    .padding(end = 4.dp)
                     .height(40.dp)
-                    .padding(top = 6.dp),
+                    .padding(top = 6.dp)
+                    .offset(x = (-4).dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = if (type2.value != null) {
                     ButtonDefaults.buttonColors(
