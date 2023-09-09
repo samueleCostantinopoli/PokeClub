@@ -1,5 +1,4 @@
 package it.codeclub.pokeclub.download_data
-
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +29,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -61,7 +61,7 @@ class DownloadDataViewModel @Inject constructor(
     private var pokemonOffset: Int = sharedPrefsRepository.getPokemonOffset()
     var currentPokemon = mutableStateOf<Pokemon?>(null)
 
-    private val okHttpClient = OkHttpClient.Builder().build()
+    private val okHttpClient = OkHttpClient.Builder().callTimeout(10, TimeUnit.MINUTES).build()
 
     init {
         viewModelScope.launch {

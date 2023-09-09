@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -251,7 +252,7 @@ fun SecondRow(
                         .clip(RoundedCornerShape(15.dp))
                         //.padding(bottom = 0.dp)
                         .fillMaxWidth()
-                        .height(83.dp)
+                        .height(if(pokemon.pokemonEntity.name.length>10) 110.dp else 100.dp)
                         .clickable {
                             //quando si clicca il box bisogna navigare nella schermata dettaglio
                             navController.navigate("pokemon_detail_screen/${pokemon.pokemonEntity.name}")
@@ -279,12 +280,13 @@ fun SecondRow(
                                 horizontalArrangement = Arrangement.SpaceAround,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
+                                var pokemonLenghtName:Int
                                 // Numero del pokemon nel pokedex
                                 Text(
                                     text = "#${
                                         pokemon.pokemonEntity.pokemonId.toString().padStart(3, '0')
                                     }",
-                                    fontSize = 19.sp,
+                                    fontSize = if(pokemon.pokemonEntity.name.length>10) 15.sp else 17.sp,
                                     fontStyle = FontStyle.Italic,
                                     //come colore inserisco il colore dominante con intensità più alta
                                     //color = Color(UIUtils.adjustForBackground(pokemon.dominantColor)),
@@ -293,10 +295,10 @@ fun SecondRow(
                                 )
                                 Text(
                                     text = pokemon.pokemonEntity.name.capitalize(Locale.current),
-                                    fontSize = 18.sp,
+                                    fontSize= if(pokemon.pokemonEntity.name.length>10) 16.sp else 18.sp,
                                     //color = Color(UIUtils.adjustForBackground(pokemon.dominantColor)),
                                     color = darkenedColor,
-                                    modifier = Modifier.padding(top = 1.dp)
+                                    modifier = Modifier.padding(top = 1.dp).widthIn(max = 105.dp)
                                 )
                             }
                             // Pokemon favourite and captured icons
@@ -405,7 +407,7 @@ fun SecondRow(
                                 ) {
                                     Text(
                                         text = "   " + stringResource(pokemon.pokemonEntity.type.value) + "   ",
-                                        fontSize = 16.sp,
+                                        fontSize = 18.sp,
                                         modifier = Modifier.align(Alignment.Center),
                                         /*
                                         color = if (isDominantBlack(color) || isDominantDarkBrown(
@@ -444,7 +446,7 @@ fun SecondRow(
                                 ) {
                                     Text(
                                         text = "   " + stringResource(pokemon.pokemonEntity.secondType.value) + "   ",
-                                        fontSize = 16.sp,
+                                        fontSize = 18.sp,
                                         modifier = Modifier.align(Alignment.Center),
                                         /*
                                         color = if (isDominantBlack(color) || isDominantDarkBrown(

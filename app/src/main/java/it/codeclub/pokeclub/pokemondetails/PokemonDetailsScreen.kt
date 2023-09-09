@@ -170,8 +170,8 @@ fun DetailsScreen(
                                         horizontalArrangement = Arrangement.Center
                                     ) {
                                         val imageModifier = Modifier
-                                            .size(100.dp)
-                                            .background(Color.Transparent)
+                                            .size(150.dp)
+                                            .background(Color.Transparent,shape= RoundedCornerShape(150.dp))
                                         if (pokemonDetails.pokemon.pokemonEntity.isFavourite) {
                                             if (pokemonDetails.pokemon.pokemonEntity.image == null) {
                                                 Image(
@@ -553,7 +553,7 @@ fun getColorForType(type: PokemonType): Color {
         PokemonType.ROCK -> rock
         PokemonType.STEEL -> steel
         PokemonType.WATER -> water
-        PokemonType.NULL -> Color.Black
+        PokemonType.NULL -> zero
     }
 }
 

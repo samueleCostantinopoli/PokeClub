@@ -1,6 +1,7 @@
 package it.codeclub.pokeclub.db.entities
 
 import it.codeclub.pokeclub.R
+import java.sql.Types.NULL
 
 enum class PokemonType(val value: Int) {
 
@@ -22,7 +23,7 @@ enum class PokemonType(val value: Int) {
     ROCK(R.string.rock),
     STEEL(R.string.steel),
     WATER(R.string.water),
-    NULL(-1);
+    NULL(R.string.zero);
 
     companion object {
         fun fromInt(value: Int): PokemonType {
