@@ -50,35 +50,6 @@ fun SettingsScreen(
             .fillMaxSize()
             .background(Color.White)
     ) {
-        // Box con la freccia back e il testo impostazioni
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
-                .clip(RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp))
-                .background(Color.White),
-            //   .shadow(elevation = 4.dp, shape = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(R.drawable.back),
-                    contentDescription = stringResource(id = R.string.back),
-                    modifier = Modifier
-                        .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
-
-                        .size(24.dp)
-                        .clickable { /* Azione da eseguire al clic */ }
-                )
-                Text(
-                    text = stringResource(id = R.string.settings),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 8.dp, end = 16.dp)
-
-                )
-            }
-        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()

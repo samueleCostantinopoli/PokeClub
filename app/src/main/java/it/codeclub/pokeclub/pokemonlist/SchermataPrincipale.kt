@@ -2,6 +2,7 @@ package it.codeclub.pokeclub.pokemonlist
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
@@ -195,7 +196,7 @@ fun MainView(
                 AnimatedVisibility(
                     visible = isColumnVisible,
                     enter = slideInVertically(initialOffsetY = { it/2 }),
-                    exit = slideOutVertically( targetOffsetY  = { it })
+                    exit = slideOutVertically ( targetOffsetY  = { it })
                 ) {
                 Box {
                     Column {
@@ -208,6 +209,7 @@ fun MainView(
                                     if (isAbilityClicked.value) {
                                         isAbilityClicked.value = !isAbilityClicked.value
                                     }
+                                    isColumnVisible=!isColumnVisible
                                     //chiudo la pokeball
                                     coroutineScope.launch {
                                         rotate = !rotate
@@ -237,6 +239,7 @@ fun MainView(
                                     coroutineScope.launch {
                                         rotate = !rotate
                                         isRotated = !isRotated
+                                        isColumnVisible=!isColumnVisible
                                     }
                                 },
                                 shape = RoundedCornerShape(22.dp),
@@ -401,9 +404,7 @@ fun MainView(
                         .zIndex(1f)
                         .padding(top = 6.dp, start = 16.dp, end = 16.dp, bottom = 0.dp)
                         .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-                        .background(Color.White),
-
-
+                        .background(Color.White)
                     ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
