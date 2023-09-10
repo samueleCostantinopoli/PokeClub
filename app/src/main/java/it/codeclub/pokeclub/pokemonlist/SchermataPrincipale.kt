@@ -197,13 +197,7 @@ fun MainView(
                                     },
                                     shape = RoundedCornerShape(22.dp),
                                 ) {
-                                    Text(text = "cerca")
-                                    //Image(
-                                    //    painter = painterResource(id = R.drawable.search),
-                                    //    contentDescription = "search image",
-                                    //    //modifier = Modifier.padding(start = 20.dp)
-                                    //    modifier = Modifier.size(20.dp)
-                                    //)
+                                    Text(text = stringResource(R.string.search))
                                 }
                                 // bottone nella pokebll per ricerca tramite abilità
                                 Button(
@@ -223,13 +217,7 @@ fun MainView(
                                     },
                                     shape = RoundedCornerShape(22.dp),
                                 ) {
-                                    Text(text = "abilità")
-                                    //Image(
-                                    //    painter = painterResource(id = R.drawable.search),
-                                    //    contentDescription = "search image",
-                                    //    //modifier = Modifier.padding(start = 20.dp)
-                                    //    modifier = Modifier.size(20.dp)
-                                    //)
+                                    Text(text = stringResource(R.string.abilities).capitalize(Locale.current))
                                 }
                             }
                         }
@@ -249,8 +237,6 @@ fun MainView(
                         .padding(end = 28.dp, bottom = 10.dp)
                         .size(76.dp)
                         .graphicsLayer(rotationZ = rotationState.value)
-                        // .clickable { }
-                        //.align(Alignment.BottomEnd)
                         .background(Color.Unspecified)
 
                 ) {
@@ -350,6 +336,7 @@ fun MainView(
                                         //chiudo il box, le variabili version sono state già salvate nella lista
                                         version.value = null
                                         boxVersion.value = false
+                                        pokemonListViewModel.searchPokemon()
                                     }
                             )
                             {
