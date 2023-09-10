@@ -35,9 +35,9 @@ fun DownloadDataScreen(
     val abilityCounter = remember { downloadDataViewModel.abilityCounter }
     val abilityNumber = remember { downloadDataViewModel.abilityNumber }
     val currentAbility = remember { downloadDataViewModel.currentAbility }
-    val versionsCounter = remember { downloadDataViewModel.versionGroupsCounter }
-    val versionsNumber = remember { downloadDataViewModel.versionGroupsNumber }
-    val currentVersionGroup = remember { downloadDataViewModel.currentVersionGroup }
+    val versionsCounter = remember { downloadDataViewModel.versionsCounter }
+    val versionsNumber = remember { downloadDataViewModel.versionsNumber }
+    val currentVersionGroup = remember { downloadDataViewModel.currentVersion }
     val pokemonCounter = remember { downloadDataViewModel.pokemonCounter }
     val pokemonNumber = remember { downloadDataViewModel.pokemonNumber }
     val currentPokemon = remember { downloadDataViewModel.currentPokemon }
@@ -96,7 +96,7 @@ fun DownloadDataScreen(
                 }
             }
 
-            DownloadDataViewModel.DownloadStatus.VERSION_GROUPS_DOWNLOAD -> {
+            DownloadDataViewModel.DownloadStatus.VERSIONS_DOWNLOAD -> {
                 Text(
                     text = "${stringResource(id = R.string.downloading)} " +
                             stringResource(R.string.versions) + if (versionsCounter.value != 0)
