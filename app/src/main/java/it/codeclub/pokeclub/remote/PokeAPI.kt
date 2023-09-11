@@ -23,7 +23,7 @@ interface PokeAPI {
     ): Pokemon
 
     @GET("version")
-    suspend fun getVersionGroups(
+    suspend fun getVersions(
         @Query("limit") limit: Int,
         @Query("offset") offset: Int
     ): VersionGroups

@@ -64,8 +64,6 @@ fun SecondRow(
     type1: MutableState<PokemonType?>,
     type2: MutableState<PokemonType?>,
     pokemonListViewModel: PokemonListViewModel,
-    isAbilityClicked: MutableState<Boolean>,
-    isSearchExpanded: MutableState<Boolean>,
     favouritesFilter: MutableState<Boolean>,
     capturedFilter: MutableState<Boolean>
 ) {
@@ -280,7 +278,6 @@ fun SecondRow(
                                 horizontalArrangement = Arrangement.SpaceAround,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                var pokemonLenghtName:Int
                                 // Numero del pokemon nel pokedex
                                 Text(
                                     text = "#${
@@ -533,20 +530,9 @@ fun SecondRow(
     } // chiusura parentesi column che racchiude bottoni filtri + lazy column
 } // chiusura fun
 
-fun intToColor(colorValue: Int): Color {
-    return Color(colorValue)
-}
-
 fun isDominantBlack(color: Color, threshold: Float = 0.2f): Boolean {
     val luminance = (0.299f * color.red + 0.587f * color.green + 0.114f * color.blue)
     return luminance <= threshold
-}
-
-fun isDominantDarkRed(color: Color, threshold: Float = 0.2f): Boolean {
-    val luminance = (0.299f * color.red + 0.587f * color.green + 0.114f * color.blue)
-    val redness = color.red / (color.red + color.green + color.blue)
-
-    return luminance <= threshold && redness >= 0.2f
 }
 
 fun isDominantDarkBrown(

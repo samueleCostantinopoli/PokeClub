@@ -1,7 +1,6 @@
 package it.codeclub.pokeclub.db.entities
 
 import it.codeclub.pokeclub.R
-import java.sql.Types.NULL
 
 enum class PokemonType(val value: Int) {
 

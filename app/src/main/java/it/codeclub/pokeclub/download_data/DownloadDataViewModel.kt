@@ -1,4 +1,5 @@
 package it.codeclub.pokeclub.download_data
+
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.runtime.mutableStateOf
@@ -50,10 +51,10 @@ class DownloadDataViewModel @Inject constructor(
     var currentAbility = mutableStateOf<AbilityDetails?>(null)
 
     // Version groups attributes
-    var versionGroupsNumber = mutableStateOf(0)
-    var versionGroupsCounter = mutableStateOf(0)
-    private var versionGroupsOffset: Int = sharedPrefsRepository.getVersionGroupsOffset()
-    var currentVersionGroup = mutableStateOf<String?>(null)
+    var versionsNumber = mutableStateOf(0)
+    var versionsCounter = mutableStateOf(0)
+    private var versionsOffset: Int = sharedPrefsRepository.getVersionsOffset()
+    var currentVersion = mutableStateOf<String?>(null)
 
     // Pokemon attributes
     var pokemonNumber = mutableStateOf(0)
@@ -67,12 +68,21 @@ class DownloadDataViewModel @Inject constructor(
         viewModelScope.launch {
             if (sharedPrefsRepository.getFirstStartIndicator()) {
                 getAbilities()
-                getVersionGroups()
+                getVersions()
                 getPokemon()
                 sharedPrefsRepository.updateFirstStartIndicator()
             }
             currentStatus.value = DownloadStatus.DONE
         }
+    }
+
+    /**
+     * When ViewModel is cleared, saves current download progress
+     */
+    override fun onCleared() {
+        sharedPrefsRepository.updatePokemonOffset(pokemonOffset)
+        sharedPrefsRepository.updateAbilityOffset(abilityOffset)
+        sharedPrefsRepository.updateVersionsOffset(versionsOffset)
     }
 
     private suspend fun getAbilities() {
@@ -89,19 +99,19 @@ class DownloadDataViewModel @Inject constructor(
         sharedPrefsRepository.updateAbilityOffset(abilityCounter.value)
     }
 
-    private suspend fun getVersionGroups() {
+    private suspend fun getVersions() {
         var versionGroups: VersionGroups
-        currentStatus.value = DownloadStatus.VERSION_GROUPS_DOWNLOAD
+        currentStatus.value = DownloadStatus.VERSIONS_DOWNLOAD
         do {
-            versionGroups = pokeApi.getVersionGroups(LIMIT, versionGroupsOffset)
-            if (versionGroupsNumber.value == 0)
-                versionGroupsNumber.value = versionGroups.count
-            storeVersionGroup(versionGroups)
-            versionGroupsOffset += LIMIT
+            versionGroups = pokeApi.getVersions(LIMIT, versionsOffset)
+            if (versionsNumber.value == 0)
+                versionsNumber.value = versionGroups.count
+            storeVersion(versionGroups)
+            versionsOffset += LIMIT
             downloadProgress.value =
-                versionGroupsOffset.toFloat() / versionGroupsNumber.value.toFloat()
+                versionsOffset.toFloat() / versionsNumber.value.toFloat()
         } while (versionGroups.next != null)
-        sharedPrefsRepository.updateVersionGroupsOffset(versionGroupsCounter.value)
+        sharedPrefsRepository.updateVersionsOffset(versionsCounter.value)
     }
 
     private suspend fun getPokemon() {
@@ -141,30 +151,41 @@ class DownloadDataViewModel @Inject constructor(
             }
             val effectIt = foundEffectIt?.flavor_text ?: effectEn
 
-            val abilityEntity = Ability(
-                abilityId = ability.id.toLong(),
-                nameIt = nameIt,
-                nameEn = ability.name,
-                effectEn = effectEn,
-                effectIt = effectIt
+            pokemonRepository.insertNewAbility(
+                Ability(
+                    abilityId = ability.id.toLong(),
+                    nameIt = nameIt,
+                    nameEn = ability.name,
+                    effectEn = effectEn,
+                    effectIt = effectIt
+                )
             )
-            pokemonRepository.insertNewAbility(abilityEntity)
             abilityCounter.value++
         }
     }
 
-    private suspend fun storeVersionGroup(versionGroups: VersionGroups) {
-        versionGroups.results.forEach {
-            currentVersionGroup.value = it.name
+    /**
+     * Stores a game version
+     */
+    private suspend fun storeVersion(versionGroups: VersionGroups) {
+        viewModelScope.launch {
+            versionGroups.results.forEach {
+                currentVersion.value = it.name
 
-            val versionEntity = VersionEntity(
-                it.name
-            )
-            pokemonRepository.insertVersionGroupEntity(versionEntity)
-            versionGroupsCounter.value++
+                val versionEntity = VersionEntity(
+                    it.name
+                )
+                pokemonRepository.insertVersionGroupEntity(versionEntity)
+                versionsCounter.value++
+            }
         }
     }
 
+    /**
+     * Download data from each pokemon
+     *
+     * @param pokemonList a list of pokemon to download data for
+     */
     private suspend fun getPokemonData(pokemonList: PokemonList) {
         pokemonList.results.forEach {
 
@@ -211,14 +232,15 @@ class DownloadDataViewModel @Inject constructor(
             }
 
             // Saves PokemonVersionGroupsCrossRef
-            pokemon.game_indices.forEach { gameIndex ->
-                val pokemonVersionCrossRef = PokemonVersionCrossRef(
-                    pokemon.id,
-                    gameIndex.version.name
-                )
-                pokemonRepository.insertPokemonVersionGroupsCrossRef(
-                    pokemonVersionCrossRef
-                )
+            viewModelScope.launch {
+                pokemon.game_indices.forEach { gameIndex ->
+                    pokemonRepository.insertPokemonVersionGroupsCrossRef(
+                        PokemonVersionCrossRef(
+                            pokemon.id,
+                            gameIndex.version.name
+                        )
+                    )
+                }
             }
 
             // Takes PokemonDetails values and saves them
@@ -238,18 +260,19 @@ class DownloadDataViewModel @Inject constructor(
                     "speed" -> speed = stat.base_stat
                 }
             }
-            val pokemonDetails = PokemonDetails(
-                pokemonEntityId = pokemon.id,
-                height = pokemon.height.toDouble(),
-                weight = pokemon.weight.toDouble(),
-                lp = lp,
-                attack = attack,
-                defense = defense,
-                spAttack = spAttack,
-                spDefense = spDefense,
-                speed = speed
+            pokemonRepository.insertNewPokemonDetails(
+                PokemonDetails(
+                    pokemonEntityId = pokemon.id,
+                    height = pokemon.height.toDouble(),
+                    weight = pokemon.weight.toDouble(),
+                    lp = lp,
+                    attack = attack,
+                    defense = defense,
+                    spAttack = spAttack,
+                    spDefense = spDefense,
+                    speed = speed
+                )
             )
-            pokemonRepository.insertNewPokemonDetails(pokemonDetails)
 
             pokemon.abilities.forEach { ability ->
                 val abilityId = if (ability.ability.url.endsWith("/"))
@@ -270,9 +293,14 @@ class DownloadDataViewModel @Inject constructor(
         pokemonRepository.insertNewPokemonEntity(pokemonEntity)
     }
 
+    /**
+     * Evaluates a bitmap dominant color
+     *
+     * @param bitmap the image on which evaluating dominant color
+     * @param onFinish function called when the dominant color is evaluated
+     */
     private fun calcDominantColor(bitmap: Bitmap, onFinish: (UInt) -> Unit) {
         val bmp = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-
         Palette.from(bmp).generate { palette ->
             palette?.dominantSwatch?.rgb?.let { colorValue ->
                 onFinish(colorValue.toUInt())
@@ -283,7 +311,7 @@ class DownloadDataViewModel @Inject constructor(
     enum class DownloadStatus {
         INIT_DOWNLOAD,
         ABILITY_DOWNLOAD,
-        VERSION_GROUPS_DOWNLOAD,
+        VERSIONS_DOWNLOAD,
         POKEMON_DOWNLOAD,
         DONE
     }

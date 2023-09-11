@@ -2,11 +2,9 @@ package it.codeclub.pokeclub.pokemonlist
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -31,7 +29,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -121,17 +118,10 @@ fun MainView(
     val boxType1 = remember { mutableStateOf(false) }
     val boxType2 = remember { mutableStateOf(false) }
 
-    //variabile utilizzata per capire se e' la prima volta che l'utente ha cliccato sul box version
-    //in quel caso i selected iniziali devono per forza essere settati tutti a false poiche l'utente
-    //non ha ancora cliccato su nessuna versione, perciò i background saranno tutti bianchi
-    val firstTimeVersion = remember {
-        mutableStateOf(0)
-    }
 
     //variabile utilizzata per capire se l'utente ha selezionato un elemento nel box value
     //se l'ha selezionato il backgound dell'elemento sarà di un colore diverso dagli altri
     //in modo da far capire che quell'elemento e' stato scelto
-    val selectedItemStates = remember { mutableStateListOf<Boolean>() }
     val versionBackground = Color.Gray.copy(alpha = 0.6f)
 
     //val per ricordare cosa l'utente ha selezionato su ogni filtro
@@ -140,15 +130,6 @@ fun MainView(
     val version = remember { pokemonListViewModel.versionGroup }
     val versionGroupsList = remember {
         pokemonListViewModel.versionGroupsList
-    }
-
-    //variabile utilizzata per capire se un tipo e' stato selezioanto o meno ( duale di selectedItemState)
-    val selectedTypeState = remember { mutableStateListOf<Boolean>() }
-
-    //variabile utilizzata per capire se è la prima volta che si clicca sul box type ( duale
-    // di first time version
-    val firstTimeType = remember {
-        mutableStateOf(false)
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -184,8 +165,6 @@ fun MainView(
                 type1,
                 type2,
                 pokemonListViewModel,
-                isAbilityClicked,
-                isSearchExpanded,
                 favourite,
                 smallPokeballClick
             )
@@ -195,67 +174,55 @@ fun MainView(
             Column(modifier = Modifier.align(Alignment.BottomEnd)) {
                 AnimatedVisibility(
                     visible = isColumnVisible,
-                    enter = slideInVertically(initialOffsetY = { it/2 }),
-                    exit = slideOutVertically ( targetOffsetY  = { it })
+                    enter = slideInVertically(initialOffsetY = { it / 2 }),
+                    exit = slideOutVertically(targetOffsetY = { it })
                 ) {
-                Box {
-                    Column {
-                        if (rotate) {
-                            Button(
-                                onClick = {
-                                    //apro la barra di ricerca
-                                    isSearchExpanded.value = !isSearchExpanded.value
-                                    // se la barra di ricerca per abilità e' aperta la chiudo
-                                    if (isAbilityClicked.value) {
-                                        isAbilityClicked.value = !isAbilityClicked.value
-                                    }
-                                    isColumnVisible=!isColumnVisible
-                                    //chiudo la pokeball
-                                    coroutineScope.launch {
-                                        rotate = !rotate
-                                        isRotated = !isRotated
-                                    }
-                                },
-                                shape = RoundedCornerShape(22.dp),
-                            ) {
-                                Text(text = "cerca")
-                                //Image(
-                                //    painter = painterResource(id = R.drawable.search),
-                                //    contentDescription = "search image",
-                                //    //modifier = Modifier.padding(start = 20.dp)
-                                //    modifier = Modifier.size(20.dp)
-                                //)
-                            }
-                            // bottone nella pokebll per ricerca tramite abilità
-                            Button(
-                                onClick = {
-                                    //verifico se la barra di ricerca del pokemon ( per nome è aperta) nel caso la chiudo
-                                    if (isSearchExpanded.value) {
+                    Box {
+                        Column {
+                            if (rotate) {
+                                Button(
+                                    onClick = {
+                                        //apro la barra di ricerca
                                         isSearchExpanded.value = !isSearchExpanded.value
-                                    }
-                                    // quando clicco deve aprirsi la barra di ricerca per abilità(che si trova in first row)
-                                    isAbilityClicked.value = !isAbilityClicked.value
-                                    //chiudo la pokeball
-                                    coroutineScope.launch {
-                                        rotate = !rotate
-                                        isRotated = !isRotated
-                                        isColumnVisible=!isColumnVisible
-                                    }
-                                },
-                                shape = RoundedCornerShape(22.dp),
-                            ) {
-                                Text(text = "abilità")
-                                //Image(
-                                //    painter = painterResource(id = R.drawable.search),
-                                //    contentDescription = "search image",
-                                //    //modifier = Modifier.padding(start = 20.dp)
-                                //    modifier = Modifier.size(20.dp)
-                                //)
+                                        // se la barra di ricerca per abilità e' aperta la chiudo
+                                        if (isAbilityClicked.value) {
+                                            isAbilityClicked.value = !isAbilityClicked.value
+                                        }
+                                        isColumnVisible = !isColumnVisible
+                                        //chiudo la pokeball
+                                        coroutineScope.launch {
+                                            rotate = !rotate
+                                            isRotated = !isRotated
+                                        }
+                                    },
+                                    shape = RoundedCornerShape(22.dp),
+                                ) {
+                                    Text(text = stringResource(R.string.search))
+                                }
+                                // bottone nella pokebll per ricerca tramite abilità
+                                Button(
+                                    onClick = {
+                                        //verifico se la barra di ricerca del pokemon ( per nome è aperta) nel caso la chiudo
+                                        if (isSearchExpanded.value) {
+                                            isSearchExpanded.value = !isSearchExpanded.value
+                                        }
+                                        // quando clicco deve aprirsi la barra di ricerca per abilità(che si trova in first row)
+                                        isAbilityClicked.value = !isAbilityClicked.value
+                                        //chiudo la pokeball
+                                        coroutineScope.launch {
+                                            rotate = !rotate
+                                            isRotated = !isRotated
+                                            isColumnVisible = !isColumnVisible
+                                        }
+                                    },
+                                    shape = RoundedCornerShape(22.dp),
+                                ) {
+                                    Text(text = stringResource(R.string.abilities).capitalize(Locale.current))
+                                }
                             }
                         }
                     }
                 }
-            }
                 Spacer(modifier = Modifier.height(8.dp))
                 IconButton(
                     onClick = {
@@ -263,15 +230,13 @@ fun MainView(
                             isRotated = !isRotated
                             delay(900) // Attendiamo un secondo
                             rotate = !rotate
-                            isColumnVisible=!isColumnVisible
+                            isColumnVisible = !isColumnVisible
                         }
                     },
                     modifier = Modifier
                         .padding(end = 28.dp, bottom = 10.dp)
                         .size(76.dp)
                         .graphicsLayer(rotationZ = rotationState.value)
-                        // .clickable { }
-                        //.align(Alignment.BottomEnd)
                         .background(Color.Unspecified)
 
                 ) {
@@ -371,6 +336,7 @@ fun MainView(
                                         //chiudo il box, le variabili version sono state già salvate nella lista
                                         version.value = null
                                         boxVersion.value = false
+                                        pokemonListViewModel.searchPokemon()
                                     }
                             )
                             {
@@ -405,7 +371,7 @@ fun MainView(
                         .padding(top = 6.dp, start = 16.dp, end = 16.dp, bottom = 0.dp)
                         .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
                         .background(Color.White)
-                    ) {
+                ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
@@ -429,27 +395,9 @@ fun MainView(
                                 )
                             ) {
                                 //qui andranno il numero di tipi di pokemon presenti
-                                items(PokemonType.values().size) { index ->
-                                    //verifico se il box viene aperto per la prima volta o se e' stato gia aperto
-                                    //if (firstTimeType.value == 0) {
-                                    //e' la prima volta che apro il box, l'utente non ha selezionato ancora nulla
-                                    //tutti gli item sono su false, li aggiungo alla lista che ne tiene traccia
-                                    //for (i in pokemonTypes.indices) {
-                                    //imposto a false ogni singolo elemento
-                                    //selectedTypeState.add(i, false)
-                                    //}
-                                    //fatto ciò, questa vale come prima volta di apertura del box, imposto a 1 first time
-                                    //firstTimeType.value = 1
-                                    //fino al prossimo avvio dell'app non posso piu rientrare in questo if
-
-                                    //}
-
-                                    //se viene selezionato dall'utente l'elemento nella posizione index, il suo
-                                    //background diventerà grigio ( facendo capire che e' stato selezionato) altrimenti
-                                    //sarà bianco
-
-                                    //adjustColorIntensity( getColorForType(pokemonTypes[index]),0.5f)
-                                    //var backgroundColor:Color?=null
+                                items(
+                                    PokemonType.values().filter { it != PokemonType.NULL }.size
+                                ) { index ->
 
                                     val backgroundColor =
                                         //if (selectedTypeState[index])
@@ -566,7 +514,9 @@ fun MainView(
                                 )
                             ) {
                                 //qui andranno il numero di tipi di pokemon presenti
-                                items(PokemonType.values().size) { index ->
+                                items(
+                                    PokemonType.values().filter { it != PokemonType.NULL }.size
+                                ) { index ->
                                     val backgroundColor =
                                         getColorForType(PokemonType.values()[index])
                                     // qui c'e' la card che non e' altro composta da un box e al suo interno
@@ -676,14 +626,4 @@ fun getColorForType(type: PokemonType): Color {
     }
 }
 
-
-// Funzione per modificare l'intensità di un colore
-fun adjustColorIntensity(color: Color, factor: Float): Color {
-    val red = color.red * factor
-    val green = color.green * factor
-    val blue = color.blue * factor
-    val alpha = color.alpha
-
-    return Color(red.coerceIn(0f, 1f), green.coerceIn(0f, 1f), blue.coerceIn(0f, 1f), alpha)
-}
 

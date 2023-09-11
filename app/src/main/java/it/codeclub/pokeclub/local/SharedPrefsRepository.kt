@@ -10,7 +10,7 @@ class SharedPrefsRepository constructor(
 ) {
 
     fun getAbilityOffset() = getSharedPreferences().getInt(ABILITY_OFFSET, BASE_OFFSET)
-    fun getVersionGroupsOffset() = getSharedPreferences().getInt(VERSION_GROUPS_OFFSET, BASE_OFFSET)
+    fun getVersionsOffset() = getSharedPreferences().getInt(VERSIONS_OFFSET, BASE_OFFSET)
 
     fun getPokemonOffset() = getSharedPreferences().getInt(POKEMON_OFFSET, BASE_OFFSET)
 
@@ -19,8 +19,8 @@ class SharedPrefsRepository constructor(
     fun updateAbilityOffset(abilityOffset: Int) =
         getSharedPreferences().edit().putInt(ABILITY_OFFSET, abilityOffset).apply()
 
-    fun updateVersionGroupsOffset(versionGroupsOffset: Int) =
-        getSharedPreferences().edit().putInt(VERSION_GROUPS_OFFSET, versionGroupsOffset).apply()
+    fun updateVersionsOffset(versionsOffset: Int) =
+        getSharedPreferences().edit().putInt(VERSIONS_OFFSET, versionsOffset).apply()
 
     fun updatePokemonOffset(pokemonOffset: Int) =
         getSharedPreferences().edit().putInt(POKEMON_OFFSET, pokemonOffset).apply()
@@ -33,7 +33,7 @@ class SharedPrefsRepository constructor(
 
     private companion object PreferencesNames {
         const val ABILITY_OFFSET = "ability_offset"
-        const val VERSION_GROUPS_OFFSET = "version_groups_offset"
+        const val VERSIONS_OFFSET = "versions_offset"
         const val POKEMON_OFFSET = "pokemon_offset"
     }
 }
