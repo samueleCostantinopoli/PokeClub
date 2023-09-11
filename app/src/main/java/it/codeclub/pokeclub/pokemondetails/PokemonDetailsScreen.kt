@@ -669,7 +669,7 @@ fun createStatRow(
             Box(
                 modifier = Modifier
                     //.weight(0.9f)
-                    .size(80.dp)
+                    .size(70.dp)
                     //.padding(end = 8.dp)
                     .clip(RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp))
                     .background(Color.White)
@@ -688,7 +688,7 @@ fun createStatRow(
                     .fillMaxWidth(animatableWidth.value)
                     .clip(RoundedCornerShape(topStart = 0.dp, bottomStart = 0.dp, topEnd = 8.dp, bottomEnd = 8.dp))
                     .background(color = color)
-                    .size(80.dp)
+                    .size(70.dp)
                     .widthIn(min = 0.dp,max = weightValue.dp)
             ) {
                 Text(
