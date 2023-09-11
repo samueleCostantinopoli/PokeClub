@@ -253,7 +253,15 @@ fun SecondRow(
                         .height(if(pokemon.pokemonEntity.name.length>10) 110.dp else 100.dp)
                         .clickable {
                             //quando si clicca il box bisogna navigare nella schermata dettaglio
-                            navController.navigate("pokemon_detail_screen/${pokemon.pokemonEntity.name}")
+                            navController.navigate("pokemon_detail_screen/${pokemon.pokemonEntity.name}") {
+                                navController.graph.startDestinationRoute?.let { route ->
+                                    popUpTo(route) {
+                                        saveState = true
+                                    }
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         },
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {

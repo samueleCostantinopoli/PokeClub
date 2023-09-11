@@ -26,6 +26,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -50,8 +51,8 @@ import timber.log.Timber
 fun FirstRow(
     navController: NavController,
     pokemonListViewModel: PokemonListViewModel,
-    favourite: MutableState<Boolean>,
-    smallPokeballClick: MutableState<Boolean>,
+    favouriteState: MutableState<Boolean>,
+    capturedState: MutableState<Boolean>,
     isSearchExpanded: MutableState<Boolean>,
     focusManager: FocusManager,
     keyboardController: SoftwareKeyboardController?,
@@ -66,6 +67,9 @@ fun FirstRow(
         pokemonListViewModel.abilityFilter
     }
     val language = getLanguage()
+
+    val favourite = rememberSaveable { favouriteState }
+    val captured = rememberSaveable { capturedState }
 
     Row(
         modifier = Modifier
@@ -123,7 +127,6 @@ fun FirstRow(
                             //salvo la ricerca di dell'utente nella variabile che verrà usata per la query
                             saveSearchPokemon.value = searchTextPokemon.value
                             //verifica che ilk testo sia effettivamente preso
-                            Timber.tag("MyTag").d(saveSearchPokemon.value)
                         }
                     ),
                     //questo permette di continuare a scorrere orizzontalmente mentre si scrive sul
@@ -296,14 +299,14 @@ fun FirstRow(
         //icon pokeball in front of star
         IconButton(
             onClick = {
-                smallPokeballClick.value = !smallPokeballClick.value
+                captured.value = !captured.value
                 pokemonListViewModel.toggleFilter(FilterType.CAPTURED)
             },
             modifier = Modifier.padding(top = 17.dp, bottom = 0.dp, end = 6.dp)
         ) {
             Icon(
                 painter =
-                if (smallPokeballClick.value) {
+                if (captured.value) {
                     painterResource(id = R.drawable.smallpokeballfirstrow)
                 } else {
                     painterResource(id = R.drawable.smallpokeballemptyfirstrow)
