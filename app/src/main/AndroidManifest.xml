@@ -9,9 +9,9 @@
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/menupokeball"
+        android:icon="@mipmap/launcher"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/menupokeball"
+        android:roundIcon="@mipmap/launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.PokeClub"
         tools:targetApi="31">

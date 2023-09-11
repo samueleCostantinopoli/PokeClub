@@ -241,7 +241,7 @@ fun MainView(
 
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.menupokeball),
+                        painter = painterResource(id = R.drawable.mainpokeball),
                         contentDescription = "FabButton",
                         modifier = Modifier.fillMaxSize(), // Modificatore per riempire l'intera area del pulsante
                         contentScale = ContentScale.FillBounds // Imposta la scala dell'immagine per adattarsi all'area del pulsante
