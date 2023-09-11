@@ -1,6 +1,9 @@
 package it.codeclub.pokeclub.pokemondetails
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,12 +13,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -23,6 +28,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -504,7 +510,7 @@ fun DetailsScreen(
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(top = 260.dp)
+                                            .padding(top = 282.dp)
                                             .align(Alignment.Center)
                                     ) {
                                         Text(
@@ -633,7 +639,7 @@ fun AbilityRow(ability: Ability) {
 
 
 //funzione per la creazione della riga della statistica
-@SuppressLint("SuspiciousIndentation")
+@Composable
 fun createStatRow(
     statName: String,
     statValue: String,
@@ -641,21 +647,33 @@ fun createStatRow(
     color: Color
 ): @Composable () -> Unit {
     return {
-        val newWeightValue = weightValue * 3.1
-        val w = 3.1 - (3.1 - newWeightValue)
-        Row(modifier = Modifier.fillMaxWidth()) {
+        val animatableWidth = remember { Animatable(0f) }
+        val animDuration = 1000
+        val animDelay = 0
+
+        // Usa LaunchedEffect per avviare l'animazione quando la composable viene creata
+        LaunchedEffect(key1 = true) {
+            animatableWidth.animateTo(
+                targetValue = weightValue, // Larghezza target basata sul peso della statistica
+                animationSpec = tween(
+                    durationMillis = animDuration,
+                    delayMillis = animDelay
+                )
+            )
+        }
+
+        Row(
+            modifier = Modifier.height(42.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Box(
                 modifier = Modifier
-                    .weight(0.9f)
-                    .padding(end = 0.dp)
+                    //.weight(0.9f)
+                    .size(80.dp)
+                    //.padding(end = 8.dp)
                     .clip(RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp))
                     .background(Color.White)
-                    .border(
-                        1.dp,
-                        Color.Gray,
-                        RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp)
-                    )
-                    .padding(8.dp)
+                    .border(1.dp, Color.Gray, RoundedCornerShape(topStart = 8.dp, bottomStart = 8.dp))
             ) {
                 Text(
                     text = statName,
@@ -663,33 +681,20 @@ fun createStatRow(
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
+
+            // Usa l'animazione per la larghezza della barra
             Box(
                 modifier = Modifier
-                    .weight(w.toFloat())
-                    .padding(start = 0.dp)
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 0.dp,
-                            bottomStart = 0.dp,
-                            topEnd = 8.dp,
-                            bottomEnd = 8.dp
-                        )
-                    )
+                    .fillMaxWidth(animatableWidth.value)
+                    .clip(RoundedCornerShape(topStart = 0.dp, bottomStart = 0.dp, topEnd = 8.dp, bottomEnd = 8.dp))
                     .background(color = color)
-                    .padding(end = 0.dp)
-                    .padding(8.dp)
+                    .size(80.dp)
+                    .widthIn(min = 0.dp,max = weightValue.dp)
             ) {
                 Text(
                     text = statValue,
                     color = Color.Black,
-                    modifier = Modifier.align(Alignment.TopEnd)
-                )
-            }
-            if (weightValue != 1f) {
-                Box(
-                    modifier = Modifier
-                        .weight((3.1 - newWeightValue).toFloat())
-                        .background(color = Color(0xffffffff))
+                    modifier = Modifier.padding(8.dp).align(Alignment.CenterEnd)
                 )
             }
         }
